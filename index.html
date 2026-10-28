@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Сергей Ситников — Telegram-боты, магазины, backend</title>
+<meta name="description" content="Сергей Ситников: Telegram-боты, интернет-магазины с ботами, Mini Apps и backend на Python/TypeScript. Пишу с тестами, деплою в Docker. Живые проекты и контакты.">
+<link rel="canonical" href="https://ssrjkk.github.io/">
+<meta name="theme-color" content="#F5F4EF">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Сергей Ситников">
+<meta property="og:title" content="Сергей Ситников — Telegram-боты, магазины, backend">
+<meta property="og:description" content="Живые проекты: магазин с ботами TG/MAX, платформа оркестрации ботов, MCP-сервер, торговый терминал. Пишу с тестами.">
+<meta property="og:url" content="https://ssrjkk.github.io/">
+<meta property="og:image" content="https://ssrjkk.github.io/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Сергей Ситников — Telegram-боты, магазины, backend">
+<meta name="twitter:description" content="Живые проекты и контакты. Python/TypeScript, тесты, Docker.">
+<meta name="twitter:image" content="https://ssrjkk.github.io/assets/og.png">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<style>
+:root{
+  --bg:#F5F4EF;
+  --ink:#141412;
+  --muted:#66665E;
+  --soft:#8A8A80;
+  --line:#DCDAD0;
+  --card:#FFFFFF;
+  --accent:#1B4DFF;
+  --radius:18px;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",Menlo,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font:inherit}
+::selection{background:#D8D5FF;color:#111}
+.wrap{width:min(1180px,calc(100% - 40px));margin:0 auto}
+.skip{position:absolute;left:-9999px;top:0;background:#111;color:#fff;padding:10px 14px;z-index:100}
+.skip:focus{left:12px;top:12px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* header */
+.site-header{position:sticky;top:0;z-index:40;background:rgba(245,244,239,.86);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.header-in{display:flex;align-items:center;gap:24px;min-height:66px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:650;letter-spacing:-.02em;white-space:nowrap}
+.brand-mark{width:30px;height:30px;border-radius:9px;background:#141412;color:#F5F4EF;display:grid;place-items:center;font:600 11px/1 var(--mono);letter-spacing:.03em}
+.brand-name{font-size:14px}
+.nav{display:flex;align-items:center;gap:22px;margin-left:auto}
+.nav a{font-size:13px;color:#4E4E47}
+.nav a:hover{color:#111}
+.header-gh{display:inline-flex;align-items:center;gap:6px;border:1px solid #141412;border-radius:999px;padding:7px 13px;font-size:12px;font-weight:600;background:#141412;color:#F5F4EF}
+.header-gh:hover{background:#2A2A26}
+.mobile-nav{display:none;gap:18px;padding:0 0 12px;overflow-x:auto;white-space:nowrap;font-size:13px}
+.mobile-nav a{color:#4E4E47}
+
+/* hero */
+.hero{padding:88px 0 56px;border-bottom:1px solid var(--line)}
+.eyebrow{display:flex;align-items:center;gap:10px;margin:0;color:var(--muted);font:600 11px/1.2 var(--mono);letter-spacing:.14em;text-transform:uppercase}
+.eyebrow .dot{width:8px;height:8px;border-radius:50%;background:#178A4C;box-shadow:0 0 0 3px rgba(23,138,76,.13)}
+h1{font-size:clamp(42px,7.1vw,82px);line-height:.99;letter-spacing:-.055em;font-weight:650;margin:28px 0 0;max-width:1080px}
+h1 em{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.035em;color:#4A4A42}
+.lede{max-width:660px;margin:28px 0 0;font-size:19px;line-height:1.52;color:#4D4D45}
+.lede strong{color:#141412;font-weight:600}
+.cta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 20px;border-radius:999px;border:1px solid var(--line);background:transparent;font-size:14px;font-weight:600;transition:background .15s,border-color .15s,transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:#0F3FE0}
+.btn.dark{background:#141412;border-color:#141412;color:#F5F4EF}
+.btn.dark:hover{background:#2A2A26}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);margin:64px 0 0;border-top:1px solid var(--line)}
+.stat{padding:20px 22px 0 0;border-right:1px solid var(--line)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font-size:clamp(26px,3.4vw,36px);line-height:1;letter-spacing:-.04em;font-weight:650}
+.stat span{display:block;margin-top:8px;color:var(--muted);font-size:12px;line-height:1.35}
+.stat sup{font-size:.45em;vertical-align:super;color:var(--soft);letter-spacing:0}
+
+/* sections */
+.section{padding:82px 0;border-bottom:1px solid var(--line)}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;margin-bottom:34px}
+.section-num{display:block;font:600 11px/1 var(--mono);letter-spacing:.14em;color:var(--soft);text-transform:uppercase}
+h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font-weight:650;margin:12px 0 0}
+.section-head p{max-width:400px;margin:0 0 3px;color:var(--muted);font-size:15px;line-height:1.5}
+
+/* projects */
+.projects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.card:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(20,20,18,.08);border-color:#C9C7BC}
+.card--featured{grid-column:1/-1;display:grid;grid-template-columns:1.42fr 1fr}
+.card--featured .shot{height:100%;aspect-ratio:auto;min-height:380px}
+.shot{position:relative;display:block;aspect-ratio:16/10;background:#E9E8E1;overflow:hidden}
+.shot img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .5s ease}
+.card:hover .shot img{transform:scale(1.025)}
+.badge{position:absolute;left:14px;top:14px;display:inline-flex;align-items:center;gap:6px;background:#141412;color:#F5F4EF;border-radius:999px;padding:6px 10px;font:600 10px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase}
+.badge.live::before{content:"";width:6px;height:6px;border-radius:50%;background:#4ADE80}
+.card-body{padding:22px}
+.card--featured .card-body{padding:38px;display:flex;flex-direction:column;justify-content:center}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.card h3{margin:0;font-size:22px;line-height:1.1;letter-spacing:-.03em;font-weight:650}
+.card--featured h3{font-size:30px}
+.mono{font:600 10px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);white-space:nowrap}
+.card p{margin:11px 0 16px;color:#55554D;font-size:14.5px;line-height:1.55}
+.card--featured p{font-size:16px;max-width:44ch}
+.tags{list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px;padding:0}
+.tags li{border:1px solid var(--line);border-radius:999px;padding:4px 9px;color:#5C5C54;font:500 10.5px/1.2 var(--mono)}
+.card-link{display:inline-flex;align-items:center;gap:7px;align-self:flex-start;font-size:13.5px;font-weight:650;border-bottom:1px solid #141412;padding-bottom:2px}
+.card-link span{font-weight:400}
+.card-link:hover{color:var(--accent);border-color:var(--accent)}
+.code-shot{height:100%;min-height:280px;background:#101014;color:#D8D8D0;padding:22px;display:flex;flex-direction:column;justify-content:space-between;aspect-ratio:16/10}
+.code-shot .code-head{display:flex;align-items:center;gap:8px;font:500 11px/1 var(--mono);color:#8B8B84}
+.code-shot .code-head i{width:8px;height:8px;border-radius:50%;background:#3A3A3A;display:inline-block}
+.code-shot pre{margin:20px 0 0;font:12.5px/1.8 var(--mono);white-space:pre-wrap;color:#C9C9C1}
+.code-shot pre .g{color:#7CE38B}
+.code-shot pre .b{color:#8FB8FF}
+.code-shot .code-foot{border-top:1px solid #2A2A2E;margin-top:20px;padding-top:14px;font:500 10.5px/1.4 var(--mono);color:#77776F;letter-spacing:.04em}
+
+/* services */
+.service-list{border-top:1px solid var(--line)}
+.service{display:grid;grid-template-columns:52px 1fr 190px;gap:24px;padding:26px 0;border-bottom:1px solid var(--line);align-items:start}
+.service-num{font:500 12px/1.6 var(--mono);color:var(--soft);padding-top:3px}
+.service h3{margin:0 0 5px;font-size:20px;letter-spacing:-.025em;font-weight:650}
+.service p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.55;max-width:640px}
+.price{text-align:right;font-weight:650;font-size:17px;letter-spacing:-.02em;white-space:nowrap}
+.price span{display:block;margin-top:5px;font:500 11px/1.3 var(--mono);color:var(--soft);letter-spacing:.02em}
+.note{margin:18px 0 0;color:var(--soft);font-size:12.5px}
+
+/* process */
+.process{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--line)}
+.step{padding:24px 24px 0 0;border-right:1px solid var(--line)}
+.step:last-child{border-right:0}
+.step b{display:block;font:600 11px/1 var(--mono);letter-spacing:.12em;color:var(--accent)}
+.step h3{margin:16px 0 7px;font-size:16.5px;letter-spacing:-.02em;font-weight:650}
+.step p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.5}
+
+/* about */
+.about{display:grid;grid-template-columns:1.15fr .85fr;gap:64px;align-items:start}
+.about p{margin:0 0 16px;color:#4D4D45;font-size:16px;line-height:1.6}
+.about p:last-child{margin-bottom:0}
+.stack{display:flex;flex-wrap:wrap;gap:7px}
+.stack span{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 11px;font:500 11.5px/1.2 var(--mono);color:#4E4E47}
+.about-card{border:1px solid var(--line);border-radius:var(--radius);padding:24px;background:#fff}
+.about-card h3{margin:0 0 12px;font-size:14px;letter-spacing:-.01em;font-weight:650}
+.stack-note{margin:16px 0 0;color:var(--soft);font-size:12.5px;line-height:1.5}
+
+/* contact */
+.contact{padding:82px 0}
+.contact-box{position:relative;overflow:hidden;background:#111110;color:#F5F4EF;border-radius:26px;padding:56px 56px 48px}
+.contact-box::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:56px 56px;mask-image:linear-gradient(120deg,transparent 20%,#000 100%);pointer-events:none}
+.contact-box>*{position:relative;z-index:1}
+.contact-box .section-num{color:#87877F}
+.contact-box h2{max-width:760px;color:#F5F4EF;margin-top:14px}
+.contact-box p{max-width:560px;margin:18px 0 0;color:#B9B9B0;font-size:16px}
+.contact-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.contact-box .btn{border-color:#3A3A36;color:#F5F4EF}
+.contact-box .btn:hover{border-color:#6A6A64}
+.contact-box .btn.primary{background:#F5F4EF;border-color:#F5F4EF;color:#111110}
+.contact-box .btn.primary:hover{background:#fff}
+.contact-meta{display:flex;flex-wrap:wrap;gap:22px;margin-top:34px;padding-top:22px;border-top:1px solid #2C2C29;font-size:12.5px;color:#9A9A92}
+.contact-meta a:hover{color:#fff}
+
+/* footer */
+.footer{padding:26px 0 40px;display:flex;justify-content:space-between;align-items:center;gap:20px;color:var(--soft);font-size:12px}
+.footer-links{display:flex;gap:16px}
+.footer a:hover{color:#111}
+
+@media (max-width:900px){
+  .nav{display:none}
+  .mobile-nav{display:flex}
+  .header-in{min-height:60px}
+  .hero{padding:62px 0 44px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stat:nth-child(2){border-right:0}
+  .stat:nth-child(1),.stat:nth-child(2){border-bottom:1px solid var(--line);padding-bottom:18px}
+  .stat:nth-child(3),.stat:nth-child(4){padding-top:18px}
+  .section{padding:62px 0}
+  .section-head{display:block}
+  .section-head p{margin-top:14px}
+  .card--featured{grid-template-columns:1fr}
+  .card--featured .shot{min-height:0;aspect-ratio:16/10}
+  .card--featured .card-body{padding:24px}
+  .card--featured h3{font-size:24px}
+  .service{grid-template-columns:34px 1fr;gap:16px}
+  .price{grid-column:2;text-align:left;margin-top:6px}
+  .process{grid-template-columns:repeat(2,1fr)}
+  .step:nth-child(2){border-right:0}
+  .step:nth-child(1),.step:nth-child(2){border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:22px}
+  .about{grid-template-columns:1fr;gap:32px}
+  .contact-box{padding:38px 26px 32px;border-radius:20px}
+}
+@media (max-width:620px){
+  .wrap{width:min(100% - 28px,1180px)}
+  .brand-name{display:none}
+  .header-gh{padding:6px 11px}
+  h1{font-size:clamp(38px,11vw,56px)}
+  .lede{font-size:16.5px}
+  .projects{grid-template-columns:1fr}
+  .card--featured{grid-column:auto}
+  .stats{margin-top:44px}
+  .stat{padding-right:12px}
+  .stat b{font-size:28px}
+  .process{grid-template-columns:1fr}
+  .step{border-right:0!important;border-bottom:1px solid var(--line);padding:18px 0}
+  .step:last-child{border-bottom:0}
+  .step:first-child{padding-top:0}
+  .service{grid-template-columns:1fr;gap:8px}
+  .price{grid-column:auto;text-align:left}
+  .contact{padding:58px 0}
+  .contact-actions .btn{width:100%}
+  .footer{display:block;line-height:1.9}
+  .footer-links{margin-top:8px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+  .card:hover,.btn:hover{transform:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">К содержанию</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <div class="header-in">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">СС</span>
+        <span class="brand-name">Сергей Ситников</span>
+      </a>
+      <nav class="nav" aria-label="Основное">
+        <a href="#projects">Проекты</a>
+        <a href="#services">Услуги</a>
+        <a href="#process">Подход</a>
+        <a href="#about">О себе</a>
+        <a href="#contact">Контакты</a>
+      </nav>
+      <a class="header-gh" href="https://github.com/ssrjkk" target="_blank" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
+    </div>
+    <nav class="mobile-nav" aria-label="Мобильная навигация">
+      <a href="#projects">Проекты</a>
+      <a href="#services">Услуги</a>
+      <a href="#process">Подход</a>
+      <a href="#about">О себе</a>
+      <a href="#contact">Контакты</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow"><span class="dot" aria-hidden="true"></span> Backend · Telegram · QA</p>
+      <h1>Боты, магазины и backend.<br><em>С тестами, а не «на авось».</em></h1>
+      <p class="lede">Сергей Ситников. 3,5 года в QA, сейчас — Python и TypeScript, Telegram-боты, Mini Apps и backend. Ниже — <strong>живые проекты</strong>, а не концепты: ссылки открываются, код лежит на GitHub.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="https://t.me/ssrjkk" target="_blank" rel="noopener">Обсудить задачу</a>
+        <a class="btn" href="#projects">Смотреть проекты</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>7</b><span>живых проектов<br>со ссылками</span></div>
+        <div class="stat"><b>313</b><span>моделей в магазине<br>shopwatch</span></div>
+        <div class="stat"><b>66</b><span>tools в MCP-сервере<br>raven</span></div>
+        <div class="stat"><b>270<sup>+</sup></b><span>автотестов<br>в опыте</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="projects">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="section-num">01 — Проекты</span>
+          <h2>Живое, а не концепты</h2>
+        </div>
+        <p>Каждый проект можно открыть и потрогать. Скриншоты сняты с работающих интерфейсов, не из макетов.</p>
+      </div>
+
+      <div class="projects">
+        <article class="card card--featured">
+          <a class="shot" href="https://ssrjkk.github.io/shopwatch/" target="_blank" rel="noopener" aria-label="Открыть магазин shopwatch">
+            <img src="assets/shopwatch.png" alt="Витрина магазина Watchop: каталог часов Garmin, карточки товаров и цены" loading="eager">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top">
+              <h3>shopwatch</h3>
+              <span class="mono">e-commerce</span>
+            </div>
+            <p>Магазин часов на 313 моделей: каталог, фильтры, корзина и оформление. Заказ уходит из Deep Link в Telegram- или MAX-бота — без ручной переноски заявок.</p>
+            <ul class="tags">
+              <li>JavaScript</li><li>Node.js</li><li>TG / MAX bots</li><li>GitHub Pages</li>
+            </ul>
+            <a class="card-link" href="https://ssrjkk.github.io/shopwatch/" target="_blank" rel="noopener">Открыть магазин <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="/bothive/" aria-label="Открыть лендинг Bothive">
+            <img src="assets/bothive.png" alt="Тёмный дашборд Bothive: боты, аккаунты, скрипты и очереди на одном экране" loading="lazy">
+            <span class="badge">self-hosted</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>bothive</h3><span class="mono">bots</span></div>
+            <p>Платформа оркестрации ботов: 8 платформ, BullMQ, движок скриптов, webhooks и Prometheus.</p>
+            <ul class="tags"><li>TypeScript</li><li>Fastify</li><li>React</li><li>Redis</li></ul>
+            <a class="card-link" href="/bothive/">Лендинг проекта <span aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/raven/" target="_blank" rel="noopener" aria-label="Открыть сайт Raven">
+            <img src="assets/raven.jpg" alt="Сайт Raven: self-hosted MCP-сервер с 66 инструментами" loading="lazy">
+            <span class="badge">open source</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>raven</h3><span class="mono">MCP / AI</span></div>
+            <p>Self-hosted MCP-сервер: 66 инструментов поверх stdio и HTTP, изоляция workspace и ключевая авторизация.</p>
+            <ul class="tags"><li>Python</li><li>FastAPI</li><li>MCP</li><li>Rust / Go</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/raven/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://t.me/waketrade_bot" target="_blank" rel="noopener" aria-label="Открыть Telegram-бота Wake">
+            <img src="assets/wake.jpg" alt="Telegram-бот WakeTrade: команды /markets и /funding, таблицы объёмов и ставок" loading="lazy">
+            <span class="badge live">live bot</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>wake</h3><span class="mono">trading</span></div>
+            <p>Терминал по перп-рынкам Lighter + Telegram-бот с теми же рыночными данными: объёмы, funding, портфель.</p>
+            <ul class="tags"><li>React</li><li>FastAPI</li><li>PostgreSQL</li><li>Mini App</li></ul>
+            <a class="card-link" href="https://t.me/waketrade_bot" target="_blank" rel="noopener">Открыть бота <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://t.me/tippy_on_base_bot" target="_blank" rel="noopener" aria-label="Открыть Telegram-бота Tippy">
+            <img src="assets/tippy.png" alt="Telegram-бот Tippy: баланс USDC, чаевые, рынки предсказаний и Mini App" loading="lazy">
+            <span class="badge live">live bot</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>tippy</h3><span class="mono">payments</span></div>
+            <p>USDC-экономика в Telegram: чаевые, донат-страницы, рынки предсказаний на LMSR и кабинет в Mini App.</p>
+            <ul class="tags"><li>Python</li><li>aiogram</li><li>Base / USDC</li><li>Mini App</li></ul>
+            <a class="card-link" href="https://t.me/tippy_on_base_bot" target="_blank" rel="noopener">Открыть бота <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/agent-skills/" target="_blank" rel="noopener" aria-label="Открыть каталог Agent Skills">
+            <img src="assets/skills.png" alt="Agent Skills Library: каталог навыков для AI-агентов" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>agent-skills</h3><span class="mono">AI tooling</span></div>
+            <p>Библиотека навыков для AI-агентов: 100+ навыков на EN и RU, Python SDK, CLI и живой каталог.</p>
+            <ul class="tags"><li>Python</li><li>CLI / SDK</li><li>MCP</li><li>EN + RU</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/agent-skills/" target="_blank" rel="noopener">Открыть каталог <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot code-shot" href="https://github.com/ssrjkk/qualix" target="_blank" rel="noopener" aria-label="Открыть репозиторий Qualix">
+            <div class="code-head"><i></i><i></i><i></i> qa / qualix</div>
+            <pre><span class="g">def</span> test_create_order(auth, db):
+    r = api.post(<span class="b">"/orders"</span>, json={...})
+    <span class="g">assert</span> r.status == 201
+    <span class="g">assert</span> db.has(r.json()[<span class="b">"id"</span>])
+
+<span class="g">def</span> test_401_without_token():
+    <span class="g">assert</span> api.get(<span class="b">"/orders"</span>).status == 401</pre>
+            <div class="code-foot">pytest · Playwright · API + UI + DB + Kafka</div>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>QA-фреймворки</h3><span class="mono">testing</span></div>
+            <p>Автотесты, которые проверяют бизнес-логику, а не только статус-код: UI, API, БД, Kafka и нагрузка.</p>
+            <ul class="tags"><li>pytest</li><li>Playwright</li><li>Allure</li><li>CI/CD</li></ul>
+            <a class="card-link" href="https://github.com/ssrjkk/qualix" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="services">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="section-num">02 — Услуги</span>
+          <h2>Что можно заказать</h2>
+        </div>
+        <p>Ориентиры по цене и сроку. Точная смета — после короткого описания задачи, без «уточним в процессе».</p>
+      </div>
+
+      <div class="service-list">
+        <div class="service">
+          <div class="service-num">01</div>
+          <div>
+            <h3>Telegram-бот для бизнеса</h3>
+            <p>Заявки, оплаты, админка, рассылки, уведомления. Интеграция с CRM, Google Sheets или вашей базой.</p>
+          </div>
+          <div class="price">15–30K ₽<span>4–7 дней</span></div>
+        </div>
+        <div class="service">
+          <div class="service-num">02</div>
+          <div>
+            <h3>Интернет-магазин + боты TG/MAX</h3>
+            <p>Каталог, фильтры, корзина, оформление заказа и Deep Link в бота. Как shopwatch: витрина и заявки в одном контуре.</p>
+          </div>
+          <div class="price">30–60K ₽<span>1–2 недели</span></div>
+        </div>
+        <div class="service">
+          <div class="service-num">03</div>
+          <div>
+            <h3>Telegram Mini App</h3>
+            <p>Кабинет, каталог, оплата внутри Telegram, админка. React + API, без конструкторов и потолка в кастомизации.</p>
+          </div>
+          <div class="price">от 60K ₽<span>2–4 недели</span></div>
+        </div>
+        <div class="service">
+          <div class="service-num">04</div>
+          <div>
+            <h3>QA и автотесты</h3>
+            <p>Playwright, pytest, API + UI + БД, CI и отчёт. Разовый аудит или ретейнер на поддержку регресса.</p>
+          </div>
+          <div class="price">от 30K ₽<span>или ретейнер</span></div>
+        </div>
+      </div>
+      <p class="note">Предоплата 50%. Работаю по ТЗ, правки в рамках согласованного объёма — без доплат. Деплой и инструкция входят в стоимость.</p>
+    </div>
+  </section>
+
+  <section class="section" id="process">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="section-num">03 — Подход</span>
+          <h2>Без сюрпризов</h2>
+        </div>
+        <p>Один исполнитель, без менеджеров и передач между отделами. Вы всегда знаете, на каком этапе задача.</p>
+      </div>
+      <div class="process">
+        <div class="step"><b>01</b><h3>Разбор задачи</h3><p>30 минут в Telegram: что нужно, что уже есть, где узкое место. Фиксирую объём и цену.</p></div>
+        <div class="step"><b>02</b><h3>План и прототип</h3><p>Сценарии, экраны, схема данных. Согласуем до кода, чтобы не переделывать после сдачи.</p></div>
+        <div class="step"><b>03</b><h3>Разработка</h3><p>Короткие статусы раз в 1–2 дня. Показываю рабочие куски, а не отчёт «всё идёт по плану».</p></div>
+        <div class="step"><b>04</b><h3>Тесты и запуск</h3><p>Проверяю сценарии, деплою в Docker, отдаю исходники, логи и инструкцию по запуску.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <div class="wrap about">
+      <div>
+        <span class="section-num">04 — О себе</span>
+        <h2 style="margin-bottom:22px">Сначала QA, потом код</h2>
+        <p>3,5 года работал в QA: UI, API, мобильные, нагрузка. В amoCRM вёл 100+ API-тестов и сократил регресс с 4 часов до 30 минут. Поэтому в коде сразу думаю о том, как это будет падать и как это чинить.</p>
+        <p>Пишу на Python и TypeScript: FastAPI, aiogram, React, PostgreSQL, Redis, Docker. Деплой — не «залил по SSH», а compose/CI с логами и health-check. Если проект не тянет — скажу до заказа, а не после.</p>
+        <p>Работаю сам. Без прослойки, которая пересказывает ТЗ. Отвечаю в течение дня, по МСК.</p>
+      </div>
+      <div class="about-card">
+        <h3>Стек, который использую</h3>
+        <div class="stack">
+          <span>Python</span><span>FastAPI</span><span>aiogram 3</span><span>TypeScript</span>
+          <span>React</span><span>Node.js</span><span>PostgreSQL</span><span>Redis</span>
+          <span>Docker</span><span>GitHub Actions</span><span>Playwright</span><span>pytest</span>
+          <span>Allure</span><span>Prometheus</span>
+        </div>
+        <p class="stack-note">Не беру задачи, где нет доступа к стенду и непонятен критерий «готово». Так дешевле для обеих сторон.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="wrap">
+      <div class="contact-box">
+        <span class="section-num">05 — Контакты</span>
+        <h2>Напишите задачу.<br>Скажу, сколько это стоит и когда будет готово.</h2>
+        <p>Пришлите 2–3 строки: что нужно сделать и какой результат считается готовым. Отвечу с оценкой и планом, даже если решите не брать.</p>
+        <div class="contact-actions">
+          <a class="btn primary" href="https://t.me/ssrjkk" target="_blank" rel="noopener">Telegram @ssrjkk</a>
+          <a class="btn" href="mailto:ray013lefe@gmail.com">ray013lefe@gmail.com</a>
+          <a class="btn" href="https://github.com/ssrjkk" target="_blank" rel="noopener">GitHub</a>
+        </div>
+        <div class="contact-meta">
+          <a href="https://t.me/b2wmain" target="_blank" rel="noopener">Канал @b2wmain</a>
+          <a href="https://kwork.ru/user/ssrjkk" target="_blank" rel="noopener">Kwork</a>
+          <span>Санкт-Петербург · МСК</span>
+          <span>© 2026 Сергей Ситников</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer wrap">
+  <span>Сделано без конструкторов. HTML, CSS и живые проекты.</span>
+  <div class="footer-links">
+    <a href="https://github.com/ssrjkk" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://t.me/ssrjkk" target="_blank" rel="noopener">Telegram</a>
+    <a href="mailto:ray013lefe@gmail.com">Email</a>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Сергей Ситников",
+  "url": "https://ssrjkk.github.io/",
+  "jobTitle": "Backend-разработчик, QA-инженер",
+  "sameAs": ["https://github.com/ssrjkk", "https://t.me/ssrjkk"],
+  "knowsAbout": ["Python", "TypeScript", "Telegram bots", "FastAPI", "QA automation", "Playwright", "Docker"]
+}
+</script>
+</body>
+</html>
