@@ -91,16 +91,18 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
 
 /* projects */
 .projects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;display:flex;flex-direction:column}
 .card:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(20,20,18,.08);border-color:#C9C7BC}
 .card--featured{grid-column:1/-1;display:grid;grid-template-columns:1.42fr 1fr}
 .card--featured .shot{height:100%;aspect-ratio:auto;min-height:380px}
-.shot{position:relative;display:block;aspect-ratio:16/10;background:#E9E8E1;overflow:hidden}
+.shot{position:relative;display:block;aspect-ratio:16/10;background:#E9E8E1;overflow:hidden;flex:none}
 .shot img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .5s ease}
 .card:hover .shot img{transform:scale(1.025)}
 .badge{position:absolute;left:14px;top:14px;display:inline-flex;align-items:center;gap:6px;background:#141412;color:#F5F4EF;border-radius:999px;padding:6px 10px;font:600 10px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase}
 .badge.live::before{content:"";width:6px;height:6px;border-radius:50%;background:#4ADE80}
-.card-body{padding:22px}
+.card-body{padding:22px;flex:1;display:flex;flex-direction:column}
+.card-body .card-link{margin-top:auto}
+.card-body .tags{margin-bottom:18px}
 .card--featured .card-body{padding:38px;display:flex;flex-direction:column;justify-content:center}
 .card-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .card h3{margin:0;font-size:22px;line-height:1.1;letter-spacing:-.03em;font-weight:650}
@@ -113,10 +115,19 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
 .card-link{display:inline-flex;align-items:center;gap:7px;align-self:flex-start;font-size:13.5px;font-weight:650;border-bottom:1px solid #141412;padding-bottom:2px}
 .card-link span{font-weight:400}
 .card-link:hover{color:var(--accent);border-color:var(--accent)}
+.more{margin-top:18px;border:1px solid var(--line);border-radius:var(--radius);background:var(--card);overflow:hidden}
+.more-head{padding:20px 22px 0;font:600 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.more-row{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:16px 22px;border-top:1px solid var(--line)}
+.more-row:first-of-type{margin-top:16px}
+.more-row b{font-size:15.5px;letter-spacing:-.015em;font-weight:650}
+.more-row p{margin:4px 0 0;color:var(--muted);font-size:13px;line-height:1.5;max-width:640px}
+.more-row .mono{font:600 10.5px/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--soft);white-space:nowrap}
+.more-row:hover{background:#FAFAF6}
+.more-row:hover .mono{color:var(--accent)}
 .code-shot{height:100%;min-height:280px;background:#101014;color:#D8D8D0;padding:22px;display:flex;flex-direction:column;justify-content:space-between;aspect-ratio:16/10}
 .code-shot .code-head{display:flex;align-items:center;gap:8px;font:500 11px/1 var(--mono);color:#8B8B84}
 .code-shot .code-head i{width:8px;height:8px;border-radius:50%;background:#3A3A3A;display:inline-block}
-.code-shot pre{margin:20px 0 0;font:12.5px/1.8 var(--mono);white-space:pre-wrap;color:#C9C9C1}
+.code-shot pre{margin-top:auto;margin-bottom:auto;font:12.5px/1.8 var(--mono);white-space:pre-wrap;color:#C9C9C1}
 .code-shot pre .g{color:#7CE38B}
 .code-shot pre .b{color:#8FB8FF}
 .code-shot .code-foot{border-top:1px solid #2A2A2E;margin-top:20px;padding-top:14px;font:500 10.5px/1.4 var(--mono);color:#77776F;letter-spacing:.04em}
@@ -211,6 +222,8 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
   .step:first-child{padding-top:0}
   .service{grid-template-columns:1fr;gap:8px}
   .price{grid-column:auto;text-align:left}
+  .more-row{display:block}
+  .more-row .mono{display:block;margin-top:8px}
   .contact{padding:58px 0}
   .contact-actions .btn{width:100%}
   .footer{display:block;line-height:1.9}
@@ -262,7 +275,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
         <a class="btn" href="#projects">Смотреть проекты</a>
       </div>
       <div class="stats">
-        <div class="stat"><b>7</b><span>живых проектов<br>со ссылками</span></div>
+        <div class="stat"><b>10</b><span>живых проектов<br>со ссылками</span></div>
         <div class="stat"><b>313</b><span>моделей в магазине<br>shopwatch</span></div>
         <div class="stat"><b>66</b><span>tools в MCP-сервере<br>raven</span></div>
         <div class="stat"><b>270<sup>+</sup></b><span>автотестов<br>в опыте</span></div>
@@ -352,6 +365,62 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
         </article>
 
         <article class="card">
+          <a class="shot code-shot" href="https://ssrjkk.github.io/drafter/" target="_blank" rel="noopener" aria-label="Открыть сайт Drafter">
+            <div class="code-head"><i></i><i></i><i></i> qa / drafter</div>
+            <pre>in:  task description
+out: test plan · cases · bug reports
+providers: <span class="b">9</span> · tests: <span class="g">607 ✓</span>
+stack: typescript · browser app</pre>
+            <div class="code-foot">TypeScript · 9 AI providers</div>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>drafter</h3><span class="mono">QA · AI</span></div>
+            <p>Браузерный QA-ассистент: тест-планы, кейсы и баг-репорты из описания задачи. Сайт — SPA, поэтому на плитке его консоль.</p>
+            <ul class="tags"><li>TypeScript</li><li>9 providers</li><li>607 tests</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/drafter/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/ezzoffer/" target="_blank" rel="noopener" aria-label="Открыть сайт EZOffer">
+            <img src="assets/ezzoffer.png" alt="EZOffer: поиск работы без рутины — каталог вакансий и отклики с сопроводительными" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>ezzoffer</h3><span class="mono">automation</span></div>
+            <p>Автоклик по hh.ru: резюме, подбор вакансий из 13 источников и до 250 откликов в сутки, каждый с письмом.</p>
+            <ul class="tags"><li>TypeScript</li><li>Next.js</li><li>hh.ru</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/ezzoffer/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/harvest/" target="_blank" rel="noopener" aria-label="Открыть сайт Harvest">
+            <img src="assets/harvest.png" alt="Harvest: QA-стенд для EVM-тестнетов — боты, сценарии и отчёт прогона" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>harvest</h3><span class="mono">QA · testnets</span></div>
+            <p>QA-стенд для чужих EVM-тестнетов: флот кошельков, сценарии, здоровье сети и отчёт. Только тестовые сети, плюс Telegram-бот.</p>
+            <ul class="tags"><li>Python</li><li>EVM testnets</li><li>Telegram bot</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/harvest/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/shroud/" target="_blank" rel="noopener" aria-label="Открыть сайт Shroud">
+            <img src="assets/shroud.png" alt="Shroud: обучение ML на зашифрованных данных, спецификация протокола и лаборатория" loading="lazy">
+            <span class="badge">research</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>shroud</h3><span class="mono">FHE · fhEVM</span></div>
+            <p>Исследовательский прототип: обучение ML на шифрованных данных, escrow-задачи и проверяемые вычисления. Не аудировано.</p>
+            <ul class="tags"><li>Solidity</li><li>TypeScript</li><li>Rust</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/shroud/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
           <a class="shot" href="https://ssrjkk.github.io/agent-skills/" target="_blank" rel="noopener" aria-label="Открыть каталог Agent Skills">
             <img src="assets/skills.png" alt="Agent Skills Library: каталог навыков для AI-агентов" loading="lazy">
             <span class="badge live">live</span>
@@ -383,6 +452,26 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
             <a class="card-link" href="https://github.com/ssrjkk/qualix" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
           </div>
         </article>
+      </div>
+
+      <div class="more">
+        <div class="more-head">Ещё код — без отдельных сайтов</div>
+        <a class="more-row" href="https://github.com/ssrjkk/noema" target="_blank" rel="noopener">
+          <div><b>noema</b><p>Нейросимвольная система: LLM предлагает решения, Z3 проверяет по контрактам. Phase 1 готов.</p></div>
+          <span class="mono">Python · MIT →</span>
+        </a>
+        <a class="more-row" href="https://github.com/ssrjkk/volley" target="_blank" rel="noopener">
+          <div><b>volley</b><p>Нагрузка на HTTP: C++20 async-ядро, YAML-сценарии, OAuth2/mTLS, OpenTelemetry.</p></div>
+          <span class="mono">C++ · Apache-2.0 →</span>
+        </a>
+        <a class="more-row" href="https://github.com/ssrjkk/mobius" target="_blank" rel="noopener">
+          <div><b>mobius</b><p>Мобильная автоматизация Android/iOS: Appium 2.x + pytest, screen objects, device pooling.</p></div>
+          <span class="mono">Python · Appium →</span>
+        </a>
+        <a class="more-row" href="https://github.com/ssrjkk/qa-arsenal" target="_blank" rel="noopener">
+          <div><b>qa-arsenal</b><p>QA-монорепо: API/UI/load/DB/Kafka на 5 целей, один пайплайн и стандарты.</p></div>
+          <span class="mono">Python · monorepo →</span>
+        </a>
       </div>
     </div>
   </section>
