@@ -35,8 +35,8 @@
   --mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",Menlo,monospace;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+html{scroll-behavior:smooth;overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:clip}
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
 button{font:inherit}
@@ -64,7 +64,7 @@ button{font:inherit}
 .hero{padding:88px 0 56px;border-bottom:1px solid var(--line)}
 .eyebrow{display:flex;align-items:center;gap:10px;margin:0;color:var(--muted);font:600 11px/1.2 var(--mono);letter-spacing:.14em;text-transform:uppercase}
 .eyebrow .dot{width:8px;height:8px;border-radius:50%;background:#178A4C;box-shadow:0 0 0 3px rgba(23,138,76,.13)}
-h1{font-size:clamp(42px,7.1vw,82px);line-height:.99;letter-spacing:-.055em;font-weight:650;margin:28px 0 0;max-width:1080px}
+h1{font-size:clamp(42px,7.1vw,82px);line-height:.99;letter-spacing:-.055em;font-weight:650;margin:28px 0 0;max-width:1080px;text-wrap:balance}
 h1 em{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.035em;color:#4A4A42}
 .lede{max-width:660px;margin:28px 0 0;font-size:19px;line-height:1.52;color:#4D4D45}
 .lede strong{color:#141412;font-weight:600}
@@ -255,7 +255,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
   <section class="hero">
     <div class="wrap">
       <p class="eyebrow"><span class="dot" aria-hidden="true"></span> Backend · Telegram · QA</p>
-      <h1>Боты, магазины и backend.<br><em>С тестами, а не «на авось».</em></h1>
+      <h1>Боты, магазины и backend. <em>С тестами, а не «на авось».</em></h1>
       <p class="lede">Сергей Ситников. 3,5 года в QA, сейчас — Python и TypeScript, Telegram-боты, Mini Apps и backend. Ниже — <strong>живые проекты</strong>, а не концепты: ссылки открываются, код лежит на GitHub.</p>
       <div class="cta-row">
         <a class="btn primary" href="https://t.me/ssrjkk" target="_blank" rel="noopener">Обсудить задачу</a>
