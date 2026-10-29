@@ -36,6 +36,7 @@
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;overflow-x:clip}
+section[id]{scroll-margin-top:78px}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:clip}
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
@@ -181,6 +182,16 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
 .footer-links{display:flex;gap:16px}
 .footer a:hover{color:#111}
 
+/* bots and all links */
+.link-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}
+.link-box{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px}
+.link-box h3{margin:0;font-size:16px;font-weight:650;letter-spacing:-.02em}
+.link-box ul{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:9px}
+.link-box li{display:flex;align-items:baseline;justify-content:space-between;gap:14px;border-top:1px solid #EFEEE7;padding-top:9px;font-size:13.5px;color:var(--muted)}
+.link-box li:first-child{border-top:0;padding-top:0}
+.link-box li a{color:#141412;font-weight:600}
+.link-box li a:hover{color:var(--accent)}
+
 @media (max-width:900px){
   .nav{display:none}
   .mobile-nav{display:flex}
@@ -224,6 +235,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
   .price{grid-column:auto;text-align:left}
   .more-row{display:block}
   .more-row .mono{display:block;margin-top:8px}
+  .link-cols{grid-template-columns:1fr}
   .contact{padding:58px 0}
   .contact-actions .btn{width:100%}
   .footer{display:block;line-height:1.9}
@@ -247,6 +259,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
       </a>
       <nav class="nav" aria-label="Основное">
         <a href="#projects">Проекты</a>
+        <a href="#bots">Боты</a>
         <a href="#services">Услуги</a>
         <a href="#process">Подход</a>
         <a href="#about">О себе</a>
@@ -256,6 +269,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
     </div>
     <nav class="mobile-nav" aria-label="Мобильная навигация">
       <a href="#projects">Проекты</a>
+      <a href="#bots">Боты</a>
       <a href="#services">Услуги</a>
       <a href="#process">Подход</a>
       <a href="#about">О себе</a>
@@ -273,9 +287,10 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
       <div class="cta-row">
         <a class="btn primary" href="https://t.me/ssrjkk" target="_blank" rel="noopener">Обсудить задачу</a>
         <a class="btn" href="#projects">Смотреть проекты</a>
+        <a class="btn" href="https://t.me/ssrjkk_bot" target="_blank" rel="noopener">Каталог в Telegram</a>
       </div>
       <div class="stats">
-        <div class="stat"><b>10</b><span>живых проектов<br>со ссылками</span></div>
+        <div class="stat"><b>20</b><span>проектов: сайты,<br>боты, инструменты</span></div>
         <div class="stat"><b>313</b><span>моделей в магазине<br>shopwatch</span></div>
         <div class="stat"><b>66</b><span>tools в MCP-сервере<br>raven</span></div>
         <div class="stat"><b>270<sup>+</sup></b><span>автотестов<br>в опыте</span></div>
@@ -290,7 +305,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
           <span class="section-num">01 — Проекты</span>
           <h2>Живое, а не концепты</h2>
         </div>
-        <p>Каждый проект можно открыть и потрогать. Скриншоты сняты с работающих интерфейсов, не из макетов.</p>
+        <p>Каждый проект можно открыть и потрогать. Скриншоты сняты с живых интерфейсов; где публичного интерфейса нет — показан код проекта.</p>
       </div>
 
       <div class="projects">
@@ -365,17 +380,13 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
         </article>
 
         <article class="card">
-          <a class="shot code-shot" href="https://ssrjkk.github.io/drafter/" target="_blank" rel="noopener" aria-label="Открыть сайт Drafter">
-            <div class="code-head"><i></i><i></i><i></i> qa / drafter</div>
-            <pre>in:  task description
-out: test plan · cases · bug reports
-providers: <span class="b">9</span> · tests: <span class="g">607 ✓</span>
-stack: typescript · browser app</pre>
-            <div class="code-foot">TypeScript · 9 AI providers</div>
+          <a class="shot" href="https://ssrjkk.github.io/drafter/" target="_blank" rel="noopener" aria-label="Открыть сайт Drafter">
+            <img src="assets/drafter.jpg" alt="Drafter: рабочее пространство QA-ассистента с модулями тест-планов, кейсов и баг-репортов" loading="lazy">
+            <span class="badge live">live</span>
           </a>
           <div class="card-body">
             <div class="card-top"><h3>drafter</h3><span class="mono">QA · AI</span></div>
-            <p>Браузерный QA-ассистент: тест-планы, кейсы и баг-репорты из описания задачи. Сайт — SPA, поэтому на плитке его консоль.</p>
+            <p>Браузерный QA-ассистент: тест-планы, кейсы, код автотестов и баг-репорты из описания задачи. Девять провайдеров, свой ключ.</p>
             <ul class="tags"><li>TypeScript</li><li>9 providers</li><li>607 tests</li></ul>
             <a class="card-link" href="https://ssrjkk.github.io/drafter/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
           </div>
@@ -472,6 +483,90 @@ stack: typescript · browser app</pre>
           <div><b>qa-arsenal</b><p>QA-монорепо: API/UI/load/DB/Kafka на 5 целей, один пайплайн и стандарты.</p></div>
           <span class="mono">Python · monorepo →</span>
         </a>
+        <a class="more-row" href="https://t.me/ssrjkk_bot" target="_blank" rel="noopener">
+          <div><b>port</b><p>Каталог проектов @ssrjkk_bot: Cloudflare Worker, D1 и KV, двуязычный каталог и скриншоты. Исходники закрыты.</p></div>
+          <span class="mono">Telegram →</span>
+        </a>
+        <div class="more-row">
+          <div><b>b2w-crypto-tg-bot</b><p>Telegram-платформа для криптопортфеля: отслеживание цен, алерты, рыночная аналитика.</p></div>
+          <span class="mono">Python · aiogram · private</span>
+        </div>
+        <div class="more-row">
+          <div><b>tt_bot</b><p>Telegram-бот для лабораторных: сдача работ, отчёты и оценивание.</p></div>
+          <span class="mono">Python · aiogram · private</span>
+        </div>
+        <div class="more-row">
+          <div><b>twinby-swipe-bot</b><p>Telegram-бот со свайпами для поиска контента, автоматизация Android/iOS/macOS.</p></div>
+          <span class="mono">Python · Telegram · private</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="bots">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="section-num">02 — Боты</span>
+          <h2>Живые Telegram-боты</h2>
+        </div>
+        <p>Пять ботов в работе: каталог проектов, магазин, торговый терминал, платежи и тестнет-стенд.</p>
+      </div>
+      <div class="more">
+        <div class="more-head">Открыть в Telegram</div>
+        <a class="more-row" href="https://t.me/ssrjkk_bot" target="_blank" rel="noopener">
+          <div><b>@ssrjkk_bot</b><p>Каталог проектов: /projects, /sites, /bots, /top, /search, скриншоты и переключение RU/EN. Cloudflare Workers, D1 и KV.</p></div>
+          <span class="mono">catalogue →</span>
+        </a>
+        <a class="more-row" href="https://t.me/wwwatchshop_bot" target="_blank" rel="noopener">
+          <div><b>@wwwatchshop_bot</b><p>Заказы магазина Watchop: состав корзины приходит из витрины по deep link, заявка создаётся в боте.</p></div>
+          <span class="mono">shop →</span>
+        </a>
+        <a class="more-row" href="https://t.me/waketrade_bot" target="_blank" rel="noopener">
+          <div><b>@waketrade_bot</b><p>Карточки рынков, funding и ссылка на терминал Wake — те же данные Lighter, что и на сайте.</p></div>
+          <span class="mono">trading →</span>
+        </a>
+        <a class="more-row" href="https://t.me/tippy_on_base_bot" target="_blank" rel="noopener">
+          <div><b>@tippy_on_base_bot</b><p>Чаевые, донат-страницы, рынки предсказаний и Mini App в USDC на Base.</p></div>
+          <span class="mono">payments →</span>
+        </a>
+        <a class="more-row" href="https://t.me/harvest_testnet_bot" target="_blank" rel="noopener">
+          <div><b>@harvest_testnet_bot</b><p>Статус тестнет-стенда и операторские команды Harvest.</p></div>
+          <span class="mono">testnets →</span>
+        </a>
+      </div>
+
+      <div class="link-cols">
+        <div class="link-box">
+          <h3>Все сайты</h3>
+          <ul>
+            <li><a href="https://ssrjkk.github.io/">ssrjkk.github.io</a><span>хаб</span></li>
+            <li><a href="https://ssrjkk.github.io/shopwatch/">shopwatch</a><span>магазин</span></li>
+            <li><a href="https://ssrjkk.github.io/bothive/">bothive</a><span>боты</span></li>
+            <li><a href="https://ssrjkk.github.io/raven/">raven</a><span>MCP</span></li>
+            <li><a href="https://wake-7k6.pages.dev">wake</a><span>терминал</span></li>
+            <li><a href="https://tippy-egi.pages.dev">tippy</a><span>Base</span></li>
+            <li><a href="https://ssrjkk.github.io/drafter/">drafter</a><span>QA · AI</span></li>
+            <li><a href="https://ssrjkk.github.io/ezzoffer/">ezzoffer</a><span>hh.ru</span></li>
+            <li><a href="https://ssrjkk.github.io/harvest/">harvest</a><span>тестнеты</span></li>
+            <li><a href="https://ssrjkk.github.io/shroud/">shroud</a><span>FHE</span></li>
+            <li><a href="https://ssrjkk.github.io/agent-skills/">agent-skills</a><span>каталог</span></li>
+          </ul>
+        </div>
+        <div class="link-box">
+          <h3>Боты, каналы, код</h3>
+          <ul>
+            <li><a href="https://t.me/ssrjkk_bot">@ssrjkk_bot</a><span>каталог</span></li>
+            <li><a href="https://t.me/wwwatchshop_bot">@wwwatchshop_bot</a><span>магазин</span></li>
+            <li><a href="https://t.me/waketrade_bot">@waketrade_bot</a><span>терминал</span></li>
+            <li><a href="https://t.me/tippy_on_base_bot">@tippy_on_base_bot</a><span>платежи</span></li>
+            <li><a href="https://t.me/harvest_testnet_bot">@harvest_testnet_bot</a><span>тестнеты</span></li>
+            <li><a href="https://t.me/b2wmain">@b2wmain</a><span>канал</span></li>
+            <li><a href="https://t.me/b2wshitpost">@b2wshitpost</a><span>канал</span></li>
+            <li><a href="https://t.me/ssrjkk">@ssrjkk</a><span>связь</span></li>
+            <li><a href="https://github.com/ssrjkk">github.com/ssrjkk</a><span>код</span></li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
@@ -480,7 +575,7 @@ stack: typescript · browser app</pre>
     <div class="wrap">
       <div class="section-head">
         <div>
-          <span class="section-num">02 — Услуги</span>
+          <span class="section-num">03 — Услуги</span>
           <h2>Что можно заказать</h2>
         </div>
         <p>Ориентиры по цене и сроку. Точная смета — после короткого описания задачи, без «уточним в процессе».</p>
@@ -528,7 +623,7 @@ stack: typescript · browser app</pre>
     <div class="wrap">
       <div class="section-head">
         <div>
-          <span class="section-num">03 — Подход</span>
+          <span class="section-num">04 — Подход</span>
           <h2>Без сюрпризов</h2>
         </div>
         <p>Один исполнитель, без менеджеров и передач между отделами. Вы всегда знаете, на каком этапе задача.</p>
@@ -545,7 +640,7 @@ stack: typescript · browser app</pre>
   <section class="section" id="about">
     <div class="wrap about">
       <div>
-        <span class="section-num">04 — О себе</span>
+        <span class="section-num">05 — О себе</span>
         <h2 style="margin-bottom:22px">Сначала QA, потом код</h2>
         <p>3,5 года работал в QA: UI, API, мобильные, нагрузка. В amoCRM вёл 100+ API-тестов и сократил регресс с 4 часов до 30 минут. Поэтому в коде сразу думаю о том, как это будет падать и как это чинить.</p>
         <p>Пишу на Python и TypeScript: FastAPI, aiogram, React, PostgreSQL, Redis, Docker. Деплой — не «залил по SSH», а compose/CI с логами и health-check. Если проект не тянет — скажу до заказа, а не после.</p>
@@ -567,7 +662,7 @@ stack: typescript · browser app</pre>
   <section class="contact" id="contact">
     <div class="wrap">
       <div class="contact-box">
-        <span class="section-num">05 — Контакты</span>
+        <span class="section-num">06 — Контакты</span>
         <h2>Напишите задачу.<br>Скажу, сколько это стоит и когда будет готово.</h2>
         <p>Пришлите 2–3 строки: что нужно сделать и какой результат считается готовым. Отвечу с оценкой и планом, даже если решите не брать.</p>
         <div class="contact-actions">
@@ -591,6 +686,7 @@ stack: typescript · browser app</pre>
   <div class="footer-links">
     <a href="https://github.com/ssrjkk" target="_blank" rel="noopener">GitHub</a>
     <a href="https://t.me/ssrjkk" target="_blank" rel="noopener">Telegram</a>
+    <a href="https://t.me/ssrjkk_bot" target="_blank" rel="noopener">Каталог проектов</a>
     <a href="mailto:ray013lefe@gmail.com">Email</a>
   </div>
 </footer>
@@ -602,7 +698,7 @@ stack: typescript · browser app</pre>
   "name": "Сергей Ситников",
   "url": "https://ssrjkk.github.io/",
   "jobTitle": "Backend-разработчик, QA-инженер",
-  "sameAs": ["https://github.com/ssrjkk", "https://t.me/ssrjkk"],
+  "sameAs": ["https://github.com/ssrjkk", "https://t.me/ssrjkk", "https://t.me/ssrjkk_bot"],
   "knowsAbout": ["Python", "TypeScript", "Telegram bots", "FastAPI", "QA automation", "Playwright", "Docker"]
 }
 </script>
