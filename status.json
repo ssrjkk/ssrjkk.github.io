@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-06T19:21:19Z",
+ "generated_at": "2026-11-06T23:47:09Z",
  "targets": [
   {
    "id": "hub",
@@ -7,9 +7,10 @@
    "url": "https://ssrjkk.github.io/",
    "ok": true,
    "code": 200,
-   "ms": 187,
+   "ms": 317,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1
@@ -21,9 +22,10 @@
    "url": "https://ssrjkk.github.io/shopwatch/",
    "ok": true,
    "code": 200,
-   "ms": 362,
+   "ms": 527,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1
@@ -35,9 +37,10 @@
    "url": "https://ssrjkk.github.io/bothive/",
    "ok": true,
    "code": 200,
-   "ms": 161,
+   "ms": 322,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1
@@ -49,9 +52,10 @@
    "url": "https://ssrjkk.github.io/raven/",
    "ok": true,
    "code": 200,
-   "ms": 137,
+   "ms": 177,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1
@@ -63,9 +67,10 @@
    "url": "https://ssrjkk.github.io/agent-skills/",
    "ok": true,
    "code": 200,
-   "ms": 119,
+   "ms": 307,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1
@@ -77,9 +82,10 @@
    "url": "https://ssrjkk.github.io/drafter/",
    "ok": true,
    "code": 200,
-   "ms": 104,
+   "ms": 130,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1
@@ -91,9 +97,10 @@
    "url": "https://ssrjkk.github.io/ezzoffer/",
    "ok": true,
    "code": 200,
-   "ms": 150,
+   "ms": 130,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1
@@ -105,9 +112,10 @@
    "url": "https://ssrjkk.github.io/harvest/",
    "ok": true,
    "code": 200,
-   "ms": 127,
+   "ms": 376,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1
@@ -119,9 +127,10 @@
    "url": "https://ssrjkk.github.io/shroud/",
    "ok": true,
    "code": 200,
-   "ms": 132,
+   "ms": 136,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1
@@ -133,9 +142,10 @@
    "url": "https://wake-7k6.pages.dev/",
    "ok": true,
    "code": 200,
-   "ms": 91,
+   "ms": 272,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1
@@ -145,20 +155,21 @@
    "id": "tippy",
    "name": "Tippy on Base",
    "url": "https://tippy-egi.pages.dev/",
-   "ok": true,
-   "code": 200,
-   "ms": 10019,
-   "uptime": 33.3,
+   "ok": false,
+   "code": 0,
+   "ms": 695,
+   "uptime": 25.0,
    "history": [
     0,
     0,
-    1
+    1,
+    0
    ]
   }
  ],
  "summary": {
   "total": 11,
-  "up": 11,
-  "down": 0
+  "up": 10,
+  "down": 1
  }
 }
