@@ -725,7 +725,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
   fetch("status.json", { cache: "no-store" })
     .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
     .then(function (data) {
-      box.querySelectorAll(".chip, .sb-updated").forEach(function (n) { n.remove(); });
+      box.querySelectorAll(".chip").forEach(function (n) { n.remove(); });
       data.targets.forEach(function (t) {
         var chip = document.createElement("a");
         chip.className = "chip " + (t.ok ? "up" : "down");
