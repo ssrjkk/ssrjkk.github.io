@@ -1,0 +1,41 @@
+# Живой статус витрины: опрос сервисов раз в 15 минут, коммит status.json.
+# Pages перестраивается автоматически после каждого коммита в main.
+# @author ssrjkk | ssrjkk.github.io
+name: Live status
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: live-status
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Probe services and build status.json
+        run: python scripts/generate_status.py
+
+      - name: Commit status.json (only on change)
+        run: |
+          if [[ -n "$(git status --porcelain status.json)" ]]; then
+            git config user.name "ssrjkk"
+            git config user.email "136786536+ssrjkk@users.noreply.github.com"
+            git add status.json
+            git commit -m "chore(status): refresh live status"
+            git push
+          else
+            echo "Статус не изменился — коммит не нужен"
+          fi
