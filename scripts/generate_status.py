@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """Живой статус сервисов витрины ssrjkk.github.io.
 
 Каждый запуск (Actions, раз в 15 минут) опрашивает все публичные сайты,
@@ -12,11 +11,12 @@
 from __future__ import annotations
 
 import json
-import os
 import time
+import urllib.error
 import urllib.request
 from collections import deque
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+from http.client import IncompleteRead
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -25,22 +25,29 @@ HISTORY_LIMIT = 60  # ~15 часов непрерывной истории пр�
 
 # (id, человекочитаемое имя, URL) — ровно то, что показано на витрине.
 TARGETS = [
-    ("hub", "Хаб", "https://ssrjkk.github.io/"),
-    ("shopwatch", "Shopwatch", "https://ssrjkk.github.io/shopwatch/"),
-    ("bothive", "Bothive", "https://ssrjkk.github.io/bothive/"),
-    ("raven", "Raven", "https://ssrjkk.github.io/raven/"),
-    ("agent-skills", "Agent Skills", "https://ssrjkk.github.io/agent-skills/"),
-    ("drafter", "Drafter", "https://ssrjkk.github.io/drafter/"),
-    ("ezzoffer", "EZZoffer", "https://ssrjkk.github.io/ezzoffer/"),
-    ("harvest", "Harvest", "https://ssrjkk.github.io/harvest/"),
-    ("shroud", "Shroud", "https://ssrjkk.github.io/shroud/"),
-    ("wake", "Wake", "https://wake-7k6.pages.dev/"),
-    ("tippy", "Tippy on Base", "https://tippy-egi.pages.dev/"),
+    ("hub", "Хаб", "https://ssrjkk.github.io/", None),
+    ("shopwatch", "Shopwatch", "https://ssrjkk.github.io/shopwatch/", None),
+    ("bothive", "Bothive", "https://ssrjkk.github.io/bothive/", None),
+    ("raven", "Raven", "https://ssrjkk.github.io/raven/", None),
+    ("agent-skills", "Agent Skills", "https://ssrjkk.github.io/agent-skills/", None),
+    ("drafter", "Drafter", "https://ssrjkk.github.io/drafter/", None),
+    ("ezzoffer", "EZZoffer", "https://ssrjkk.github.io/ezzoffer/", None),
+    ("harvest", "Harvest", "https://ssrjkk.github.io/harvest/", None),
+    ("shroud", "Shroud", "https://ssrjkk.github.io/shroud/", None),
+    ("wake", "Wake · сайт", "https://wake-7k6.pages.dev/", None),
+    (
+        "wake-api", "Wake · API",
+        "https://wake-backend-production-3483.up.railway.app/ready", "ready",
+    ),
+    ("tippy", "Tippy on Base", "https://tippy-egi.pages.dev/", None),
 ]
+PROBE_METHOD = "complete-response-readiness-v1"
 
 
-def probe(url: str, timeout: float = 10.0, attempts: int = 2) -> tuple[bool, int, int]:
-    """Вернёт (ok, http_code, мс). Туннели иногда делают первый рывок — даём ретрай."""
+def probe(
+    url: str, timeout: float = 10.0, attempts: int = 2, expected_status: str | None = None,
+) -> tuple[bool, int, int]:
+    """Вернёт (ok, http_code, мс) после чтения полного ответа и проверки готовности."""
     last_code = 0
     for i in range(attempts):
         start = time.monotonic()
@@ -50,10 +57,23 @@ def probe(url: str, timeout: float = 10.0, attempts: int = 2) -> tuple[bool, int
         try:
             with urllib.request.urlopen(req, timeout=timeout) as resp:
                 code = resp.status
-                ok = 200 <= code < 400
-        except Exception:  # noqa: BLE001 — любой сбой сети = недоступность
+                body = resp.read(2_000_001)
+                length = resp.headers.get("Content-Length")
+                complete = length is None or (length.isdecimal() and int(length) == len(body))
+                ok = 200 <= code < 400 and len(body) <= 2_000_000 and complete
+        except urllib.error.HTTPError as error:
+            code = error.code
+            ok = False
+        except (OSError, IncompleteRead):
             code = 0
             ok = False
+        if ok and expected_status is not None:
+            try:
+                data = json.loads(body)
+            except (json.JSONDecodeError, UnicodeDecodeError):
+                ok = False
+            else:
+                ok = isinstance(data, dict) and data.get("status") == expected_status
         ms = int((time.monotonic() - start) * 1000)
         if ok:
             return True, code, ms
@@ -70,11 +90,14 @@ def main() -> None:
             previous = json.loads(STATUS_FILE.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError):
             previous = {}
-    old_targets = {t.get("id"): t for t in previous.get("targets", [])}
+    old_targets = (
+        {t.get("id"): t for t in previous.get("targets", [])}
+        if previous.get("probe_method") == PROBE_METHOD else {}
+    )
 
     targets = []
-    for tid, name, url in TARGETS:
-        ok, code, ms = probe(url)
+    for tid, name, url, expected_status in TARGETS:
+        ok, code, ms = probe(url, expected_status=expected_status)
         hist = deque(old_targets.get(tid, {}).get("history", []), maxlen=HISTORY_LIMIT)
         hist.append(1 if ok else 0)
         history = list(hist)
@@ -94,7 +117,8 @@ def main() -> None:
         print(f"{'UP  ' if ok else 'DOWN'} {code or '---':>3} {ms:>5}ms  {tid}")
 
     payload = {
-        "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "probe_method": PROBE_METHOD,
+        "generated_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "targets": targets,
         "summary": {
             "total": len(targets),
@@ -105,7 +129,10 @@ def main() -> None:
     STATUS_FILE.write_text(
         json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
     )
-    print(f"written: {STATUS_FILE.name} ({payload['summary']['up']}/{payload['summary']['total']} up)")
+    print(
+        f"written: {STATUS_FILE.name} "
+        f"({payload['summary']['up']}/{payload['summary']['total']} up)"
+    )
 
 
 if __name__ == "__main__":

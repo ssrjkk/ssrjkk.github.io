@@ -25,6 +25,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Verify status probes
+        run: python -m unittest discover -s scripts -p 'test_status.py' -v
+
       - name: Probe services and build status.json
         run: python scripts/generate_status.py
 
