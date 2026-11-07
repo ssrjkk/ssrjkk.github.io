@@ -1,5 +1,6 @@
 {
- "generated_at": "2026-11-07T11:53:53Z",
+ "probe_method": "complete-response-readiness-v1",
+ "generated_at": "2026-11-07T17:38:56Z",
  "targets": [
   {
    "id": "hub",
@@ -7,14 +8,9 @@
    "url": "https://ssrjkk.github.io/",
    "ok": true,
    "code": 200,
-   "ms": 144,
+   "ms": 146,
    "uptime": 100.0,
    "history": [
-    1,
-    1,
-    1,
-    1,
-    1,
     1
    ]
   },
@@ -24,14 +20,9 @@
    "url": "https://ssrjkk.github.io/shopwatch/",
    "ok": true,
    "code": 200,
-   "ms": 106,
+   "ms": 131,
    "uptime": 100.0,
    "history": [
-    1,
-    1,
-    1,
-    1,
-    1,
     1
    ]
   },
@@ -41,14 +32,9 @@
    "url": "https://ssrjkk.github.io/bothive/",
    "ok": true,
    "code": 200,
-   "ms": 127,
+   "ms": 166,
    "uptime": 100.0,
    "history": [
-    1,
-    1,
-    1,
-    1,
-    1,
     1
    ]
   },
@@ -58,14 +44,9 @@
    "url": "https://ssrjkk.github.io/raven/",
    "ok": true,
    "code": 200,
-   "ms": 124,
+   "ms": 118,
    "uptime": 100.0,
    "history": [
-    1,
-    1,
-    1,
-    1,
-    1,
     1
    ]
   },
@@ -75,14 +56,9 @@
    "url": "https://ssrjkk.github.io/agent-skills/",
    "ok": true,
    "code": 200,
-   "ms": 123,
+   "ms": 139,
    "uptime": 100.0,
    "history": [
-    1,
-    1,
-    1,
-    1,
-    1,
     1
    ]
   },
@@ -92,14 +68,9 @@
    "url": "https://ssrjkk.github.io/drafter/",
    "ok": true,
    "code": 200,
-   "ms": 112,
+   "ms": 99,
    "uptime": 100.0,
    "history": [
-    1,
-    1,
-    1,
-    1,
-    1,
     1
    ]
   },
@@ -109,14 +80,9 @@
    "url": "https://ssrjkk.github.io/ezzoffer/",
    "ok": true,
    "code": 200,
-   "ms": 120,
+   "ms": 159,
    "uptime": 100.0,
    "history": [
-    1,
-    1,
-    1,
-    1,
-    1,
     1
    ]
   },
@@ -126,14 +92,9 @@
    "url": "https://ssrjkk.github.io/harvest/",
    "ok": true,
    "code": 200,
-   "ms": 118,
+   "ms": 84,
    "uptime": 100.0,
    "history": [
-    1,
-    1,
-    1,
-    1,
-    1,
     1
    ]
   },
@@ -143,32 +104,34 @@
    "url": "https://ssrjkk.github.io/shroud/",
    "ok": true,
    "code": 200,
-   "ms": 257,
+   "ms": 141,
    "uptime": 100.0,
    "history": [
-    1,
-    1,
-    1,
-    1,
-    1,
     1
    ]
   },
   {
    "id": "wake",
-   "name": "Wake",
+   "name": "Wake · сайт",
    "url": "https://wake-7k6.pages.dev/",
    "ok": true,
    "code": 200,
-   "ms": 133,
+   "ms": 231,
    "uptime": 100.0,
    "history": [
-    1,
-    1,
-    1,
-    1,
-    1,
     1
+   ]
+  },
+  {
+   "id": "wake-api",
+   "name": "Wake · API",
+   "url": "https://wake-backend-production-3483.up.railway.app/ready",
+   "ok": false,
+   "code": 404,
+   "ms": 214,
+   "uptime": 0.0,
+   "history": [
+    0
    ]
   },
   {
@@ -176,22 +139,17 @@
    "name": "Tippy on Base",
    "url": "https://tippy-egi.pages.dev/",
    "ok": false,
-   "code": 0,
-   "ms": 1481,
-   "uptime": 16.7,
+   "code": 200,
+   "ms": 11704,
+   "uptime": 0.0,
    "history": [
-    0,
-    0,
-    1,
-    0,
-    0,
     0
    ]
   }
  ],
  "summary": {
-  "total": 11,
+  "total": 12,
   "up": 10,
-  "down": 1
+  "down": 2
  }
 }
