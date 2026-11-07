@@ -11,7 +11,7 @@ Telegram bots and channels, the services with prices, and contacts.
 
 - **Projects** — shopwatch, bothive, raven, wake, tippy, drafter, ezzoffer, harvest, shroud, agent-skills
 - **Bots** — [@ssrjkk_bot](https://t.me/ssrjkk_bot), [@wwwatchshop_bot](https://t.me/wwwatchshop_bot), [@waketrade_bot](https://t.me/waketrade_bot), [@tippy_on_base_bot](https://t.me/tippy_on_base_bot), [@harvest_testnet_bot](https://t.me/harvest_testnet_bot)
-- **Sites** — ten live sites, including this hub, plus tippy's bot (its Pages site is down)
+- **Sites** — eleven live sites, including this hub; the front page shows a live health status of every one of them
 - **Services** — Telegram bots, stores with TG/MAX bots, Mini Apps, full-stack web apps and automation
 - **Contacts** — Telegram, GitHub, channels, email
 
