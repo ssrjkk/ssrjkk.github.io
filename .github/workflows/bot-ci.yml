@@ -1,18 +1,24 @@
-name: CI
+name: Bot CI
 
 on:
   push:
     branches: [main]
+    paths: ['bot/**', '.github/workflows/bot-ci.yml']
   pull_request:
     branches: [main]
+    paths: ['bot/**', '.github/workflows/bot-ci.yml']
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: bot-ci-${{ github.ref }}
   cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: bot
 
 jobs:
   worker:
@@ -26,6 +32,7 @@ jobs:
         with:
           node-version: 24
           cache: npm
+          cache-dependency-path: bot/package-lock.json
 
       - name: Установка зависимостей
         run: npm ci

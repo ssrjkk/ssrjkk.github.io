@@ -2,12 +2,14 @@
 
 Telegram catalogue of my projects, sites and bots: [@ssrjkk_bot](https://t.me/ssrjkk_bot).
 
-The bot is a Cloudflare Worker. Project data lives in [`projects.json`](projects.json), the bundle in
-`cloudflare-worker/worker.js` is built from `src/worker.js` with esbuild, and the worker keeps language
-preferences, the star cache and anonymous usage events in KV and D1.
+The bot lives in this repository under `bot/`, next to the [projects hub](https://ssrjkk.github.io/)
+it catalogues. It is a Cloudflare Worker. Project data lives in [`projects.json`](projects.json), the
+bundle in `cloudflare-worker/worker.js` is built from `src/worker.js` with esbuild, and the worker keeps
+language preferences, the star cache and anonymous usage events in KV and D1.
 
-- [GitHub profile](https://github.com/ssrjkk)
+- [Source (bot/)](https://github.com/ssrjkk/ssrjkk.github.io/tree/main/bot)
 - [Projects hub](https://ssrjkk.github.io/)
+- [GitHub profile](https://github.com/ssrjkk)
 - [Telegram](https://t.me/ssrjkk)
 
 ## What it shows
@@ -57,9 +59,10 @@ articles with site, repository and bot buttons.
 `site`, `bot` and `shot` are optional. Screenshots are served from the profile repository on `main`, which
 is reachable by Telegram without a token. `stars` is the fallback value — the worker refreshes real counts
 from the GitHub API and caches them for an hour. `"private": true` keeps the repository link out of public
-cards while the entry stays in the catalogue.
+cards while the entry stays in the catalogue. A project's `repo` must equal
+`https://github.com/ssrjkk/<name>` — the bundle check enforces it.
 
-After editing, rebuild and run the checks:
+After editing, rebuild and run the checks from `bot/`:
 
 ```bash
 npm ci
@@ -73,12 +76,12 @@ bundle contains the current data, the wrangler bindings and secrets, and that no
 
 ## Local development
 
-Node 20 or newer.
+Node 20 or newer. All commands run from `bot/` (from the repository root: `cd bot`).
 
 ```bash
 npm ci
 npm run build     # src/worker.js + projects.json -> cloudflare-worker/worker.js
-npm test          # 18 tests against the built bundle, Telegram and GitHub are mocked
+npm test          # node:test suite against the built bundle, Telegram and GitHub are mocked
 ```
 
 The worker expects four secrets, set with `wrangler secret put` and never committed:
@@ -95,7 +98,10 @@ Bindings in [`cloudflare-worker/wrangler.toml`](cloudflare-worker/wrangler.toml)
 
 ## Deploy
 
+From the repository root:
+
 ```bash
+cd bot
 npm run build
 cd cloudflare-worker
 npx wrangler deploy
@@ -112,27 +118,34 @@ https://<worker-host>/setup?key=<SETUP_KEY>
 
 ## Structure
 
+Paths relative to the repository root:
+
 ```text
-src/worker.js                 worker source
-projects.json                 project, site, bot and link data
-cloudflare-worker/worker.js   built bundle (committed, deployed as is)
-cloudflare-worker/wrangler.toml
-scripts/check-bundle.mjs      data and bundle checks
-tests/worker.test.mjs         node:test suite
+bot/src/worker.js                 worker source
+bot/projects.json                 project, site, bot and link data
+bot/cloudflare-worker/worker.js   built bundle (committed, deployed as is)
+bot/cloudflare-worker/wrangler.toml
+bot/scripts/check-bundle.mjs      data and bundle checks
+bot/tests/worker.test.mjs         node:test suite
 ```
+
+CI for the bot is `.github/workflows/bot-ci.yml` (build, bundle diff, check, test) and
+`.github/workflows/bot-codeql.yml`, both scoped to `bot/`. The hub's own live-status workflow is separate.
 
 ## Русский
 
 [`@ssrjkk_bot`](https://t.me/ssrjkk_bot) — каталог моих проектов, сайтов и ботов в Telegram. Воркер на
-Cloudflare Workers, данные в [`projects.json`](projects.json), сборка esbuild, состояние в KV и D1.
+Cloudflare Workers лежит в этом репозитории в `bot/`, рядом с хабом. Данные в [`projects.json`](projects.json),
+сборка esbuild, состояние в KV и D1.
 
 Команды: `/projects` — карточки проектов со скриншотами и ссылками, `/sites` — все сайты, `/bots` — все
 боты, `/search` — поиск по названию, стеку и описанию, `/top` — топ по звёздам, `/links` и `/channels` —
 ссылки и каналы, `/stats` — статистика для владельца.
 
-Правка контента: изменить `projects.json`, затем `npm run build && npm run check && npm test`.
+Правка контента: изменить `projects.json`, затем из `bot/`: `npm run build && npm run check && npm test`.
 Секреты (`BOT_TOKEN`, `OWNER_ID`, `SETUP_KEY`, `WEBHOOK_SECRET`) задаются через `wrangler secret put` и в
-репозиторий не попадают. Деплой: `npm run build`, затем `npx wrangler deploy` из `cloudflare-worker`.
+репозиторий не попадают. Деплой: `cd bot && npm run build`, затем `npx wrangler deploy` из
+`bot/cloudflare-worker`.
 
 ## Author
 

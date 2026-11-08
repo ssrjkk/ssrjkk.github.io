@@ -1,12 +1,13 @@
-# CodeQL: еженедельный анализ + каждые пуш/PR в main.
-# @author ssrjkk | port
-name: CodeQL
+# CodeQL бота: еженедельный анализ + пуш/PR в main, затрагивающий bot/ или workflow.
+name: Bot CodeQL
 
 on:
   push:
     branches: [main]
+    paths: ['bot/**', '.github/workflows/**']
   pull_request:
     branches: [main]
+    paths: ['bot/**', '.github/workflows/**']
   schedule:
     - cron: '40 5 * * 1'
 
@@ -29,11 +30,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-
-      - uses: actions/setup-go@v5
-        with:
-          go-version: 'stable'
-        if: matrix.language == 'go'
 
       - uses: github/codeql-action/init@v4
         with:

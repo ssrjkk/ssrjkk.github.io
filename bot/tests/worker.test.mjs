@@ -186,7 +186,7 @@ test("root endpoint reports the catalogue size", async () => {
   assert.equal(response.status, 200);
   const body = await response.json();
   assert.equal(body.name, "ssrjkk-bot");
-  assert.equal(body.projects, 20);
+  assert.equal(body.projects, 19);
   assert.equal(body.sites, 11);
   assert.equal(body.bots, 5);
   assert.equal(body.github, "https://github.com/ssrjkk");
@@ -215,7 +215,7 @@ test("/start shows the menu with sites and bots", async () => {
   assert.equal(response.status, 200);
 
   const text = lastText(calls);
-  assert.match(text, /Проектов: 20/);
+  assert.match(text, /Проектов: 19/);
   assert.match(text, /Сайтов: 11/);
   assert.match(text, /Ботов: 5/);
 
@@ -305,26 +305,26 @@ test("project detail without a screenshot sends a text card", async () => {
 
 test("a project marked private hides the repository link", () => {
   const hidden = {
-    name: "port",
-    title: "Port",
+    name: "closed-demo",
+    title: "Closed demo",
     lang: "JavaScript",
     desc: "Каталог проектов в Telegram.",
     desc_en: "A Telegram project catalogue.",
-    repo: "https://github.com/ssrjkk/port",
+    repo: "https://github.com/ssrjkk/closed-demo",
     bot: "https://t.me/ssrjkk_bot",
     private: true,
   };
 
   const card = projectCard(hidden, {}, "ru");
   assert.match(card, /исходники закрыты/);
-  assert.doesNotMatch(card, /github\.com\/ssrjkk\/port/);
+  assert.doesNotMatch(card, /github\.com\/ssrjkk\/closed-demo/);
   assert.match(projectCard(hidden, {}, "en"), /source private/);
 
   const urls = projectDetailKeyboard("ru", hidden)
     .flat()
     .map((button) => button.url)
     .filter(Boolean);
-  assert.equal(new Set(urls).has("https://github.com/ssrjkk/port"), false);
+  assert.equal(new Set(urls).has("https://github.com/ssrjkk/closed-demo"), false);
   assert.ok(new Set(urls).has("https://t.me/ssrjkk_bot"));
 });
 
@@ -427,11 +427,11 @@ test("inline query returns photos for projects with screenshots", async () => {
 
   const answer = callsOf(calls, "answerInlineQuery").at(-1);
   assert.ok(answer, "expected answerInlineQuery");
-  assert.equal(answer.body.results.length, 20);
+  assert.equal(answer.body.results.length, 19);
   const photos = answer.body.results.filter((result) => result.type === "photo");
   const articles = answer.body.results.filter((result) => result.type === "article");
   assert.equal(photos.length, 11);
-  assert.equal(articles.length, 9);
+  assert.equal(articles.length, 8);
   assert.ok(photos.every((result) => result.photo_url.startsWith("https://raw.githubusercontent.com/")));
   const skillPhoto = photos.find((result) => result.title === "Agent Skills");
   assert.match(skillPhoto.caption, /120/);

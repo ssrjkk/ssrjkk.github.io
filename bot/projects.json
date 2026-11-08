@@ -167,16 +167,6 @@
       "repo": "https://github.com/ssrjkk/volley"
     },
     {
-      "name": "port",
-      "title": "Port",
-      "lang": "JavaScript",
-      "stars": 0,
-      "desc": "Этот бот: каталог проектов в Telegram на Cloudflare Workers, D1 и KV. Два языка, карточки со скриншотами, статистика владельца и рассылка.\nСтек: JavaScript, Cloudflare Workers, D1, KV",
-      "desc_en": "This bot: a Telegram project catalogue on Cloudflare Workers, D1 and KV. Two languages, cards with screenshots, owner stats and broadcast.\nStack: JavaScript, Cloudflare Workers, D1, KV",
-      "repo": "https://github.com/ssrjkk/port",
-      "bot": "https://t.me/ssrjkk_bot"
-    },
-    {
       "name": "b2w-crypto-tg-bot",
       "title": "B2W Crypto",
       "lang": "Python",
@@ -206,12 +196,13 @@
     {
       "name": "ssrjkk.github.io",
       "title": "Projects hub",
-      "lang": "HTML, CSS",
+      "lang": "HTML, CSS, JavaScript",
       "stars": 0,
-      "desc": "Хаб проектов и услуг: живые интерфейсы, ссылки на сайты и ботов, контакты.\nСтек: HTML, CSS, GitHub Pages",
-      "desc_en": "Project and services hub: live interfaces, links to sites and bots, contacts.\nStack: HTML, CSS, GitHub Pages",
+      "desc": "Хаб проектов и услуг: живые интерфейсы, ссылки на сайты и ботов, контакты. Здесь же живёт каталог-бот @ssrjkk_bot на Cloudflare Workers.\nСтек: HTML, CSS, GitHub Pages, Cloudflare Workers",
+      "desc_en": "Project and services hub: live interfaces, links to sites and bots, contacts. Also home to the @ssrjkk_bot catalogue worker on Cloudflare Workers.\nStack: HTML, CSS, GitHub Pages, Cloudflare Workers",
       "repo": "https://github.com/ssrjkk/ssrjkk.github.io",
       "site": "https://ssrjkk.github.io/",
+      "bot": "https://t.me/ssrjkk_bot",
       "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/hub.jpg"
     }
   ],
