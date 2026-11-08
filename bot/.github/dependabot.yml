@@ -1,0 +1,13 @@
+version: 2
+# Воркер лежит в репозитории собранным, package.json здесь нет: обновлять
+# npm-пакеты нечего. Единственное, что живёт по версиям, — actions в CI.
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "ci"

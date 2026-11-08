@@ -1,0 +1,11 @@
+﻿name = "ssrjkk-bot"
+main = "worker.js"
+compatibility_date = "2025-06-01"
+
+[[kv_namespaces]]
+binding = "BOT_KV"
+id = "a4622d7a88df4119ad877778d40095de"
+
+[[d1_databases]]
+binding = "BOT_DB"
+database_id = "c91edbb2-e155-424f-bdbc-af90262e795f"

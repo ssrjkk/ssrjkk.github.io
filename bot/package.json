@@ -1,0 +1,18 @@
+{
+  "name": "ssrjkk-bot",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Telegram catalogue of ssrjkk projects on Cloudflare Workers",
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/worker.js --bundle --format=esm --platform=neutral --target=es2022 --charset=utf8 --legal-comments=none --outfile=cloudflare-worker/worker.js",
+    "check": "node --check cloudflare-worker/worker.js && node scripts/check-bundle.mjs",
+    "test": "node --test tests/worker.test.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
