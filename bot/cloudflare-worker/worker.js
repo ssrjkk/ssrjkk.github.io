@@ -5,11 +5,11 @@ var projects_default = {
   projects: [
     {
       name: "shopwatch",
-      title: "OneWatch",
+      title: "WATIX",
       lang: "JavaScript, Node.js",
       stars: 0,
-      desc: "Часовой магазин OneWatch: 391 модель, каталог с поиском, фильтры, корзина и оформление. Заказ уходит из deep link в Telegram- или MAX-бота. Каталог выгружается в WooCommerce, OpenCart и PrestaShop.\nСтек: JavaScript, Node.js, Telegram/MAX bots",
-      desc_en: "OneWatch store: 391 products, searchable catalog, filters, cart and checkout. Orders go from a deep link into a Telegram or MAX bot. The catalog exports to WooCommerce, OpenCart and PrestaShop.\nStack: JavaScript, Node.js, Telegram/MAX bots",
+      desc: "Часовой магазин WATIX: 391 модель, каталог с поиском, фильтры, корзина и оформление. Заказ уходит из deep link в Telegram- или MAX-бота. Каталог выгружается в WooCommerce, OpenCart и PrestaShop.\nСтек: JavaScript, Node.js, Telegram/MAX bots",
+      desc_en: "WATIX store: 391 products, searchable catalog, filters, cart and checkout. Orders go from a deep link into a Telegram or MAX bot. The catalog exports to WooCommerce, OpenCart and PrestaShop.\nStack: JavaScript, Node.js, Telegram/MAX bots",
       repo: "https://github.com/ssrjkk/shopwatch",
       site: "https://ssrjkk.github.io/shopwatch/",
       bot: "https://t.me/wwwatchshop_bot",
@@ -57,7 +57,6 @@ var projects_default = {
       desc: "USDC-экономика в Telegram: чаевые, донат-страницы, рынки предсказаний на LMSR и Mini App на Base. Нулевой газ для пользователей.\nСтек: Python, aiogram, Base/USDC, Mini App",
       desc_en: "USDC economy in Telegram: tips, donation pages, LMSR prediction markets and a Mini App on Base. Zero gas for users.\nStack: Python, aiogram, Base/USDC, Mini App",
       repo: "https://github.com/ssrjkk/tippy-on-base",
-      site: "https://tippy-egi.pages.dev",
       bot: "https://t.me/tippy_on_base_bot",
       shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/tippy.jpg"
     },
@@ -111,14 +110,23 @@ var projects_default = {
       title: "Agent Skills",
       lang: "Python",
       stars: 2,
-      desc: "120 двуязычных навыков (EN/RU), 20 IT-роадмапов и 27 гайдов. Публичный registry, поиск через CLI --remote, Python SDK и проверяемая CI-сборка сайта.\nСтек: Python, Agent Skills, SDK/CLI",
-      desc_en: "120 bilingual skills (EN/RU), 20 IT roadmaps and 27 guides. Public registry, CLI --remote search, Python SDK and a validated CI site build.\nStack: Python, Agent Skills, SDK/CLI",
+      desc: "120 двуязычных навыков (EN/RU), 20 IT-роадмапов и 25 гайдов. Публичный registry, поиск через CLI --remote, Python SDK и проверяемая CI-сборка сайта.\nСтек: Python, Agent Skills, SDK/CLI",
+      desc_en: "120 bilingual skills (EN/RU), 20 IT roadmaps and 25 guides. Public registry, CLI --remote search, Python SDK and a validated CI site build.\nStack: Python, Agent Skills, SDK/CLI",
       repo: "https://github.com/ssrjkk/agent-skills",
       site: "https://ssrjkk.github.io/agent-skills/",
       links: [
-        { name: "Registry JSON", url: "https://ssrjkk.github.io/agent-skills/skills_catalog.json" },
-        { name: "Roadmaps", url: "https://ssrjkk.github.io/agent-skills/roadmaps.html" },
-        { name: "Guides", url: "https://ssrjkk.github.io/agent-skills/guides.html" }
+        {
+          name: "Registry JSON",
+          url: "https://ssrjkk.github.io/agent-skills/skills_catalog.json"
+        },
+        {
+          name: "Roadmaps",
+          url: "https://ssrjkk.github.io/agent-skills/roadmaps.html"
+        },
+        {
+          name: "Guides",
+          url: "https://ssrjkk.github.io/agent-skills/guides.html"
+        }
       ],
       shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/agent-skills.jpg"
     },
