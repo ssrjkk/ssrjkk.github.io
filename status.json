@@ -1,6 +1,6 @@
 {
  "probe_method": "complete-response-readiness-v1",
- "generated_at": "2026-11-10T16:32:21Z",
+ "generated_at": "2026-11-10T18:38:00Z",
  "targets": [
   {
    "id": "hub",
@@ -8,9 +8,10 @@
    "url": "https://ssrjkk.github.io/",
    "ok": true,
    "code": 200,
-   "ms": 468,
+   "ms": 243,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -36,9 +37,10 @@
    "url": "https://ssrjkk.github.io/shopwatch/",
    "ok": true,
    "code": 200,
-   "ms": 437,
+   "ms": 151,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -64,9 +66,10 @@
    "url": "https://ssrjkk.github.io/bothive/",
    "ok": true,
    "code": 200,
-   "ms": 327,
+   "ms": 141,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -92,9 +95,10 @@
    "url": "https://ssrjkk.github.io/raven/",
    "ok": true,
    "code": 200,
-   "ms": 250,
+   "ms": 125,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -120,9 +124,10 @@
    "url": "https://ssrjkk.github.io/agent-skills/",
    "ok": true,
    "code": 200,
-   "ms": 1157,
+   "ms": 400,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -148,9 +153,10 @@
    "url": "https://ssrjkk.github.io/drafter/",
    "ok": true,
    "code": 200,
-   "ms": 327,
+   "ms": 153,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -176,9 +182,10 @@
    "url": "https://ssrjkk.github.io/ezzoffer/",
    "ok": true,
    "code": 200,
-   "ms": 469,
+   "ms": 201,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -204,9 +211,10 @@
    "url": "https://ssrjkk.github.io/harvest/",
    "ok": true,
    "code": 200,
-   "ms": 264,
+   "ms": 131,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -232,9 +240,10 @@
    "url": "https://ssrjkk.github.io/shroud/",
    "ok": true,
    "code": 200,
-   "ms": 250,
+   "ms": 211,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -260,9 +269,10 @@
    "url": "https://wake-7k6.pages.dev/",
    "ok": true,
    "code": 200,
-   "ms": 1547,
+   "ms": 189,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -288,9 +298,10 @@
    "url": "https://wake-backend-production-3483.up.railway.app/ready",
    "ok": false,
    "code": 404,
-   "ms": 389,
+   "ms": 166,
    "uptime": 0.0,
    "history": [
+    0,
     0,
     0,
     0,
@@ -316,9 +327,10 @@
    "url": "https://tippy-egi.pages.dev/",
    "ok": false,
    "code": 503,
-   "ms": 1047,
+   "ms": 636,
    "uptime": 0.0,
    "history": [
+    0,
     0,
     0,
     0,
@@ -344,9 +356,10 @@
    "url": "https://ssrjkk.github.io/volley/",
    "ok": true,
    "code": 200,
-   "ms": 250,
+   "ms": 123,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1
    ]
@@ -357,9 +370,10 @@
    "url": "https://ssrjkk.github.io/mobius/",
    "ok": true,
    "code": 200,
-   "ms": 250,
+   "ms": 125,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1
    ]
@@ -370,9 +384,10 @@
    "url": "https://ssrjkk.github.io/noema/",
    "ok": true,
    "code": 200,
-   "ms": 390,
+   "ms": 166,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1
    ]
@@ -383,9 +398,10 @@
    "url": "https://ssrjkk.github.io/qa-arsenal/",
    "ok": true,
    "code": 200,
-   "ms": 234,
+   "ms": 134,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1
    ]
@@ -396,9 +412,10 @@
    "url": "https://ssrjkk.github.io/qualix/",
    "ok": true,
    "code": 200,
-   "ms": 235,
+   "ms": 157,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1
    ]
@@ -409,9 +426,10 @@
    "url": "https://ssrjkk.github.io/b2w-crypto-tg-bot/",
    "ok": true,
    "code": 200,
-   "ms": 561,
+   "ms": 133,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1
    ]
@@ -422,9 +440,10 @@
    "url": "https://ssrjkk.github.io/tt_bot/",
    "ok": true,
    "code": 200,
-   "ms": 578,
+   "ms": 182,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1
    ]
@@ -435,9 +454,10 @@
    "url": "https://ssrjkk.github.io/twinby-swipe-bot/",
    "ok": true,
    "code": 200,
-   "ms": 235,
+   "ms": 118,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1
    ]
