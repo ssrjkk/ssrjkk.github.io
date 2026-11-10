@@ -245,6 +245,21 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
   *{scroll-behavior:auto!important;transition:none!important;animation:none!important}
   .card:hover,.btn:hover{transform:none}
 }
+/* --- live status bar (status.json генерируется Actions каждые 15 минут) --- */
+.statusbar{border-bottom:1px solid var(--line);background:var(--card)}
+.statusbar .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:13px 0}
+.sb-label{font:600 11px/1 var(--mono);letter-spacing:.11em;text-transform:uppercase;color:#6B6B62;margin-right:8px;display:inline-flex;align-items:center;gap:7px}
+.sb-label .pulse{width:7px;height:7px;border-radius:50%;background:#178A4C;box-shadow:0 0 0 3px rgba(23,138,76,.13);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.sb-label .pulse{animation:none}}
+.chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:7px 12px;font:500 12.5px/1 var(--sans);background:var(--bg)}
+.chip .cdot{width:7px;height:7px;border-radius:50%;background:#B9B7AC;flex:none}
+.chip.up .cdot{background:#178A4C;box-shadow:0 0 0 3px rgba(23,138,76,.13)}
+.chip.down{border-color:#E0B4B4;background:#FBF1F1}
+.chip.down .cdot{background:#D64545;box-shadow:0 0 0 3px rgba(214,69,69,.14)}
+.chip .cms{font:500 11px/1 var(--mono);color:#6B6B62}
+.sb-updated{margin-left:auto;font:500 11.5px/1 var(--mono);color:#6B6B62}
+.badge.down::before{content:"";width:6px;height:6px;border-radius:50%;background:#F87171}
 </style>
 </head>
 <body>
@@ -295,6 +310,14 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
         <div class="stat"><b>66</b><span>tools в MCP-сервере<br>raven</span></div>
         <div class="stat"><b>5</b><span>Telegram-ботов<br>в работе</span></div>
       </div>
+    </div>
+  </section>
+
+  <section class="statusbar" aria-label="Живой статус сервисов">
+    <div class="wrap" id="live-status">
+      <span class="sb-label"><span class="pulse" aria-hidden="true"></span>Live</span>
+      <noscript><span class="chip"><span class="cdot up"></span>Все ссылки ниже проверяются автоматически каждые 15 минут</span></noscript>
+      <span class="sb-updated" id="sb-updated"></span>
     </div>
   </section>
 
@@ -438,8 +461,8 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
           </a>
           <div class="card-body">
             <div class="card-top"><h3>agent-skills</h3><span class="mono">AI tooling</span></div>
-            <p>Библиотека навыков для AI-агентов: 120 навыков на EN и RU, Python SDK, CLI и живой каталог.</p>
-            <ul class="tags"><li>Python</li><li>CLI / SDK</li><li>MCP</li><li>EN + RU</li></ul>
+            <p>120 навыков на EN и RU, 20 IT-роадмапов и 25 гайдов. Публичный registry, поиск через CLI --remote и Python SDK.</p>
+            <ul class="tags"><li>Python</li><li>CLI / SDK</li><li>EN + RU</li><li><a href="https://ssrjkk.github.io/agent-skills/skills_catalog.json">Registry JSON</a></li><li><a href="https://ssrjkk.github.io/agent-skills/roadmaps.html">Роадмапы</a></li><li><a href="https://ssrjkk.github.io/agent-skills/guides.html">Гайды</a></li></ul>
             <a class="card-link" href="https://ssrjkk.github.io/agent-skills/" target="_blank" rel="noopener">Открыть каталог <span aria-hidden="true">↗</span></a>
           </div>
         </article>
@@ -483,8 +506,8 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
           <div><b>qa-arsenal</b><p>QA-монорепо: API/UI/load/DB/Kafka на 5 целей, один пайплайн и стандарты.</p></div>
           <span class="mono">Python · monorepo →</span>
         </a>
-        <a class="more-row" href="https://github.com/ssrjkk/port" target="_blank" rel="noopener">
-          <div><b>port</b><p>Каталог проектов @ssrjkk_bot: Cloudflare Worker, D1 и KV, двуязычный каталог и скриншоты.</p></div>
+        <a class="more-row" href="https://github.com/ssrjkk/ssrjkk.github.io/tree/main/bot" target="_blank" rel="noopener">
+          <div><b>ssrjkk bot</b><p>Каталог проектов @ssrjkk_bot: Cloudflare Worker, D1 и KV, двуязычный каталог и скриншоты. Живёт в этом репозитории, в bot/.</p></div>
           <span class="mono">JavaScript · Workers →</span>
         </a>
         <a class="more-row" href="https://github.com/ssrjkk/b2w-crypto-tg-bot" target="_blank" rel="noopener">
@@ -690,6 +713,58 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
   </div>
 </footer>
 
+<script>
+/* Живой статус: данные готовит scripts/generate_status.py (Actions, каждые 15 минут). */
+(function () {
+  "use strict";
+  var box = document.getElementById("live-status");
+  var updated = document.getElementById("sb-updated");
+  if (!box) return;
+  fetch("status.json", { cache: "no-store" })
+    .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+    .then(function (data) {
+      box.querySelectorAll(".chip").forEach(function (n) { n.remove(); });
+      data.targets.forEach(function (t) {
+        var chip = document.createElement("a");
+        chip.className = "chip " + (t.ok ? "up" : "down");
+        chip.href = t.url;
+        chip.target = "_blank";
+        chip.rel = "noopener";
+        chip.title = (t.ok ? "Доступен" : "Недоступен (код " + (t.code || "нет ответа") + ")")
+          + " · uptime: " + t.uptime + "%";
+        var dot = document.createElement("span");
+        dot.className = "cdot";
+        chip.appendChild(dot);
+        chip.appendChild(document.createTextNode(t.name));
+        if (t.ok && t.ms) {
+          var ms = document.createElement("span");
+          ms.className = "cms";
+          ms.textContent = t.ms + "ms";
+          chip.appendChild(ms);
+        }
+        box.appendChild(chip);
+      });
+      var mins = Math.max(0, Math.round((Date.now() - new Date(data.generated_at).getTime()) / 60000));
+      if (updated) updated.textContent = "обновлено " + (mins === 0 ? "только что" : mins + " мин назад")
+        + " · " + data.summary.up + "/" + data.summary.total + " в строю";
+      /* Синхронизируем бейджи на карточках с живыми данными */
+      data.targets.forEach(function (t) {
+        document.querySelectorAll('a[href^="' + t.url + '"]').forEach(function (a) {
+          var card = a.closest(".card");
+          if (!card) return;
+          var badge = card.querySelector(".badge");
+          if (!badge) return;
+          badge.classList.remove("live", "down");
+          badge.classList.add(t.ok ? "live" : "down");
+          badge.textContent = (t.ok ? "live" : "down") + (t.ok && t.ms ? " " + t.ms + "ms" : "");
+        });
+      });
+    })
+    .catch(function () {
+      if (updated) updated.textContent = "статус временно недоступен";
+    });
+})();
+</script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",

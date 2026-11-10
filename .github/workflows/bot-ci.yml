@@ -1,0 +1,55 @@
+name: Bot CI
+
+on:
+  push:
+    branches: [main]
+    paths: ['bot/**', '.github/workflows/bot-ci.yml']
+  pull_request:
+    branches: [main]
+    paths: ['bot/**', '.github/workflows/bot-ci.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bot-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: bot
+
+jobs:
+  worker:
+    name: Cloudflare Worker
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: bot/package-lock.json
+
+      - name: Установка зависимостей
+        run: npm ci
+
+      # Деплоится собранный бандл. Если исходник или projects.json изменили,
+      # а бандл не пересобрали, пользователи бота увидят старые данные.
+      - name: Сборка
+        run: npm run build
+
+      - name: Бандл пересобран из исходника
+        run: git diff --exit-code cloudflare-worker/worker.js
+
+      - name: Синтаксис воркера
+        run: node --check cloudflare-worker/worker.js
+
+      - name: Данные, ссылки и бандл согласованы
+        run: node scripts/check-bundle.mjs
+
+      - name: Тесты воркера
+        run: npm test
