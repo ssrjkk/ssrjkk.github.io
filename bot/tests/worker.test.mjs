@@ -187,7 +187,7 @@ test("root endpoint reports the catalogue size", async () => {
   const body = await response.json();
   assert.equal(body.name, "ssrjkk-bot");
   assert.equal(body.projects, 19);
-  assert.equal(body.sites, 10);
+  assert.equal(body.sites, 18);
   assert.equal(body.bots, 5);
   assert.equal(body.github, "https://github.com/ssrjkk");
 });
@@ -216,7 +216,7 @@ test("/start shows the menu with sites and bots", async () => {
 
   const text = lastText(calls);
   assert.match(text, /Проектов: 19/);
-  assert.match(text, /Сайтов: 10/);
+  assert.match(text, /Сайтов: 18/);
   assert.match(text, /Ботов: 5/);
 
   const button = callsOf(calls, "sendMessage").at(-1);
@@ -251,9 +251,11 @@ test("/sites lists every project site as a URL button", async () => {
   const sent = callsOf(calls, "sendMessage").at(-1);
   assert.match(sent.body.text, /Сайты проектов/);
   const urls = keyboardData(sent).filter((value) => value.startsWith("https://"));
-  assert.equal(urls.length, 10);
+  assert.equal(urls.length, 18);
   assert.ok(new Set(urls).has("https://ssrjkk.github.io/shopwatch/"));
   assert.ok(new Set(urls).has("https://wake-7k6.pages.dev"));
+  assert.ok(new Set(urls).has("https://ssrjkk.github.io/noema/"));
+  assert.ok(new Set(urls).has("https://ssrjkk.github.io/twinby-swipe-bot/"));
 });
 
 test("/bots lists every Telegram bot as a URL button", async () => {

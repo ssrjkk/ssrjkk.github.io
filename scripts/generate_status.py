@@ -40,6 +40,14 @@ TARGETS = [
         "https://wake-backend-production-3483.up.railway.app/ready", "ready",
     ),
     ("tippy", "Tippy on Base", "https://tippy-egi.pages.dev/", None),
+    ("volley", "Volley", "https://ssrjkk.github.io/volley/", None),
+    ("mobius", "Mobius", "https://ssrjkk.github.io/mobius/", None),
+    ("noema", "Noema", "https://ssrjkk.github.io/noema/", None),
+    ("qa-arsenal", "QA Arsenal", "https://ssrjkk.github.io/qa-arsenal/", None),
+    ("qualix", "Qualix", "https://ssrjkk.github.io/qualix/", None),
+    ("b2w", "B2W Crypto", "https://ssrjkk.github.io/b2w-crypto-tg-bot/", None),
+    ("tt-bot", "TT Bot", "https://ssrjkk.github.io/tt_bot/", None),
+    ("twinby", "Twinby", "https://ssrjkk.github.io/twinby-swipe-bot/", None),
 ]
 PROBE_METHOD = "complete-response-readiness-v1"
 
