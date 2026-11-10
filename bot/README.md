@@ -44,7 +44,7 @@ articles with site, repository and bot buttons.
 ```json
 {
   "name": "shopwatch",
-  "title": "Watchop",
+  "title": "WATIX",
   "lang": "JavaScript, Node.js",
   "stars": 0,
   "desc": "Russian description",
