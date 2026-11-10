@@ -1,6 +1,6 @@
 {
  "probe_method": "complete-response-readiness-v1",
- "generated_at": "2026-11-10T22:41:55Z",
+ "generated_at": "2026-11-10T23:45:18Z",
  "targets": [
   {
    "id": "hub",
@@ -8,9 +8,10 @@
    "url": "https://ssrjkk.github.io/",
    "ok": true,
    "code": 200,
-   "ms": 281,
+   "ms": 80,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -38,9 +39,10 @@
    "url": "https://ssrjkk.github.io/bothive/",
    "ok": true,
    "code": 200,
-   "ms": 360,
+   "ms": 84,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -68,9 +70,10 @@
    "url": "https://ssrjkk.github.io/raven/",
    "ok": true,
    "code": 200,
-   "ms": 203,
+   "ms": 65,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -98,9 +101,10 @@
    "url": "https://ssrjkk.github.io/agent-skills/",
    "ok": true,
    "code": 200,
-   "ms": 436,
+   "ms": 96,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -128,9 +132,10 @@
    "url": "https://ssrjkk.github.io/drafter/",
    "ok": true,
    "code": 200,
-   "ms": 281,
+   "ms": 119,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -158,9 +163,10 @@
    "url": "https://ssrjkk.github.io/ezzoffer/",
    "ok": true,
    "code": 200,
-   "ms": 360,
+   "ms": 75,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -188,9 +194,10 @@
    "url": "https://ssrjkk.github.io/harvest/",
    "ok": true,
    "code": 200,
-   "ms": 218,
+   "ms": 66,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -218,9 +225,10 @@
    "url": "https://ssrjkk.github.io/shroud/",
    "ok": true,
    "code": 200,
-   "ms": 218,
+   "ms": 78,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -248,9 +256,10 @@
    "url": "https://wake-7k6.pages.dev/",
    "ok": true,
    "code": 200,
-   "ms": 281,
+   "ms": 159,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -278,9 +287,10 @@
    "url": "https://wake-backend-production-3483.up.railway.app/ready",
    "ok": false,
    "code": 404,
-   "ms": 391,
+   "ms": 135,
    "uptime": 0.0,
    "history": [
+    0,
     0,
     0,
     0,
@@ -308,9 +318,10 @@
    "url": "https://tippy-egi.pages.dev/",
    "ok": false,
    "code": 503,
-   "ms": 1093,
+   "ms": 6230,
    "uptime": 0.0,
    "history": [
+    0,
     0,
     0,
     0,
@@ -338,9 +349,10 @@
    "url": "https://ssrjkk.github.io/tippy-on-base/",
    "ok": true,
    "code": 200,
-   "ms": 188,
+   "ms": 58,
    "uptime": 100.0,
    "history": [
+    1,
     1
    ]
   },
@@ -350,9 +362,10 @@
    "url": "https://ssrjkk.github.io/corvid_crm/",
    "ok": true,
    "code": 200,
-   "ms": 218,
+   "ms": 180,
    "uptime": 100.0,
    "history": [
+    1,
     1
    ]
   },
@@ -362,9 +375,10 @@
    "url": "https://ssrjkk.github.io/verso/",
    "ok": true,
    "code": 200,
-   "ms": 203,
+   "ms": 42,
    "uptime": 100.0,
    "history": [
+    1,
     1
    ]
   },
@@ -374,9 +388,10 @@
    "url": "https://ssrjkk.github.io/volley/",
    "ok": true,
    "code": 200,
-   "ms": 233,
+   "ms": 110,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -389,9 +404,10 @@
    "url": "https://ssrjkk.github.io/mobius/",
    "ok": true,
    "code": 200,
-   "ms": 219,
+   "ms": 71,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -404,9 +420,10 @@
    "url": "https://ssrjkk.github.io/noema/",
    "ok": true,
    "code": 200,
-   "ms": 218,
+   "ms": 98,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -419,9 +436,10 @@
    "url": "https://ssrjkk.github.io/qa-arsenal/",
    "ok": true,
    "code": 200,
-   "ms": 328,
+   "ms": 87,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -434,9 +452,10 @@
    "url": "https://ssrjkk.github.io/qualix/",
    "ok": true,
    "code": 200,
-   "ms": 203,
+   "ms": 68,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -449,9 +468,10 @@
    "url": "https://ssrjkk.github.io/b2w-crypto-tg-bot/",
    "ok": true,
    "code": 200,
-   "ms": 233,
+   "ms": 66,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -464,9 +484,10 @@
    "url": "https://ssrjkk.github.io/tt_bot/",
    "ok": true,
    "code": 200,
-   "ms": 328,
+   "ms": 41,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -479,9 +500,10 @@
    "url": "https://ssrjkk.github.io/twinby-swipe-bot/",
    "ok": true,
    "code": 200,
-   "ms": 328,
+   "ms": 67,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
