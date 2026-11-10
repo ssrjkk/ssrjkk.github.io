@@ -189,8 +189,8 @@
       "title": "TT Bot",
       "lang": "Python",
       "stars": 0,
-      "desc": "Telegram-бот для университетских лабораторных: сдача работ, отчёты и оценивание.\nСтек: Python, aiogram",
-      "desc_en": "Telegram bot for university labs: submissions, reports and grading.\nStack: Python, aiogram",
+      "desc": "Telegram-бот задач и мониторинга сервисов: задачи с адресом эндпоинта, пул асинхронных воркеров, статусы, аналитика и выгрузка в CSV.\nСтек: Python, aiogram",
+      "desc_en": "Telegram task and service-monitoring bot: tasks bound to an endpoint, an asyncio worker pool, statuses, analytics and CSV export.\nStack: Python, aiogram",
       "repo": "https://github.com/ssrjkk/tt_bot",
       "site": "https://ssrjkk.github.io/tt_bot/",
       "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/tt_bot.jpg"
