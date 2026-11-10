@@ -4,18 +4,6 @@ var projects_default = {
   hub: "https://ssrjkk.github.io/",
   projects: [
     {
-      name: "shopwatch",
-      title: "WATIX",
-      lang: "JavaScript, Node.js",
-      stars: 0,
-      desc: "Часовой магазин WATIX: 391 модель, каталог с поиском, фильтры, корзина и оформление. Заказ уходит из deep link в Telegram- или MAX-бота. Каталог выгружается в WooCommerce, OpenCart и PrestaShop.\nСтек: JavaScript, Node.js, Telegram/MAX bots",
-      desc_en: "WATIX store: 391 products, searchable catalog, filters, cart and checkout. Orders go from a deep link into a Telegram or MAX bot. The catalog exports to WooCommerce, OpenCart and PrestaShop.\nStack: JavaScript, Node.js, Telegram/MAX bots",
-      repo: "https://github.com/ssrjkk/shopwatch",
-      site: "https://ssrjkk.github.io/shopwatch/",
-      bot: "https://t.me/wwwatchshop_bot",
-      shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/shopwatch.jpg"
-    },
-    {
       name: "bothive",
       title: "Bothive",
       lang: "TypeScript",
@@ -57,8 +45,9 @@ var projects_default = {
       desc: "USDC-экономика в Telegram: чаевые, донат-страницы, рынки предсказаний на LMSR и Mini App на Base. Нулевой газ для пользователей.\nСтек: Python, aiogram, Base/USDC, Mini App",
       desc_en: "USDC economy in Telegram: tips, donation pages, LMSR prediction markets and a Mini App on Base. Zero gas for users.\nStack: Python, aiogram, Base/USDC, Mini App",
       repo: "https://github.com/ssrjkk/tippy-on-base",
+      site: "https://ssrjkk.github.io/tippy-on-base/",
       bot: "https://t.me/tippy_on_base_bot",
-      shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/tippy.jpg"
+      shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/tippy-on-base.jpg"
     },
     {
       name: "drafter",
@@ -138,7 +127,8 @@ var projects_default = {
       desc: "QA-платформа автоматизации: 317 тестов на шести уровнях, покрытие 85%+, security hardening, готовность к k8s.\nСтек: Python, FastAPI, pytest, Playwright, Locust",
       desc_en: "QA automation platform: 317 tests across six layers, 85%+ coverage, security hardening, k8s-ready.\nStack: Python, FastAPI, pytest, Playwright, Locust",
       repo: "https://github.com/ssrjkk/qualix",
-      site: "https://ssrjkk.github.io/qualix/"
+      site: "https://ssrjkk.github.io/qualix/",
+      shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/qualix.jpg"
     },
     {
       name: "qa-arsenal",
@@ -148,7 +138,8 @@ var projects_default = {
       desc: "QA-монорепозиторий: hh.ru API/UI, guap.ru Python/Go и amoCRM. API, UI, нагрузочные, БД- и Kafka-наборы в одном пайплайне.\nСтек: Python, pytest, Playwright, Go, Kafka",
       desc_en: "QA monorepo: hh.ru API/UI, guap.ru Python/Go and amoCRM. API, UI, load, DB and Kafka suites in one pipeline.\nStack: Python, pytest, Playwright, Go, Kafka",
       repo: "https://github.com/ssrjkk/qa-arsenal",
-      site: "https://ssrjkk.github.io/qa-arsenal/"
+      site: "https://ssrjkk.github.io/qa-arsenal/",
+      shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/qa-arsenal.jpg"
     },
     {
       name: "mobius",
@@ -158,7 +149,8 @@ var projects_default = {
       desc: "Мобильная автоматизация Android и iOS: Appium 2.x + pytest, screen objects, пул устройств, параллельный запуск. 947 тестов, 99% покрытия.\nСтек: Python, Appium 2.x, pytest",
       desc_en: "Mobile automation for Android and iOS: Appium 2.x + pytest, screen objects, device pooling, parallel runs. 947 tests, 99% coverage.\nStack: Python, Appium 2.x, pytest",
       repo: "https://github.com/ssrjkk/mobius",
-      site: "https://ssrjkk.github.io/mobius/"
+      site: "https://ssrjkk.github.io/mobius/",
+      shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/mobius.jpg"
     },
     {
       name: "noema",
@@ -168,7 +160,8 @@ var projects_default = {
       desc: "Нейро-символический инженерный движок: LLM предлагает решения, Z3 проверяет по контрактам, инциденты чинятся через pull-реквесты.\nСтек: Python, Z3, gRPC",
       desc_en: "Neuro-symbolic engineering engine: an LLM proposes solutions, Z3 verifies them against contracts, incidents are fixed through pull requests.\nStack: Python, Z3, gRPC",
       repo: "https://github.com/ssrjkk/noema",
-      site: "https://ssrjkk.github.io/noema/"
+      site: "https://ssrjkk.github.io/noema/",
+      shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/noema.jpg"
     },
     {
       name: "volley",
@@ -178,7 +171,8 @@ var projects_default = {
       desc: "Платформа нагрузочного тестирования HTTP: асинхронное ядро C++20, YAML-сценарии, OAuth2/mTLS/Vault, OTLP и Prometheus, Python SDK.\nСтек: C++20, Boost.Beast, gRPC",
       desc_en: "HTTP load-testing platform: C++20 async core, YAML scenarios, OAuth2/mTLS/Vault, OTLP and Prometheus, Python SDK.\nStack: C++20, Boost.Beast, gRPC",
       repo: "https://github.com/ssrjkk/volley",
-      site: "https://ssrjkk.github.io/volley/"
+      site: "https://ssrjkk.github.io/volley/",
+      shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/volley.jpg"
     },
     {
       name: "b2w-crypto-tg-bot",
@@ -188,7 +182,8 @@ var projects_default = {
       desc: "Telegram-платформа для криптопортфеля: отслеживание цен, мониторинг рынка и алерты.\nСтек: Python, aiogram, PostgreSQL",
       desc_en: "Telegram crypto platform: portfolio tracking, price monitoring and market alerts.\nStack: Python, aiogram, PostgreSQL",
       repo: "https://github.com/ssrjkk/b2w-crypto-tg-bot",
-      site: "https://ssrjkk.github.io/b2w-crypto-tg-bot/"
+      site: "https://ssrjkk.github.io/b2w-crypto-tg-bot/",
+      shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/b2w-crypto-tg-bot.jpg"
     },
     {
       name: "tt_bot",
@@ -198,7 +193,8 @@ var projects_default = {
       desc: "Telegram-бот для университетских лабораторных: сдача работ, отчёты и оценивание.\nСтек: Python, aiogram",
       desc_en: "Telegram bot for university labs: submissions, reports and grading.\nStack: Python, aiogram",
       repo: "https://github.com/ssrjkk/tt_bot",
-      site: "https://ssrjkk.github.io/tt_bot/"
+      site: "https://ssrjkk.github.io/tt_bot/",
+      shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/tt_bot.jpg"
     },
     {
       name: "twinby-swipe-bot",
@@ -208,7 +204,30 @@ var projects_default = {
       desc: "Telegram-бот со свайпами для поиска контента и автоматизацией Android/iOS/macOS.\nСтек: Python, Telegram",
       desc_en: "Telegram swipe bot for content discovery with Android/iOS/macOS automation.\nStack: Python, Telegram",
       repo: "https://github.com/ssrjkk/twinby-swipe-bot",
-      site: "https://ssrjkk.github.io/twinby-swipe-bot/"
+      site: "https://ssrjkk.github.io/twinby-swipe-bot/",
+      shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/twinby-swipe-bot.jpg"
+    },
+    {
+      name: "corvid_crm",
+      title: "Corvid CRM",
+      lang: "TypeScript",
+      stars: 0,
+      desc: "CRM для фриланса: сделки, счета, клиенты, задачи и аналитика в одном интерфейсе. Next.js 16, App Router, e2e на Playwright.\nСтек: TypeScript, Next.js 16, Tailwind v4",
+      desc_en: "CRM for freelance work: deals, invoices, clients, tasks and analytics in one interface. Next.js 16 App Router, Playwright e2e.\nStack: TypeScript, Next.js 16, Tailwind v4",
+      repo: "https://github.com/ssrjkk/corvid_crm",
+      site: "https://ssrjkk.github.io/corvid_crm/",
+      shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/corvid_crm.jpg"
+    },
+    {
+      name: "verso",
+      title: "Verso",
+      lang: "TypeScript",
+      stars: 0,
+      desc: "Редакционный Headless CMS и блочный конструктор страниц: коллекции, записи, ревизии, канбан редполитики и headless-выдача по API.\nСтек: TypeScript, Next.js 16, tRPC, Prisma",
+      desc_en: "Editorial headless CMS and block page builder: collections, records, revisions, a redpolicy kanban and headless delivery over API.\nStack: TypeScript, Next.js 16, tRPC, Prisma",
+      repo: "https://github.com/ssrjkk/verso",
+      site: "https://ssrjkk.github.io/verso/",
+      shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/verso.jpg"
     },
     {
       name: "ssrjkk.github.io",
@@ -220,7 +239,7 @@ var projects_default = {
       repo: "https://github.com/ssrjkk/ssrjkk.github.io",
       site: "https://ssrjkk.github.io/",
       bot: "https://t.me/ssrjkk_bot",
-      shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/hub.jpg"
+      shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/ssrjkk.github.io.jpg"
     }
   ],
   channels: [
@@ -316,7 +335,16 @@ ${s.refList}`,
     searchEmpty: (q) => `По запросу «${q}» ничего не найдено.`,
     searchTitle: (q) => `<b>Результаты по запросу «${q}»:</b>`,
     topTitle: "<b>🏆 Топ проектов по звёздам:</b>",
-    about: "👤 <b>Обо мне</b>\n\nРазрабатываю ботов, AI-инструменты, Web3 и QA-платформы.\nВсе проекты — открытый код на GitHub.\n\n🛠 Стек: Python, TypeScript, Go, Rust, C++, Solidity\n📦 Проектов: 20 — сайты, боты и инженерные инструменты\n📢 Каналы: @b2wmain, @b2wshitpost\n\nКнопки ниже — мои ссылки 👇",
+    about: (projects) => `👤 <b>Обо мне</b>
+
+Разрабатываю ботов, AI-инструменты, Web3 и QA-платформы.
+Все проекты — открытый код на GitHub.
+
+🛠 Стек: Python, TypeScript, Go, Rust, C++, Solidity
+📦 Проектов: ${projects} — сайты, боты и инженерные инструменты
+📢 Каналы: @b2wmain, @b2wshitpost
+
+Кнопки ниже — мои ссылки 👇`,
     broadcastPrompt: "Формат: /broadcast <текст>",
     broadcastDone: (ok, fail) => `Отправлено: <b>${ok}</b>, не доставлено: <b>${fail}</b>.`,
     broadcastEmpty: "В рассылке нет ни одного пользователя."
@@ -374,7 +402,16 @@ ${s.refList}`,
     searchEmpty: (q) => `Nothing found for «${q}».`,
     searchTitle: (q) => `<b>Results for «${q}»:</b>`,
     topTitle: "<b>🏆 Top projects by stars:</b>",
-    about: "👤 <b>About me</b>\n\nI build bots, AI tools, Web3 and QA platforms.\nAll projects are open source on GitHub.\n\n🛠 Stack: Python, TypeScript, Go, Rust, C++, Solidity\n📦 Projects: 20 — sites, bots and engineering tools\n📢 Channels: @b2wmain, @b2wshitpost\n\nButtons below are my links 👇",
+    about: (projects) => `👤 <b>About me</b>
+
+I build bots, AI tools, Web3 and QA platforms.
+All projects are open source on GitHub.
+
+🛠 Stack: Python, TypeScript, Go, Rust, C++, Solidity
+📦 Projects: ${projects} — sites, bots and engineering tools
+📢 Channels: @b2wmain, @b2wshitpost
+
+Buttons below are my links 👇`,
     broadcastPrompt: "Format: /broadcast <text>",
     broadcastDone: (ok, fail) => `Sent: <b>${ok}</b>, failed: <b>${fail}</b>.`,
     broadcastEmpty: "No users to broadcast to."
@@ -742,7 +779,7 @@ ${lines.join("\n\n")}`);
   }
   if (cmd === "/about") {
     track(env, ctx, userId, "cmd", "about");
-    await sendMessage(token, chatId, LANG[lang].about, urlKeyboard(lang, LINKS));
+    await sendMessage(token, chatId, LANG[lang].about(PROJECTS.length), urlKeyboard(lang, LINKS));
     return;
   }
   if (cmd === "/help") {
@@ -910,7 +947,7 @@ async function handleCallback(env, ctx, callback) {
         }))
       );
     } else if (what === "about") {
-      text = LANG[lang].about;
+      text = LANG[lang].about(PROJECTS.length);
       keyboard = urlKeyboard(lang, LINKS);
     } else if (what === "help") {
       text = LANG[lang].help;

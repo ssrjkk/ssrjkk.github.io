@@ -64,7 +64,7 @@ ${s.refList}`,
     searchEmpty: (q) => `По запросу «${q}» ничего не найдено.`,
     searchTitle: (q) => `<b>Результаты по запросу «${q}»:</b>`,
     topTitle: "<b>🏆 Топ проектов по звёздам:</b>",
-    about: "👤 <b>Обо мне</b>\n\nРазрабатываю ботов, AI-инструменты, Web3 и QA-платформы.\nВсе проекты — открытый код на GitHub.\n\n🛠 Стек: Python, TypeScript, Go, Rust, C++, Solidity\n📦 Проектов: 20 — сайты, боты и инженерные инструменты\n📢 Каналы: @b2wmain, @b2wshitpost\n\nКнопки ниже — мои ссылки 👇",
+    about: (projects) => `👤 <b>Обо мне</b>\n\nРазрабатываю ботов, AI-инструменты, Web3 и QA-платформы.\nВсе проекты — открытый код на GitHub.\n\n🛠 Стек: Python, TypeScript, Go, Rust, C++, Solidity\n📦 Проектов: ${projects} — сайты, боты и инженерные инструменты\n📢 Каналы: @b2wmain, @b2wshitpost\n\nКнопки ниже — мои ссылки 👇`,
     broadcastPrompt: "Формат: /broadcast <текст>",
     broadcastDone: (ok, fail) => `Отправлено: <b>${ok}</b>, не доставлено: <b>${fail}</b>.`,
     broadcastEmpty: "В рассылке нет ни одного пользователя."
@@ -122,7 +122,7 @@ ${s.refList}`,
     searchEmpty: (q) => `Nothing found for «${q}».`,
     searchTitle: (q) => `<b>Results for «${q}»:</b>`,
     topTitle: "<b>🏆 Top projects by stars:</b>",
-    about: "👤 <b>About me</b>\n\nI build bots, AI tools, Web3 and QA platforms.\nAll projects are open source on GitHub.\n\n🛠 Stack: Python, TypeScript, Go, Rust, C++, Solidity\n📦 Projects: 20 — sites, bots and engineering tools\n📢 Channels: @b2wmain, @b2wshitpost\n\nButtons below are my links 👇",
+    about: (projects) => `👤 <b>About me</b>\n\nI build bots, AI tools, Web3 and QA platforms.\nAll projects are open source on GitHub.\n\n🛠 Stack: Python, TypeScript, Go, Rust, C++, Solidity\n📦 Projects: ${projects} — sites, bots and engineering tools\n📢 Channels: @b2wmain, @b2wshitpost\n\nButtons below are my links 👇`,
     broadcastPrompt: "Format: /broadcast <text>",
     broadcastDone: (ok, fail) => `Sent: <b>${ok}</b>, failed: <b>${fail}</b>.`,
     broadcastEmpty: "No users to broadcast to."
@@ -524,7 +524,7 @@ async function handleMessage(env, ctx, msg) {
   }
   if (cmd === "/about") {
     track(env, ctx, userId, "cmd", "about");
-    await sendMessage(token, chatId, LANG[lang].about, urlKeyboard(lang, LINKS));
+    await sendMessage(token, chatId, LANG[lang].about(PROJECTS.length), urlKeyboard(lang, LINKS));
     return;
   }
   if (cmd === "/help") {
@@ -705,7 +705,7 @@ async function handleCallback(env, ctx, callback) {
         }))
       );
     } else if (what === "about") {
-      text = LANG[lang].about;
+      text = LANG[lang].about(PROJECTS.length);
       keyboard = urlKeyboard(lang, LINKS);
     } else if (what === "help") {
       text = LANG[lang].help;

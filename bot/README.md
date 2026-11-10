@@ -43,16 +43,16 @@ articles with site, repository and bot buttons.
 
 ```json
 {
-  "name": "shopwatch",
-  "title": "WATIX",
-  "lang": "JavaScript, Node.js",
+  "name": "wake",
+  "title": "Wake",
+  "lang": "Python, TS",
   "stars": 0,
   "desc": "Russian description",
   "desc_en": "English description",
-  "repo": "https://github.com/ssrjkk/shopwatch",
-  "site": "https://ssrjkk.github.io/shopwatch/",
-  "bot": "https://t.me/wwwatchshop_bot",
-  "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/shopwatch.jpg"
+  "repo": "https://github.com/ssrjkk/wake",
+  "site": "https://wake-7k6.pages.dev",
+  "bot": "https://t.me/waketrade_bot",
+  "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/wake.jpg"
 }
 ```
 

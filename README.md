@@ -9,9 +9,9 @@ Telegram bots and channels, the services with prices, and contacts.
 
 ## Sections
 
-- **Projects** — shopwatch, bothive, raven, wake, tippy, drafter, ezzoffer, harvest, shroud, agent-skills
-- **Bots** — [@ssrjkk_bot](https://t.me/ssrjkk_bot), [@wwwatchshop_bot](https://t.me/wwwatchshop_bot), [@waketrade_bot](https://t.me/waketrade_bot), [@tippy_on_base_bot](https://t.me/tippy_on_base_bot), [@harvest_testnet_bot](https://t.me/harvest_testnet_bot)
-- **Sites** — eleven site addresses, including this hub; availability requires a complete HTTP response, and Wake API readiness is shown separately
+- **Projects** — bothive, raven, wake, tippy, drafter, ezzoffer, harvest, shroud, agent-skills, QA frameworks
+- **Bots** — [@ssrjkk_bot](https://t.me/ssrjkk_bot), [@waketrade_bot](https://t.me/waketrade_bot), [@tippy_on_base_bot](https://t.me/tippy_on_base_bot), [@harvest_testnet_bot](https://t.me/harvest_testnet_bot)
+- **Sites** — twenty site addresses, including this hub; availability requires a complete HTTP response, and Wake API readiness is shown separately
 - **Services** — Telegram bots, stores with TG/MAX bots, Mini Apps, full-stack web apps and automation
 - **Contacts** — Telegram, GitHub, channels, email
 

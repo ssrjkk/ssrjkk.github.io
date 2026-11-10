@@ -1,6 +1,6 @@
 {
  "probe_method": "complete-response-readiness-v1",
- "generated_at": "2026-11-10T18:38:00Z",
+ "generated_at": "2026-11-10T22:41:55Z",
  "targets": [
   {
    "id": "hub",
@@ -8,38 +8,10 @@
    "url": "https://ssrjkk.github.io/",
    "ok": true,
    "code": 200,
-   "ms": 243,
+   "ms": 281,
    "uptime": 100.0,
    "history": [
     1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1
-   ]
-  },
-  {
-   "id": "shopwatch",
-   "name": "Shopwatch",
-   "url": "https://ssrjkk.github.io/shopwatch/",
-   "ok": true,
-   "code": 200,
-   "ms": 151,
-   "uptime": 100.0,
-   "history": [
     1,
     1,
     1,
@@ -66,9 +38,10 @@
    "url": "https://ssrjkk.github.io/bothive/",
    "ok": true,
    "code": 200,
-   "ms": 141,
+   "ms": 360,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -95,9 +68,10 @@
    "url": "https://ssrjkk.github.io/raven/",
    "ok": true,
    "code": 200,
-   "ms": 125,
+   "ms": 203,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -124,9 +98,10 @@
    "url": "https://ssrjkk.github.io/agent-skills/",
    "ok": true,
    "code": 200,
-   "ms": 400,
+   "ms": 436,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -153,9 +128,10 @@
    "url": "https://ssrjkk.github.io/drafter/",
    "ok": true,
    "code": 200,
-   "ms": 153,
+   "ms": 281,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -182,9 +158,10 @@
    "url": "https://ssrjkk.github.io/ezzoffer/",
    "ok": true,
    "code": 200,
-   "ms": 201,
+   "ms": 360,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -211,9 +188,10 @@
    "url": "https://ssrjkk.github.io/harvest/",
    "ok": true,
    "code": 200,
-   "ms": 131,
+   "ms": 218,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -240,9 +218,10 @@
    "url": "https://ssrjkk.github.io/shroud/",
    "ok": true,
    "code": 200,
-   "ms": 211,
+   "ms": 218,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -269,9 +248,10 @@
    "url": "https://wake-7k6.pages.dev/",
    "ok": true,
    "code": 200,
-   "ms": 189,
+   "ms": 281,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1,
@@ -298,9 +278,10 @@
    "url": "https://wake-backend-production-3483.up.railway.app/ready",
    "ok": false,
    "code": 404,
-   "ms": 166,
+   "ms": 391,
    "uptime": 0.0,
    "history": [
+    0,
     0,
     0,
     0,
@@ -327,9 +308,10 @@
    "url": "https://tippy-egi.pages.dev/",
    "ok": false,
    "code": 503,
-   "ms": 636,
+   "ms": 1093,
    "uptime": 0.0,
    "history": [
+    0,
     0,
     0,
     0,
@@ -351,14 +333,51 @@
    ]
   },
   {
+   "id": "tippy-pages",
+   "name": "Tippy on Base · Pages",
+   "url": "https://ssrjkk.github.io/tippy-on-base/",
+   "ok": true,
+   "code": 200,
+   "ms": 188,
+   "uptime": 100.0,
+   "history": [
+    1
+   ]
+  },
+  {
+   "id": "corvid",
+   "name": "Corvid CRM",
+   "url": "https://ssrjkk.github.io/corvid_crm/",
+   "ok": true,
+   "code": 200,
+   "ms": 218,
+   "uptime": 100.0,
+   "history": [
+    1
+   ]
+  },
+  {
+   "id": "verso",
+   "name": "Verso",
+   "url": "https://ssrjkk.github.io/verso/",
+   "ok": true,
+   "code": 200,
+   "ms": 203,
+   "uptime": 100.0,
+   "history": [
+    1
+   ]
+  },
+  {
    "id": "volley",
    "name": "Volley",
    "url": "https://ssrjkk.github.io/volley/",
    "ok": true,
    "code": 200,
-   "ms": 123,
+   "ms": 233,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1
@@ -370,9 +389,10 @@
    "url": "https://ssrjkk.github.io/mobius/",
    "ok": true,
    "code": 200,
-   "ms": 125,
+   "ms": 219,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1
@@ -384,9 +404,10 @@
    "url": "https://ssrjkk.github.io/noema/",
    "ok": true,
    "code": 200,
-   "ms": 166,
+   "ms": 218,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1
@@ -398,9 +419,10 @@
    "url": "https://ssrjkk.github.io/qa-arsenal/",
    "ok": true,
    "code": 200,
-   "ms": 134,
+   "ms": 328,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1
@@ -412,9 +434,10 @@
    "url": "https://ssrjkk.github.io/qualix/",
    "ok": true,
    "code": 200,
-   "ms": 157,
+   "ms": 203,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1
@@ -426,9 +449,10 @@
    "url": "https://ssrjkk.github.io/b2w-crypto-tg-bot/",
    "ok": true,
    "code": 200,
-   "ms": 133,
+   "ms": 233,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1
@@ -440,9 +464,10 @@
    "url": "https://ssrjkk.github.io/tt_bot/",
    "ok": true,
    "code": 200,
-   "ms": 182,
+   "ms": 328,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1
@@ -454,9 +479,10 @@
    "url": "https://ssrjkk.github.io/twinby-swipe-bot/",
    "ok": true,
    "code": 200,
-   "ms": 118,
+   "ms": 328,
    "uptime": 100.0,
    "history": [
+    1,
     1,
     1,
     1
@@ -464,8 +490,8 @@
   }
  ],
  "summary": {
-  "total": 20,
-  "up": 18,
+  "total": 22,
+  "up": 20,
   "down": 2
  }
 }

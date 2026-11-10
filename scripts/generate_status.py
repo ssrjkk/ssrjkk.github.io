@@ -26,7 +26,6 @@ HISTORY_LIMIT = 60  # ~15 часов непрерывной истории пр�
 # (id, человекочитаемое имя, URL) — ровно то, что показано на витрине.
 TARGETS = [
     ("hub", "Хаб", "https://ssrjkk.github.io/", None),
-    ("shopwatch", "Shopwatch", "https://ssrjkk.github.io/shopwatch/", None),
     ("bothive", "Bothive", "https://ssrjkk.github.io/bothive/", None),
     ("raven", "Raven", "https://ssrjkk.github.io/raven/", None),
     ("agent-skills", "Agent Skills", "https://ssrjkk.github.io/agent-skills/", None),
@@ -40,6 +39,9 @@ TARGETS = [
         "https://wake-backend-production-3483.up.railway.app/ready", "ready",
     ),
     ("tippy", "Tippy on Base", "https://tippy-egi.pages.dev/", None),
+    ("tippy-pages", "Tippy on Base · Pages", "https://ssrjkk.github.io/tippy-on-base/", None),
+    ("corvid", "Corvid CRM", "https://ssrjkk.github.io/corvid_crm/", None),
+    ("verso", "Verso", "https://ssrjkk.github.io/verso/", None),
     ("volley", "Volley", "https://ssrjkk.github.io/volley/", None),
     ("mobius", "Mobius", "https://ssrjkk.github.io/mobius/", None),
     ("noema", "Noema", "https://ssrjkk.github.io/noema/", None),

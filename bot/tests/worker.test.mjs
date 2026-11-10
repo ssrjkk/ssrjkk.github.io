@@ -165,8 +165,8 @@ test("bundle validation accepts the current catalogue", () => {
 });
 
 for (const [name, mutate] of [
-  ["impostor repository host", (data) => { data.projects[0].repo = "https://example.test/ssrjkk/shopwatch"; }],
-  ["lookalike Telegram host", (data) => { data.projects[0].bot = "https://not.t.me/wwwatchshop_bot"; }],
+  ["impostor repository host", (data) => { const p = data.projects[0]; p.repo = `https://example.test/ssrjkk/${p.name}`; }],
+  ["lookalike Telegram host", (data) => { data.projects[0].bot = "https://not.t.me/ssrjkk_bot"; }],
   ["insecure documentation URL", (data) => { data.projects.find((p) => p.name === "agent-skills").links[0].url = "http://example.test/registry"; }]
 ]) {
   test(`bundle validation rejects ${name}`, () => {
@@ -186,9 +186,9 @@ test("root endpoint reports the catalogue size", async () => {
   assert.equal(response.status, 200);
   const body = await response.json();
   assert.equal(body.name, "ssrjkk-bot");
-  assert.equal(body.projects, 19);
-  assert.equal(body.sites, 18);
-  assert.equal(body.bots, 5);
+  assert.equal(body.projects, 20);
+  assert.equal(body.sites, 20);
+  assert.equal(body.bots, 4);
   assert.equal(body.github, "https://github.com/ssrjkk");
 });
 
@@ -215,9 +215,9 @@ test("/start shows the menu with sites and bots", async () => {
   assert.equal(response.status, 200);
 
   const text = lastText(calls);
-  assert.match(text, /Проектов: 19/);
-  assert.match(text, /Сайтов: 18/);
-  assert.match(text, /Ботов: 5/);
+  assert.match(text, /Проектов: 20/);
+  assert.match(text, /Сайтов: 20/);
+  assert.match(text, /Ботов: 4/);
 
   const button = callsOf(calls, "sendMessage").at(-1);
   const data = keyboardData(button);
@@ -251,8 +251,8 @@ test("/sites lists every project site as a URL button", async () => {
   const sent = callsOf(calls, "sendMessage").at(-1);
   assert.match(sent.body.text, /Сайты проектов/);
   const urls = keyboardData(sent).filter((value) => value.startsWith("https://"));
-  assert.equal(urls.length, 18);
-  assert.ok(new Set(urls).has("https://ssrjkk.github.io/shopwatch/"));
+  assert.equal(urls.length, 20);
+  assert.ok(new Set(urls).has("https://ssrjkk.github.io/bothive/"));
   assert.ok(new Set(urls).has("https://wake-7k6.pages.dev"));
   assert.ok(new Set(urls).has("https://ssrjkk.github.io/noema/"));
   assert.ok(new Set(urls).has("https://ssrjkk.github.io/twinby-swipe-bot/"));
@@ -265,25 +265,37 @@ test("/bots lists every Telegram bot as a URL button", async () => {
   const sent = callsOf(calls, "sendMessage").at(-1);
   assert.match(sent.body.text, /Telegram-боты/);
   const urls = keyboardData(sent).filter((value) => value.startsWith("https://"));
-  assert.equal(urls.length, 5);
+  assert.equal(urls.length, 4);
   assert.ok(new Set(urls).has("https://t.me/ssrjkk_bot"));
-  assert.ok(new Set(urls).has("https://t.me/wwwatchshop_bot"));
+  assert.ok(new Set(urls).has("https://t.me/waketrade_bot"));
+});
+
+test("/about counts the catalogue instead of hardcoding it", async () => {
+  const calls = installFetch();
+  const catalogue = JSON.parse(readFileSync(new URL("../projects.json", import.meta.url), "utf8"));
+
+  await sendWebhook(makeEnv(), makeCtx(), messageUpdate("/about", { chatId: 118 }));
+  assert.match(lastText(calls), new RegExp(`Проектов: ${catalogue.projects.length}`));
+
+  await sendWebhook(makeEnv(), makeCtx(), callbackUpdate("lang:en", { chatId: 118 }));
+  await sendWebhook(makeEnv(), makeCtx(), messageUpdate("/about", { chatId: 118 }));
+  assert.match(lastText(calls), new RegExp(`Projects: ${catalogue.projects.length}`));
 });
 
 test("project detail sends the screenshot with site, repo and bot buttons", async () => {
   const calls = installFetch();
-  await sendWebhook(makeEnv(), makeCtx(), callbackUpdate("p:shopwatch", { chatId: 105 }));
+  await sendWebhook(makeEnv(), makeCtx(), callbackUpdate("p:wake", { chatId: 105 }));
 
   const photos = callsOf(calls, "sendPhoto");
   assert.equal(photos.length, 1);
-  assert.match(photos[0].body.photo, /raw\.githubusercontent\.com\/ssrjkk\/ssrjkk\/main\/assets\/shots\/shopwatch\.jpg/);
-  assert.match(photos[0].body.caption, /WATIX/);
+  assert.match(photos[0].body.photo, /raw\.githubusercontent\.com\/ssrjkk\/ssrjkk\/main\/assets\/shots\/wake\.jpg/);
+  assert.match(photos[0].body.caption, /Wake/);
 
   const buttons = photos[0].body.reply_markup.inline_keyboard.flat();
   const urls = buttons.map((button) => button.url).filter(Boolean);
-  assert.ok(new Set(urls).has("https://ssrjkk.github.io/shopwatch/"));
-  assert.ok(new Set(urls).has("https://github.com/ssrjkk/shopwatch"));
-  assert.ok(new Set(urls).has("https://t.me/wwwatchshop_bot"));
+  assert.ok(new Set(urls).has("https://wake-7k6.pages.dev"));
+  assert.ok(new Set(urls).has("https://github.com/ssrjkk/wake"));
+  assert.ok(new Set(urls).has("https://t.me/waketrade_bot"));
 });
 
 test("project detail falls back to a text message when the photo fails", async () => {
@@ -296,12 +308,23 @@ test("project detail falls back to a text message when the photo fails", async (
   assert.match(text, /assets\/shots\/raven\.jpg/);
 });
 
-test("project detail without a screenshot sends a text card", async () => {
+test("every catalogue project publishes a screenshot", () => {
+  const catalogue = JSON.parse(readFileSync(new URL("../projects.json", import.meta.url), "utf8"));
+  for (const project of catalogue.projects) {
+    assert.equal(
+      project.shot,
+      `https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/${project.name}.jpg`,
+      `${project.name}: shot должен вести на профильный репозиторий`
+    );
+  }
+});
+
+test("an unknown project answers with a text card instead of a photo", async () => {
   const calls = installFetch();
-  await sendWebhook(makeEnv(), makeCtx(), callbackUpdate("p:qualix", { chatId: 107 }));
+  await sendWebhook(makeEnv(), makeCtx(), callbackUpdate("p:no-such-project", { chatId: 107 }));
 
   assert.equal(callsOf(calls, "sendPhoto").length, 0);
-  assert.match(lastText(calls), /Qualix/);
+  assert.match(lastText(calls), /не найден/i);
 });
 
 test("a project marked private hides the repository link", () => {
@@ -428,11 +451,11 @@ test("inline query returns photos for projects with screenshots", async () => {
 
   const answer = callsOf(calls, "answerInlineQuery").at(-1);
   assert.ok(answer, "expected answerInlineQuery");
-  assert.equal(answer.body.results.length, 19);
+  assert.equal(answer.body.results.length, 20);
   const photos = answer.body.results.filter((result) => result.type === "photo");
   const articles = answer.body.results.filter((result) => result.type === "article");
-  assert.equal(photos.length, 11);
-  assert.equal(articles.length, 8);
+  assert.equal(photos.length, 20);
+  assert.equal(articles.length, 0);
   assert.ok(photos.every((result) => result.photo_url.startsWith("https://raw.githubusercontent.com/")));
   const skillPhoto = photos.find((result) => result.title === "Agent Skills");
   assert.match(skillPhoto.caption, /120/);
