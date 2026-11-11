@@ -95,6 +95,7 @@ npm ci
 npm run build
 npm run check
 npm test
+npm run coverage
 ```
 
 `npm run check` verifies the data shape, every URL, the screenshot host, unique project names, that the
@@ -110,7 +111,30 @@ Node 20 or newer. All commands run from `bot/` (from the repository root: `cd bo
 npm ci
 npm run build     # src/worker.js + projects.json -> cloudflare-worker/worker.js
 npm test          # node:test suite against the built bundle, Telegram and GitHub are mocked
+npm run coverage  # same suite, plus the numeric coverage gate CI fails on
 ```
+
+`npm run coverage` measures the shipped bundle and `scripts/smoke-prod.mjs` and exits non-zero below 99.5%
+lines, 96.5% branches and 97% functions; the suite currently reports 99.69 / 97.15 / 97.44. It runs against
+the bundle that is deployed: Telegram, GitHub, KV and D1 are mocked, and `fetch` is replaced before the first
+test with a stub that throws, so a case that forgets its mock fails loudly instead of reaching the network
+from CI. The language and star caches are reset between the cases that care about them, and a catalogue built
+from a temporary `projects.json` exercises the shapes the real one does not have yet — a project without a
+screenshot, a private repository.
+
+One gate reads the interface instead of the code: `src/worker.js`, the built bundle and every string of both
+language packs must be free of emoji. The menu is spelled in words, and a pictograph in a button label or a
+heading fails the suite with the file, the key and the code point it found.
+
+`npm run check` is held to the same standard: 48 mutations of the data, the bundle, the configuration, the
+README and the hub cards prove the gate rejects a blank title, a missing `lang`, a repeated name, a screenshot
+outside the profile repository, a stale bundle, an unused wrangler binding, a planted Telegram or GitHub
+token, a bundle that is not a worker module, and a README or hub card promising something the repository does
+not have.
+
+What no test reaches is what the data gate forbids: every project carries a title, a `lang` and a screenshot,
+so `displayName`, `stackTokens` and the inline article branch keep their fallbacks. They are proven on the
+fixture catalogue rather than deleted — deploying without `npm run check` must not print an empty name.
 
 The worker expects four secrets, set with `wrangler secret put` and never committed:
 
@@ -206,7 +230,8 @@ Deep-ссылки: `https://t.me/ssrjkk_bot?start=p_<name>` сразу откр�
 а в карточке бота есть «Поделиться» с той же ссылкой проекта и «Пригласить» с личной `?start=ref_`.
 `npm run check` ловит расхождение: имя проекта в ссылке хаба должно быть в каталоге.
 
-Правка контента: изменить `projects.json`, затем из `bot/`: `npm run build && npm run check && npm test`.
+Правка контента: изменить `projects.json`, затем из `bot/`:
+`npm run build && npm run check && npm test && npm run coverage`.
 Секреты (`BOT_TOKEN`, `OWNER_ID`, `SETUP_KEY`, `WEBHOOK_SECRET`) задаются через `wrangler secret put` и в
 репозиторий не попадают. Деплой: `cd bot && npm run build`, затем `npx wrangler deploy` из
 `bot/cloudflare-worker`.
@@ -221,6 +246,27 @@ Deep-ссылки: `https://t.me/ssrjkk_bot?start=p_<name>` сразу откр�
 ответ, его не повторяют. Любая красная проверка выходит кодом 1;
 `.github/workflows/bot-prod-smoke.yml` гоняет смоук раз в час и по кнопке, а сами проверки покрыты тестами,
 включая три способа, которыми они должны падать.
+
+Покрытие — числовой порог, а не «посмотрели и согласились»: `npm run coverage` меряет задеплоенный бандл и
+`scripts/smoke-prod.mjs` и выходит кодом 1 ниже 99.5% строк, 96.5% веток и 97% функций; сейчас прогон даёт
+99.69 / 97.15 / 97.44. Тесты гоняют против того же бандла, что уезжает на Cloudflare: Telegram, GitHub, KV и
+D1 замоканы, а `fetch` до первой проверки подменён заглушкой, которая бросает ошибку, — тест, забывший
+двойника, падает сразу и с адресом запроса, а не уходит в сеть из CI. Кеш языка и кеш звёзд сбрасываются
+между проверками, которым важно начало TTL, а ветки, которых в текущем каталоге нет (проект без скриншота,
+приватный репозиторий), прогоняются на сборке из временного `projects.json` теми же флагами esbuild.
+
+Одна проверка читает не код, а сам интерфейс: в `src/worker.js`, в собранном бандле и в каждой строке обоих
+языковых пакетов не должно остаться эмодзи. Меню набирается словами, и картинка в подписи кнопки или в
+заголовке роняет прогон с указанием файла, ключа и найденного code point.
+
+`npm run check` проверяется так же: 48 мутаций данных, бандла, конфигурации, README и карточек хаба
+доказывают, что гейт отклоняет пустой title, отсутствующий lang, повтор имени, скриншот не из профильного
+репозитория, устаревший бандл, неиспользуемую привязку wrangler, подложенный токен Telegram или GitHub,
+бандл без обработчика по умолчанию и документ или карточку, обещающие то, чего в репозитории нет.
+
+До чего не доводит живой каталог — то, что запрещает гейт данных: у каждого проекта есть title, lang и
+скриншот, поэтому `displayName`, `stackTokens` и article-ветка inline-ответов сохраняют свои фолбэки. Они
+подтверждены на фикстуре, а не удалены: деплой в обход `npm run check` не должен печатать пустое имя.
 
 ## Author
 

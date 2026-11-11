@@ -12,13 +12,16 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { createRequire } from "node:module";
 import { spawnSync } from "node:child_process";
 
 import worker, {
   LANG,
   COMMANDS,
   LANG_CACHE_LIMIT,
+  resetCaches,
+  displayName,
   projectCard,
   projectDetailKeyboard,
   shareProjectUrl
@@ -27,7 +30,91 @@ import worker, {
 const BASE = "https://bot.example";
 const SECRET = "hook-secret";
 
-function checkBundleData(mutate = () => {}, editReadme = (text) => text, editHub = (text) => text) {
+// сеть по умолчанию запрещена: тест, забывший installFetch, падает с адресом
+// запроса, а не молча уходит в GitHub из CI и не зависит от порядка проверок.
+globalThis.fetch = async (input) => {
+  throw new Error(`проверка полезла в сеть без двойника: ${String(input)}`);
+};
+
+const { buildSync } = createRequire(import.meta.url)("esbuild");
+const CATALOGUE = JSON.parse(readFileSync(new URL("../projects.json", import.meta.url), "utf8"));
+
+// Кеш звёзд и язык держатся в памяти модуля: проверки, которым важно начало TTL,
+// сбрасывают его явно и работают с тем же бандлом, что лежит в проде.
+function cleanWorkerCache() {
+  resetCaches();
+  return worker;
+}
+
+// Тот же src и те же флаги esbuild, что у npm run build, но с другими данными:
+// так проверяются ветки, которые текущий каталог не показывает ни разу.
+async function workerWithCatalogue(mutate) {
+  const dir = mkdtempSync(join(tmpdir(), "bot-catalogue-"));
+  const data = JSON.parse(JSON.stringify(CATALOGUE));
+  mutate(data);
+  mkdirSync(join(dir, "src"));
+  copyFileSync(fileURLToPath(new URL("../src/worker.js", import.meta.url)), join(dir, "src", "worker.js"));
+  writeFileSync(join(dir, "projects.json"), JSON.stringify(data));
+  const outfile = join(dir, "bundle.js");
+  buildSync({
+    entryPoints: [join(dir, "src", "worker.js")],
+    bundle: true,
+    format: "esm",
+    platform: "neutral",
+    target: "es2022",
+    charset: "utf8",
+    legalComments: "none",
+    outfile,
+    logLevel: "silent"
+  });
+  // Исходник прочитан при import, временная папка больше не нужна.
+  const instance = (await import(pathToFileURL(outfile).href)).default;
+  rmSync(dir, { recursive: true, force: true });
+  return instance;
+}
+
+async function webhookOn(instance, env, ctx, update) {
+  const response = await instance.fetch(
+    new Request(`${BASE}/webhook`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Telegram-Bot-Api-Secret-Token": SECRET },
+      body: JSON.stringify(update)
+    }),
+    env,
+    ctx
+  );
+  await Promise.allSettled(ctx.pending);
+  return response;
+}
+
+function dbReturning(rowsByCall) {
+  const calls = [];
+  let index = 0;
+  return {
+    calls,
+    prepare(sql) {
+      calls.push(sql);
+      return {
+        bind() {
+          return this;
+        },
+        async run() {
+          return { success: true };
+        },
+        async all() {
+          return { results: rowsByCall[index++] ?? [] };
+        },
+        async first() {
+          return null;
+        }
+      };
+    }
+  };
+}
+
+// editFiles правит любой файл фикстуры после копирования; null — файла нет вовсе.
+// Так проверяются ветки, которые портят не данные, а сам бандл или конфигурацию.
+function checkBundleData(mutate = () => {}, editReadme = (text) => text, editHub = (text) => text, editFiles = {}) {
   // Проверка читает README, соседний .github/workflows и карточки хаба,
   // поэтому фикстура — копия раскладки репозитория: <tmp>/bot рядом с
   // <tmp>/.github и <tmp>/index.html.
@@ -50,6 +137,11 @@ function checkBundleData(mutate = () => {}, editReadme = (text) => text, editHub
     const data = JSON.parse(readFileSync(new URL("../projects.json", import.meta.url), "utf8"));
     mutate(data);
     writeFileSync(join(root, "projects.json"), JSON.stringify(data));
+    for (const [file, edit] of Object.entries(editFiles)) {
+      const target = join(root, file);
+      if (edit === null) rmSync(target, { force: true });
+      else writeFileSync(target, edit(readFileSync(target, "utf8")));
+    }
     return spawnSync(process.execPath, [join(root, "scripts/check-bundle.mjs")], { encoding: "utf8" });
   } finally {
     rmSync(base, { recursive: true, force: true });
@@ -121,7 +213,16 @@ function makeCtx() {
   };
 }
 
-function installFetch({ photoFails = false, events = [], eventsStatus = 200, telegram = null } = {}) {
+function installFetch({
+  photoFails = false,
+  events = [],
+  eventsStatus = 200,
+  telegram = null,
+  stars = null,
+  starsDefault = 7,
+  githubStatus = 200,
+  githubError = false
+} = {}) {
   const calls = [];
   globalThis.fetch = async (input, init = {}) => {
     const url = String(input);
@@ -130,7 +231,12 @@ function installFetch({ photoFails = false, events = [], eventsStatus = 200, tel
       // что свежий кеш в KV экономит бюджет (60 запросов в час на IP).
       calls.push({ method: "github", body: { url } });
       if (url.includes("/events/public")) return jsonResponse(events, eventsStatus);
-      return jsonResponse({ stargazers_count: 7 });
+      if (githubError) throw new Error("fetch failed");
+      if (githubStatus !== 200) return jsonResponse({ message: "API rate limit exceeded" }, githubStatus);
+      const name = decodeURIComponent(url.split("/").pop());
+      // null в списке звёзд — это репозиторий, ответивший без поля stargazers_count.
+      const count = stars && name in stars ? stars[name] : starsDefault;
+      return jsonResponse(count === null ? { full_name: name } : { stargazers_count: count });
     }
     if (url.startsWith("https://api.telegram.org/")) {
       const method = url.split("/").pop();
@@ -210,6 +316,15 @@ function keyboardData(call) {
   return (call.body.reply_markup?.inline_keyboard ?? []).flat().map((button) => button.callback_data ?? button.url);
 }
 
+// Каждый отказ гейта регистрируется здесь: число в README сверяется с тем, что
+// прогон действительно проверил, а не с тем, что кто-то помнит.
+const gateRejections = [];
+function expectGateRejection(result, expected, label) {
+  gateRejections.push(label);
+  assert.equal(result.status, 1, result.stdout);
+  if (expected) assert.match(result.stderr, expected);
+}
+
 test("bundle validation accepts the current catalogue", () => {
   const result = checkBundleData();
   assert.equal(result.status, 0, result.stderr);
@@ -222,18 +337,18 @@ for (const [name, editReadme] of [
 ]) {
   test(`bundle validation rejects ${name}`, () => {
     const result = checkBundleData(() => {}, editReadme);
-    assert.equal(result.status, 1, result.stdout);
+    expectGateRejection(result, null, name);
   });
 }
 
-for (const [name, mutate] of [
-  ["impostor repository host", (data) => { const p = data.projects[0]; p.repo = `https://example.test/ssrjkk/${p.name}`; }],
-  ["lookalike Telegram host", (data) => { data.projects[0].bot = "https://not.t.me/ssrjkk_bot"; }],
-  ["insecure documentation URL", (data) => { data.projects.find((p) => p.name === "agent-skills").links[0].url = "http://example.test/registry"; }]
+for (const [name, mutate, expected] of [
+  ["impostor repository host", (data) => { const p = data.projects[0]; p.repo = `https://example.test/ssrjkk/${p.name}`; }, /repo должен вести на github\.com\/ssrjkk\/bothive/],
+  ["lookalike Telegram host", (data) => { data.projects[0].bot = "https://not.t.me/ssrjkk_bot"; }, /bot должен вести на t\.me/],
+  ["insecure documentation URL", (data) => { data.projects.find((p) => p.name === "agent-skills").links[0].url = "http://example.test/registry"; }, /ссылка документации должна быть https-URL/]
 ]) {
   test(`bundle validation rejects ${name}`, () => {
     const result = checkBundleData(mutate);
-    assert.equal(result.status, 1, result.stdout);
+    expectGateRejection(result, expected, name);
   });
 }
 
@@ -244,10 +359,87 @@ for (const [name, editHub] of [
 ]) {
   test(`bundle validation rejects ${name}`, () => {
     const result = checkBundleData(() => {}, (text) => text, editHub);
-    assert.equal(result.status, 1, result.stdout);
-    assert.match(result.stderr, /index\.html|deep-/);
+    expectGateRejection(result, /index\.html|deep-/, name);
   });
 }
+
+// Проверка данных — это обещание, на котором держится код воркера: title и lang
+// обязательны, поэтому displayName и stackTokens не встретят пустоту. Каждый отказ
+// сверяется по тексту замечания, а не только по коду возврата: молчаливый exit 1
+// прошёл бы и при совсем другой поломке.
+const DATA_FAILURES = [
+  ["a missing top-level key", /нет ключа «channels»/, (d) => { delete d.channels; }],
+  ["an empty catalogue", /projects должен быть непустым списком/, (d) => { d.projects = []; }],
+  ["a hub that is not a URL", /hub не является URL/, (d) => { d.hub = "ssrjkk.github.io"; }],
+  ["a bot link outside t.me", /bot должен вести на t\.me/, (d) => { d.bot = "https://example.test/ssrjkk_bot"; }],
+  ["a project without a title", /пустое поле «title»/, (d) => { d.projects[0].title = "   "; }],
+  ["a project without a lang", /пустое поле «lang»/, (d) => { delete d.projects[0].lang; }],
+  ["a project without an English description", /пустое поле «desc_en»/, (d) => { d.projects[0].desc_en = ""; }],
+  ["a repeated project name", /имя проекта повторяется/, (d) => { d.projects[1].name = d.projects[0].name; }],
+  ["stars that are not a number", /stars должен быть неотрицательным числом/, (d) => { d.projects[0].stars = "12"; }],
+  ["negative stars", /stars должен быть неотрицательным числом/, (d) => { d.projects[0].stars = -1; }],
+  ["a private flag that is not a boolean", /private должен быть true или false/, (d) => { d.projects[0].private = "yes"; }],
+  ["a repo that is not a URL", /repo не является URL/, (d) => { d.projects[0].repo = "ssrjkk/bothive"; }],
+  ["a site over http", /site не является https-URL/, (d) => { d.projects[0].site = "http://ssrjkk.github.io/bothive/"; }],
+  ["a bot over http", /bot не является https-URL/, (d) => { d.projects.find((p) => p.bot).bot = "http://t.me/ssrjkk_bot"; }],
+  ["a Pages site without the trailing slash", /site на GitHub Pages должен заканчиваться слэшем/, (d) => { d.projects[0].site = "https://ssrjkk.github.io/bothive"; }],
+  ["a screenshot outside the profile repository", /shot должен лежать в/, (d) => { d.projects[0].shot = "https://raw.githubusercontent.com/ssrjkk/bothive/main/shot.png"; }],
+  ["a screenshot over http", /shot не является https-URL/, (d) => { d.projects[0].shot = "http://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/bothive.png"; }],
+  ["a documentation link with credentials", /ссылка документации должна быть https-URL без учётных данных/, (d) => { d.projects.find((p) => p.links).links[0].url = "https://user:pass@example.test/docs"; }],
+  ["a documentation link without a name", /пустое имя ссылки документации/, (d) => { d.projects.find((p) => p.links).links[0].name = " "; }],
+  ["a channel without a name", /channels\[0\]: пустое имя/, (d) => { d.channels[0].name = ""; }],
+  ["a channel that is not an https URL", /channels\[0\]: url не является https-URL/, (d) => { d.channels[0].url = "ftp://t.me/b2wmain"; }],
+  ["a profile link without a name", /links\[0\]: пустое имя/, (d) => { d.links[0].name = ""; }],
+  ["a profile link that is not an https URL", /links\[0\]: url не является https-URL/, (d) => { d.links[0].url = "javascript:alert(1)"; }],
+  ["a project the bundle has never heard of", /«ghost-project» есть в projects\.json, но нет в бандле/, (d) => { d.projects[0].name = "ghost-project"; }],
+  ["a description the bundle does not carry", /описание проекта «bothive» не найдено в бандле/, (d) => { d.projects[0].desc = "Совсем другое описание проекта, которого в бандле нет."; }],
+  ["a channel link the bundle does not carry", /ссылка «B2W Main» есть в projects\.json, но нет в бандле/, (d) => { d.channels[0].url = "https://t.me/other_channel"; }]
+];
+
+for (const [name, expected, mutate] of DATA_FAILURES) {
+  test(`bundle validation rejects ${name}`, () => {
+    const result = checkBundleData(mutate);
+    expectGateRejection(result, expected, name);
+  });
+}
+
+// Секреты и форма бандла: гейт обязан падать на подложенном токене, иначе он
+// декоративный. Токены здесь синтетические и живут только во временной фикстуре.
+const FILE_FAILURES = [
+  ["projects.json that does not parse", /projects\.json не разбирается/, { "projects.json": () => "{ не json" }],
+  ["a bundle that cannot be read", /бандл не читается/, { "cloudflare-worker/worker.js": null }],
+  ["a missing source file", /нет src\/worker\.js/, { "src/worker.js": null }],
+  ["a missing README", /нет bot\/README\.md/, { "README.md": null }],
+  ["a missing wrangler config", /wrangler\.toml не читается/, { "cloudflare-worker/wrangler.toml": null }],
+  ["a wrangler config without bindings", /в wrangler\.toml не найдено ни одной привязки/, { "cloudflare-worker/wrangler.toml": (t) => t.replace(/^\s*binding\s*=.*$/gm, "") }],
+  ["a binding the bundle never uses", /привязка «GHOST_KV» объявлена в wrangler\.toml, но не встречается в бандле/, { "cloudflare-worker/wrangler.toml": (t) => t.replace('binding = "BOT_KV"', 'binding = "GHOST_KV"') }],
+  ["a planted Telegram token", /в бандле найден токен Telegram-бота/, { "cloudflare-worker/worker.js": (t) => `${t}\nconst leak = "123456789:${"A".repeat(35)}";\n` }],
+  ["a planted GitHub token", /в бандле найден токен GitHub/, { "cloudflare-worker/worker.js": (t) => `${t}\nconst leak = "ghp_${"B".repeat(36)}";\n` }],
+  ["a planted private key", /в бандле найден приватный ключ/, { "cloudflare-worker/worker.js": (t) => `${t}\nconst leak = "-----BEGIN RSA PRIVATE KEY-----";\n` }],
+  ["a key-shaped string left in the bundle", /в бандле найден длинная строка, похожая на ключ/, { "cloudflare-worker/worker.js": (t) => `${t}\nconst leak = "${"C".repeat(44)}";\n` }],
+  ["a bundle that is not a worker module", /бандл не экспортирует обработчик по умолчанию/, { "cloudflare-worker/worker.js": (t) => t.replace("worker_default as default", "worker_default as handler") }],
+  ["a source map that is not there", /бандл ссылается на source map «worker\.js\.map»/, { "cloudflare-worker/worker.js": (t) => `${t}\n//# sourceMappingURL=worker.js.map\n` }]
+];
+
+for (const [name, expected, files] of FILE_FAILURES) {
+  test(`bundle validation rejects ${name}`, () => {
+    const result = checkBundleData(() => {}, (text) => text, (text) => text, files);
+    expectGateRejection(result, expected, name);
+  });
+}
+
+test("the README count of gate mutations is the count the suite really runs", () => {
+  const readme = readFileSync(new URL("../README.md", import.meta.url), "utf8");
+  assert.equal(Number(readme.match(/(\d+) mutations of the data/)[1]), gateRejections.length);
+  assert.equal(Number(readme.match(/(\d+) мутаций данных/)[1]), gateRejections.length);
+  assert.equal(new Set(gateRejections).size, gateRejections.length, "одно и то же замечание посчитано дважды");
+});
+
+test("bundle validation reports the catalogue it accepted", () => {
+  const result = checkBundleData();
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /Воркер в порядке: 20 проектов, 20 сайтов, 4 ботов, 2 привязок/);
+});
 
 test("health endpoint answers OK", async () => {
   const response = await worker.fetch(new Request(`${BASE}/health`), makeEnv(), makeCtx());
@@ -501,7 +693,7 @@ test("language switch changes the next reply", async () => {
   const env = makeEnv();
   const ctx = makeCtx();
   await sendWebhook(env, ctx, callbackUpdate("lang:en", { chatId: 112 }));
-  assert.match(callsOf(calls, "editMessageText").at(-1).body.text, /Language: 🇬🇧 English/);
+  assert.match(callsOf(calls, "editMessageText").at(-1).body.text, /Language: English/);
   assert.equal(await env.BOT_KV.get("lang:112"), "en");
 
   await sendWebhook(env, makeCtx(), messageUpdate("/start", { chatId: 112 }));
@@ -736,6 +928,25 @@ test("both language packs cover every string the worker uses", () => {
   const en = Object.keys(LANG.en).sort();
   assert.deepEqual(ru, en, "ru и en должны нести одни и те же ключи");
   for (const key of used) assert.ok(ru.includes(key), `LANG[lang].${key} есть в коде, но не в словарях`);
+});
+
+// Меню бота читается текстом: эмодзи в подписи кнопки или в заголовке — это откат,
+// поэтому проверяем и исходник, и собранный бандл, и каждую строку обоих пакетов.
+test("the bot interface carries no emoji", () => {
+  const FORBIDDEN = /[\p{Emoji_Presentation}\u{FE0F}\u{1F1E6}-\u{1F1FF}]/gu;
+  const found = [];
+  const scan = (where, text) => {
+    for (const match of String(text).matchAll(FORBIDDEN)) found.push(`${where} → U+${match[0].codePointAt(0).toString(16)}`);
+  };
+  for (const file of ["../src/worker.js", "../cloudflare-worker/worker.js"]) {
+    scan(file, readFileSync(new URL(file, import.meta.url), "utf8"));
+  }
+  for (const [language, pack] of Object.entries(LANG)) {
+    for (const [key, value] of Object.entries(pack)) {
+      scan(`${language}.${key}`, typeof value === "function" ? value("a", "b", "c", "d") : value);
+    }
+  }
+  assert.deepEqual(found, [], `эмодзи в интерфейсе бота: ${found.join(", ")}`);
 });
 
 test("every command the Telegram menu advertises is handled", () => {
@@ -1208,3 +1419,648 @@ test("/channels offers every catalogue channel by its own url", async () => {
   );
 });
 
+
+function rowsOf(call) {
+  return call.body.reply_markup?.inline_keyboard ?? [];
+}
+
+function recordingDb(store) {
+  return {
+    prepare(sql) {
+      store.push(sql);
+      return {
+        bind() {
+          return this;
+        },
+        async run() {
+          return { success: true };
+        },
+        async all() {
+          return { results: [] };
+        },
+        async first() {
+          return null;
+        }
+      };
+    }
+  };
+}
+
+function starCounts(text) {
+  return [...text.matchAll(/— (\d+)★/g)].map((match) => Number(match[1]));
+}
+
+test("/top ranks by live stars, not by the order of projects.json", async () => {
+  const instance = cleanWorkerCache();
+  const calls = installFetch({ stars: { raven: 41, wake: 17, bothive: 5 }, starsDefault: 0 });
+  await webhookOn(instance, makeEnv(), makeCtx(), messageUpdate("/top", { chatId: 301 }));
+
+  const text = lastText(calls);
+  assert.ok(text.startsWith(LANG.ru.topTitle), "шапка топа берётся из языкового пакета");
+  assert.deepEqual(starCounts(text), [41, 17, 5], "три строки по убыванию живых звёзд");
+  const lines = text.split("\n").filter((line) => line.includes("★"));
+  assert.equal(lines.length, 3, "топ печатает ровно три проекта");
+  lines.forEach((line, index) => {
+    assert.ok(line.startsWith(`${index + 1}. `), `строка ${index + 1} начинается с номера, а не с картинки`);
+  });
+  assert.match(lines[0], /Raven/, "первой строкой должен быть лидер по звёздам");
+  assert.deepEqual(rowsOf(callsOf(calls, "sendMessage").at(-1)), [], "команда печатает текст без кнопок");
+});
+
+test("/top falls back to the stars in projects.json when GitHub says nothing", async () => {
+  const instance = cleanWorkerCache();
+  const calls = installFetch({ githubStatus: 403 });
+  await webhookOn(instance, makeEnv(), makeCtx(), messageUpdate("/top", { chatId: 302 }));
+
+  const expected = CATALOGUE.projects
+    .map((project) => project.stars || 0)
+    .sort((a, b) => b - a)
+    .slice(0, 3);
+  assert.deepEqual(starCounts(lastText(calls)), expected, "лимит GitHub не должен превращать топ в нули");
+  assert.equal(
+    callsOf(calls, "github").length,
+    CATALOGUE.projects.length,
+    "каждый репозиторий всё равно спрошен, просто ответ отвергнут"
+  );
+});
+
+test("a fresh stars record in KV is reused, and so is the copy in the module", async () => {
+  const instance = cleanWorkerCache();
+  const env = makeEnv();
+  await env.BOT_KV.put("stars", JSON.stringify({ ts: Date.now(), data: { raven: { stars: 99 } } }));
+  const calls = installFetch({ stars: { raven: 1 } });
+  await webhookOn(instance, env, makeCtx(), messageUpdate("/top", { chatId: 303 }));
+  assert.equal(callsOf(calls, "github").length, 0, "свежий кеш в KV не тратит бюджет GitHub");
+  assert.deepEqual(starCounts(lastText(calls)).slice(0, 1), [99], "топ собран из кеша, а не из данных");
+
+  // Второй запрос идёт по копии в памяти модуля — с пустым KV, чтобы KV при этом
+  // был ни при чём и проверка не подменила собой первую.
+  const second = installFetch({ stars: { raven: 1 } });
+  await webhookOn(instance, makeEnv(), makeCtx(), messageUpdate("/top", { chatId: 304 }));
+  assert.equal(callsOf(second, "github").length, 0, "в пределах TTL модуль не переспрашивает GitHub");
+});
+
+test("/links offers exactly the catalogue links and then the way back", async () => {
+  const calls = installFetch();
+  await sendWebhook(makeEnv(), makeCtx(), messageUpdate("/links", { chatId: 305 }));
+
+  const last = callsOf(calls, "sendMessage").at(-1);
+  assert.equal(last.body.text, LANG.ru.linksTitle);
+  assert.deepEqual(
+    rowsOf(last).flat().map((button) => button.url ?? button.callback_data),
+    [...CATALOGUE.links.map((link) => link.url), "show:menu"],
+    "кнопки повторяют каталог ссылок"
+  );
+});
+
+test("/myid answers the numeric id in a copyable code tag", async () => {
+  const calls = installFetch();
+  await sendWebhook(makeEnv(), makeCtx(), messageUpdate("/myid", { chatId: -100201, userId: 397602448 }));
+  assert.equal(lastText(calls), "Your ID: <code>397602448</code>", "в группе показываем id автора, а не чата");
+});
+
+test("/search without a query asks for the format and tracks nothing", async () => {
+  const env = makeEnv();
+  const calls = installFetch();
+  await sendWebhook(env, makeCtx(), messageUpdate("/search", { chatId: 307 }));
+
+  assert.equal(lastText(calls), LANG.ru.searchPrompt);
+  assert.equal(trackedInserts(env, "search").length, 0, "пустой запрос не попадает в топ поисков");
+  assert.equal(trackedInserts(env, "cmd").length, 1, "саму команду считаем");
+});
+
+test("/broadcast reaches every user the bot has seen, ten at a time", async () => {
+  const ids = [42, 101, 102, 103, 104, 105, 106, 107, 108, 109, 7, 110];
+  const env = makeEnv({ BOT_DB: dbReturning([ids.map((user_id) => ({ user_id }))]) });
+  const calls = installFetch({
+    telegram: ({ method, body }) =>
+      method === "sendMessage" && body.chat_id === 7
+        ? jsonResponse({ ok: false, error_code: 400, description: "telegram api error" })
+        : null
+  });
+
+  // Считаем, сколько отправок живёт одновременно: чанки по 10 — это защита от
+  // 429, а не деталь реализации.
+  let inflight = 0;
+  let peak = 0;
+  const transport = globalThis.fetch;
+  globalThis.fetch = async (input, init) => {
+    const sending = String(input).includes("/sendMessage");
+    if (sending) peak = Math.max(peak, (inflight += 1));
+    try {
+      return await transport(input, init);
+    } finally {
+      if (sending) inflight -= 1;
+    }
+  };
+
+  try {
+    await sendWebhook(env, makeCtx(), messageUpdate("/broadcast обновлён каталог", { chatId: 42 }));
+  } finally {
+    globalThis.fetch = transport;
+  }
+
+  assert.equal(peak, 10, "рассылка идёт чанками по десять адресатов");
+  const messages = callsOf(calls, "sendMessage").map((call) => call.body);
+  assert.equal(messages.length, ids.length + 1, "по строке на каждого плюс итог");
+  assert.deepEqual(
+    messages.slice(0, ids.length).map((body) => body.chat_id),
+    ids,
+    "каждый id получает ровно одно сообщение, в порядке выборки"
+  );
+  assert.ok(messages.slice(0, ids.length).every((body) => body.text === "обновлён каталог"));
+  assert.equal(messages.at(-1).text, LANG.ru.broadcastDone(11, 1), "заблокировавший бот читается как недоставленный");
+});
+
+test("/broadcast and /stats do not read events for anyone but the owner", async () => {
+  const seen = [];
+  const env = makeEnv({ BOT_DB: recordingDb(seen) });
+  const calls = installFetch();
+  await sendWebhook(env, makeCtx(), messageUpdate("/broadcast привет", { chatId: 100 }));
+  assert.equal(lastText(calls), LANG.ru.notOwner);
+
+  const second = installFetch();
+  await sendWebhook(makeEnv({ BOT_DB: recordingDb(seen) }), makeCtx(), messageUpdate("/stats", { chatId: 100 }));
+  assert.equal(lastText(second), LANG.ru.notOwner);
+  assert.ok(
+    seen.every((sql) => !sql.includes("SELECT DISTINCT user_id")),
+    "чужая рассылка не должна читать таблицу событий"
+  );
+});
+
+test("without OWNER_ID the owner commands say the bot is not configured", async () => {
+  const calls = installFetch();
+  await sendWebhook(makeEnv({ OWNER_ID: "" }), makeCtx(), messageUpdate("/stats", { chatId: 100 }));
+  assert.equal(lastText(calls), LANG.ru.notConfigured);
+
+  const second = installFetch();
+  await sendWebhook(makeEnv({ OWNER_ID: "" }), makeCtx(), messageUpdate("/broadcast привет", { chatId: 100 }));
+  assert.equal(lastText(second), LANG.ru.notConfigured);
+});
+
+test("/broadcast asks for text and refuses an empty audience", async () => {
+  const calls = installFetch();
+  await sendWebhook(makeEnv(), makeCtx(), messageUpdate("/broadcast   ", { chatId: 42 }));
+  assert.equal(lastText(calls), LANG.ru.broadcastPrompt);
+
+  const second = installFetch();
+  await sendWebhook(makeEnv({ BOT_DB: dbReturning([[]]) }), makeCtx(), messageUpdate("/broadcast привет", { chatId: 42 }));
+  assert.equal(lastText(second), LANG.ru.broadcastEmpty);
+  assert.equal(callsOf(second, "sendMessage").length, 1, "пустая рассылка не должна ничего отправлять");
+});
+
+test("a menu button renders what the matching command prints", async () => {
+  const instance = cleanWorkerCache();
+  const pairs = [
+    ["show:top", "/top"],
+    ["show:sites", "/sites"],
+    ["show:bots", "/bots"],
+    ["show:links", "/links"],
+    ["show:channels", "/channels"],
+    ["show:about", "/about"],
+    ["show:help", "/help"]
+  ];
+
+  for (const [index, [payload, command]] of pairs.entries()) {
+    const chatId = 700 + index;
+    const commandCalls = installFetch();
+    await webhookOn(instance, makeEnv(), makeCtx(), messageUpdate(command, { chatId }));
+    const printed = callsOf(commandCalls, "sendMessage").at(-1);
+
+    const buttonCalls = installFetch();
+    await webhookOn(instance, makeEnv(), makeCtx(), callbackUpdate(payload, { chatId }));
+    const rendered = callsOf(buttonCalls, "editMessageText").at(-1);
+
+    assert.ok(rendered, `${payload} не отредактировал сообщение`);
+    assert.equal(rendered.body.text, printed.body.text, `${payload} печатает не то, что ${command}`);
+    if (payload === "show:top" || payload === "show:help") {
+      assert.deepEqual(
+        rowsOf(rendered).flat().map((button) => button.callback_data),
+        ["show:menu"],
+        `${payload} должен вести обратно в меню`
+      );
+    } else {
+      assert.deepEqual(rowsOf(rendered), rowsOf(printed), `${payload}: кнопки расходятся с ${command}`);
+    }
+    assert.equal(callsOf(buttonCalls, "answerCallbackQuery").length, 1, `${payload}: Telegram ждёт ответа на нажатие`);
+  }
+});
+
+test("the language screen and an unknown button both keep the reader inside the bot", async () => {
+  const instance = cleanWorkerCache();
+  const calls = installFetch();
+  await webhookOn(instance, makeEnv(), makeCtx(), callbackUpdate("show:lang", { chatId: 760 }));
+  const screen = callsOf(calls, "editMessageText").at(-1);
+  assert.equal(screen.body.text, LANG.ru.langMenu);
+  assert.deepEqual(
+    rowsOf(screen).flat().map((button) => button.callback_data),
+    ["lang:ru", "lang:en", "show:menu"]
+  );
+
+  const fallback = installFetch();
+  await webhookOn(instance, makeEnv(), makeCtx(), callbackUpdate("show:zzz", { chatId: 761 }));
+  const unknown = callsOf(fallback, "editMessageText").at(-1);
+  assert.equal(unknown.body.text, LANG.ru.menu, "неизвестная кнопка возвращает главное меню, а не тишину");
+
+  const menu = installFetch();
+  await webhookOn(instance, makeEnv(), makeCtx(), callbackUpdate("show:menu", { chatId: 762 }));
+  assert.deepEqual(
+    rowsOf(unknown),
+    rowsOf(callsOf(menu, "editMessageText").at(-1)),
+    "неизвестная и заглавная кнопка ведут в одно меню"
+  );
+});
+
+test("/start still greets when the platform refuses the cache write", async () => {
+  const instance = cleanWorkerCache();
+  const calls = installFetch();
+  const ctx = makeCtx();
+  // Первым waitUntil идёт событие msg, вторым — кеш звёзд. Отказываем второму:
+  // приветствие не должно зависеть от того, удалось ли записать кеш.
+  let waits = 0;
+  ctx.waitUntil = (promise) => {
+    waits += 1;
+    if (waits === 2) throw new Error("waitUntil is not allowed after the response");
+    ctx.pending.push(promise);
+  };
+
+  const response = await webhookOn(instance, makeEnv(), ctx, messageUpdate("/start", { chatId: 800 }));
+  assert.equal(response.status, 200, "вебхук не роняет ответ из-за отказа кеша");
+
+  const sites = CATALOGUE.projects.filter((project) => project.site).length;
+  const bots = CATALOGUE.projects.filter((project) => project.bot).length;
+  const text = lastText(calls);
+  assert.match(text, new RegExp(`Сайтов: ${sites} · Ботов: ${bots}`), "счётчики считаются по каталогу");
+  assert.match(text, /Звёзд: 0★/, "без кеша звёзды просто не показываются");
+  assert.ok(rowsOf(callsOf(calls, "sendMessage").at(-1)).length >= 3, "меню под приветствием остаётся");
+});
+
+test("a KV that throws costs the reader neither the language nor the stars", async () => {
+  const instance = cleanWorkerCache();
+  const env = makeEnv();
+  env.BOT_KV = {
+    async get(key) {
+      throw new Error(`KV ${key} unavailable`);
+    },
+    async put() {}
+  };
+
+  const calls = installFetch();
+  const response = await webhookOn(instance, env, makeCtx(), messageUpdate("/help", { chatId: 900 }));
+  assert.equal(response.status, 200);
+  assert.equal(lastText(calls), LANG.ru.help, "без KV держимся языка по умолчанию");
+
+  const second = installFetch({ stars: { raven: 8 }, starsDefault: 0 });
+  await webhookOn(instance, env, makeCtx(), messageUpdate("/top", { chatId: 901 }));
+  assert.deepEqual(starCounts(lastText(second)).slice(0, 1), [8], "битый KV не обнуляет звёзды из GitHub");
+  assert.ok(lastText(second).includes("★"), "топ печатает звёзды, а не пустую строку");
+});
+
+test("inline results follow the data: no screenshot means an article, private means no GitHub link", async () => {
+  const instance = await workerWithCatalogue((data) => {
+    delete data.projects[0].shot;
+    data.projects[0].private = true;
+  });
+  const calls = installFetch();
+  const response = await instance.fetch(
+    new Request(`${BASE}/webhook`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Telegram-Bot-Api-Secret-Token": SECRET },
+      body: JSON.stringify({
+        update_id: 3,
+        inline_query: { id: "iq-2", from: { id: 200, language_code: "ru" }, query: "", offset: "" }
+      })
+    }),
+    makeEnv(),
+    makeCtx()
+  );
+  assert.equal(response.status, 200);
+
+  const results = callsOf(calls, "answerInlineQuery").at(-1).body.results;
+  const [closed, next] = results;
+  assert.equal(closed.type, "article", "без скриншота Telegram не принимает photo-результат");
+  assert.equal(closed.input_message_content.parse_mode, "HTML");
+  assert.match(closed.input_message_content.message_text, /исходники закрыты/);
+  assert.ok(
+    !closed.input_message_content.message_text.includes("github.com"),
+    "приватный репозиторий не должен получать кнопку GitHub"
+  );
+  assert.ok(
+    !(closed.reply_markup?.inline_keyboard ?? []).flat().some((button) => (button.url || "").includes("github.com")),
+    "и кнопок под карточкой тоже"
+  );
+  assert.equal(next.type, "photo", "остальные проекты с картинками остаются картинками");
+});
+
+test("/setup refuses to half-configure a worker without BOT_TOKEN", async () => {
+  const response = await worker.fetch(new Request(`${BASE}/setup?key=setup-key`), makeEnv({ BOT_TOKEN: "" }), makeCtx());
+  assert.equal(response.status, 500);
+  assert.equal(await response.text(), "BOT_TOKEN not set");
+});
+
+test("paths Telegram does not use answer 404 instead of pretending to work", async () => {
+  for (const [method, path] of [
+    ["GET", "/webhook"],
+    ["GET", "/nope"],
+    ["POST", "/nope"]
+  ]) {
+    const response = await worker.fetch(new Request(`${BASE}${path}`, { method }), makeEnv(), makeCtx());
+    assert.equal(response.status, 404, `${method} ${path} должен быть 404`);
+    assert.equal(await response.text(), "Not found");
+  }
+});
+
+test("/webhook without BOT_TOKEN answers 500 rather than a silent 200", async () => {
+  const response = await sendWebhook(
+    makeEnv({ BOT_TOKEN: "" }),
+    makeCtx(),
+    messageUpdate("/start", { chatId: 1 }),
+    {}
+  );
+  assert.equal(response.status, 500);
+  assert.equal(await response.text(), "BOT_TOKEN not set");
+});
+
+test("a broken update answers 500 so Telegram retries instead of dropping it", async () => {
+  const env = makeEnv();
+  const broken = await worker.fetch(
+    new Request(`${BASE}/webhook`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Telegram-Bot-Api-Secret-Token": SECRET },
+      body: "{not json"
+    }),
+    env,
+    makeCtx()
+  );
+  assert.equal(broken.status, 500);
+  assert.equal(await broken.text(), "Error", "битое тело — это 500, а не «ОК, обработали»");
+
+  const half = await worker.fetch(
+    new Request(`${BASE}/webhook`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Telegram-Bot-Api-Secret-Token": SECRET },
+      body: JSON.stringify({ update_id: 9, callback_query: { id: "cb", data: "show:menu", from: { id: 5 } } })
+    }),
+    env,
+    makeCtx()
+  );
+  assert.equal(half.status, 500, "нажатие без message не должно превращаться в тихий успех");
+});
+
+test("a GitHub that does not answer at all still leaves the top readable", async () => {
+  const instance = cleanWorkerCache();
+  const calls = installFetch({ githubError: true });
+  await webhookOn(instance, makeEnv(), makeCtx(), messageUpdate("/top", { chatId: 310 }));
+
+  const expected = CATALOGUE.projects
+    .map((project) => project.stars || 0)
+    .sort((a, b) => b - a)
+    .slice(0, 3);
+  assert.deepEqual(starCounts(lastText(calls)), expected, "сетевой сбой не должен превращать топ в нули");
+});
+
+test("a noop button answers the tap and touches nothing else", async () => {
+  const calls = installFetch();
+  await sendWebhook(makeEnv(), makeCtx(), callbackUpdate("noop", { chatId: 311 }));
+
+  assert.deepEqual(
+    calls.map((call) => call.method),
+    ["answerCallbackQuery"],
+    "подсказка «сейчас покажем» не должна ничего редактировать и ничего считать"
+  );
+  assert.equal(callsOf(calls, "answerCallbackQuery").at(-1).body.callback_query_id, "cb-1");
+});
+
+// ——— пакет 2: всё, до чего живой каталог и здоровый Telegram не доводят ———
+
+// D1 без `results` и с `first() === null` — это не то, что отдаёт обвязка из тестов
+// выше: так выглядит ответ просроченной или перезапущенной базы.
+function dbEmpty() {
+  return {
+    prepare() {
+      return {
+        bind() {
+          return this;
+        },
+        async run() {
+          return { success: true };
+        },
+        async all() {
+          return {};
+        },
+        async first() {
+          return null;
+        }
+      };
+    }
+  };
+}
+
+function inlineUpdate(query) {
+  return { update_id: 7, inline_query: { id: "iq-1", offset: "", ...query } };
+}
+
+test("/news drops events there is nothing to sign", async () => {
+  const calls = installFetch({
+    events: [
+      { type: "PushEvent" },
+      { type: "WatchEvent", repo: { name: "ssrjkk/qualix" }, payload: {} },
+      { type: "PushEvent", repo: { name: "ssrjkk/raven" }, payload: {} },
+      { type: "ReleaseEvent", repo: { name: "ssrjkk/harvest" } },
+      { type: "CreateEvent", repo: { name: "ssrjkk/volley" }, payload: { ref_type: "branch" } },
+      { type: "DeleteEvent", repo: { name: "ssrjkk/corvid" }, payload: { ref: "tmp" } },
+      { type: "PullRequestEvent", repo: { name: "ssrjkk/drafter" }, payload: { pull_request: { title: "нет действия" } } },
+      { type: "PullRequestEvent", repo: { name: "ssrjkk/verso" }, payload: { action: "closed" } },
+      {
+        type: "PullRequestEvent",
+        repo: { name: "ssrjkk/tt-bot" },
+        payload: { action: "closed", pull_request: {} }
+      },
+      // Имя репозитория без слэша — из того же ответа GitHub, но подпись обязана
+      // остаться читаемой: иначе в списке появляется пустое место вместо проекта.
+      { type: "CreateEvent", repo: { name: "solo" }, payload: { ref_type: "branch", ref: "gh-pages" } },
+      { type: "DeleteEvent", repo: { name: "ssrjkk/qa-arsenal" }, payload: { ref_type: "branch", ref: "tmp" } },
+      {
+        type: "PullRequestEvent",
+        repo: { name: "ssrjkk/mobius" },
+        payload: { action: "opened", pull_request: { title: "правится <b>это</b>" } }
+      },
+      pushEvent("wake", "main", "ff00", "ee11")
+    ]
+  });
+  await sendWebhook(makeEnv(), makeCtx(), messageUpdate("/news", { chatId: 400 }));
+
+  const text = lastText(calls);
+  assert.deepEqual(
+    text.split("\n").filter((line) => line.startsWith("•")),
+    [
+      "• <b>solo</b> — создан branch gh-pages",
+      "• <b>qa-arsenal</b> — удалён branch tmp",
+      "• <b>mobius</b> — pull request opened: правится &lt;b&gt;это&lt;/b&gt;",
+      "• <b>wake</b> — push в main"
+    ],
+    text
+  );
+  for (const dropped of ["raven", "harvest", "volley", "corvid", "drafter", "verso", "tt-bot", "qualix"]) {
+    assert.ok(!text.includes(dropped), `событие без подписи не должно попадать в ленту: ${dropped}`);
+  }
+});
+
+test("a GitHub answer without a star count leaves the catalogue number in place", async () => {
+  const instance = cleanWorkerCache();
+  // 200 без stargazers_count — это не «ноль звёзд», а обрывок ответа: брать из него
+  // нечего, и иначе raven с тремя звёздами в данных падает до 0★.
+  const calls = installFetch({ stars: { raven: null }, starsDefault: 0 });
+  await webhookOn(instance, makeEnv(), makeCtx(), messageUpdate("/top", { chatId: 401 }));
+
+  assert.deepEqual(starCounts(lastText(calls)), [3, 0, 0]);
+});
+
+test("an update with no author is answered but never counted", async () => {
+  const calls = installFetch();
+  const env = makeEnv();
+  const update = messageUpdate("/start", { chatId: 402 });
+  delete update.message.from;
+  const response = await sendWebhook(env, makeCtx(), update);
+
+  assert.equal(response.status, 200);
+  assert.match(lastText(calls), /Привет!/, "без автора отвечать всё равно надо");
+  assert.equal(env.inserts.length, 0, "трекать некого");
+});
+
+test("a message of only spaces is treated as an unknown command", async () => {
+  const calls = installFetch();
+  await sendWebhook(makeEnv(), makeCtx(), messageUpdate("   ", { chatId: 403 }));
+
+  assert.equal(lastText(calls), LANG.ru.unknown + LANG.ru.help);
+});
+
+test("a callback with neither author nor payload changes nothing", async () => {
+  const calls = installFetch();
+  const env = makeEnv();
+  const update = callbackUpdate("noop", { chatId: 404 });
+  delete update.callback_query.data;
+  delete update.callback_query.from;
+  const response = await sendWebhook(env, makeCtx(), update);
+
+  assert.equal(response.status, 200, "Telegram не должен повторять такой апдейт");
+  assert.equal(calls.length, 0, "редактировать и отвечать не на что");
+  assert.equal(env.inserts.length, 0);
+});
+
+test("an invite for a project the catalogue does not know still names it", async () => {
+  const calls = installFetch();
+  await sendWebhook(makeEnv(), makeCtx(), callbackUpdate("ref:ghost", { chatId: 405 }));
+
+  const buttons = callsOf(calls, "sendMessage").at(-1).body.reply_markup.inline_keyboard.flat();
+  const share = buttons.find((button) => String(button.url).startsWith("https://t.me/share/url"));
+  assert.ok(share, "кнопка «Поделиться» обязана остаться");
+  assert.ok(decodeURIComponent(share.url).includes("ghost"), share.url);
+});
+
+test("switching language answers in the language the reader just chose", async () => {
+  cleanWorkerCache();
+  const calls = installFetch();
+  const env = makeEnv();
+
+  await sendWebhook(env, makeCtx(), callbackUpdate("lang:ru", { chatId: 406 }));
+  assert.equal(callsOf(calls, "editMessageText").at(-1).body.text, LANG.ru.langSet);
+
+  await sendWebhook(env, makeCtx(), callbackUpdate("lang:не-язык", { chatId: 406 }));
+  assert.equal(callsOf(calls, "editMessageText").at(-1).body.text, LANG.ru.langSet);
+
+  await sendWebhook(env, makeCtx(), callbackUpdate("lang:en", { chatId: 406 }));
+  assert.equal(callsOf(calls, "editMessageText").at(-1).body.text, LANG.en.langSet);
+
+  await sendWebhook(env, makeCtx(), callbackUpdate("lang:ru", { chatId: 406 }));
+  assert.equal(callsOf(calls, "editMessageText").at(-1).body.text, LANG.ru.langSet);
+  assert.equal(await env.BOT_KV.get("lang:406"), "ru");
+});
+
+test("inline results answer in the language of the one who typed the query", async () => {
+  cleanWorkerCache();
+  const env = makeEnv();
+
+  for (const [languageCode, pack] of [["en", LANG.en], ["ru", LANG.ru]]) {
+    const calls = installFetch();
+    await sendWebhook(env, makeCtx(), inlineUpdate({ from: { id: 300, language_code: languageCode }, query: "raven" }));
+    const result = callsOf(calls, "answerInlineQuery").at(-1).body.results.find((item) => item.id === "raven");
+    assert.ok(result, `raven должен найтись в inline для ${languageCode}`);
+    assert.ok(result.caption.includes(pack.siteLabel), result.caption);
+    assert.ok(!result.caption.includes(languageCode === "en" ? LANG.ru.siteLabel : LANG.en.siteLabel));
+  }
+});
+
+test("a chosen inline result with no author is acknowledged and not counted", async () => {
+  const calls = installFetch();
+  const env = makeEnv();
+  const response = await sendWebhook(env, makeCtx(), {
+    update_id: 8,
+    chosen_inline_result: { result_id: "raven", from: undefined }
+  });
+
+  assert.equal(response.status, 200);
+  assert.equal(calls.length, 0);
+  assert.equal(env.inserts.length, 0);
+});
+
+test("/setup without a webhook secret registers a plain url", async () => {
+  const calls = installFetch();
+  const response = await worker.fetch(
+    new Request(`${BASE}/setup?key=setup-key`),
+    makeEnv({ WEBHOOK_SECRET: undefined }),
+    makeCtx()
+  );
+
+  assert.equal(response.status, 200);
+  assert.equal("secret_token" in callsOf(calls, "setWebhook").at(-1).body, false);
+});
+
+test("/feedback does not thank the reader when the owner chat refused the note", async () => {
+  // 400 с пустым телом — это ответ Telegram, а не сбой транспорта: его не повторяют.
+  const calls = installFetch({
+    telegram: ({ method, body }) =>
+      method === "sendMessage" && String(body.chat_id) === "42" ? new Response("", { status: 400 }) : null
+  });
+  const env = makeEnv();
+  await sendWebhook(env, makeCtx(), messageUpdate("/feedback держите скрин", { chatId: 407 }));
+
+  assert.equal(lastText(calls), LANG.ru.feedbackFailed);
+  assert.ok(callsOf(calls, "sendMessage").some((call) => String(call.body.chat_id) === "42"));
+  assert.equal(trackedInserts(env, "feedback").length, 0, "не доставлено — нечего и считать");
+});
+
+test("a D1 answer without rows leaves stats and broadcast on zero", async () => {
+  const calls = installFetch();
+  const env = makeEnv({ BOT_DB: dbEmpty() });
+  await sendWebhook(env, makeCtx(), messageUpdate("/stats", { chatId: 42 }));
+
+  const stats = lastText(calls);
+  for (const label of ["Пользователей", "Сообщений", "Сегодня", "Команд", "Открытий карточек", "Выборов из inline", "Отзывов"]) {
+    assert.ok(stats.includes(`${label}: <b>0</b>`), `${label}: ${stats}`);
+  }
+  assert.equal(stats.split(LANG.ru.statsEmpty).length - 1, 6, "каждый пустой список говорит об этом сам");
+  assert.match(stats, /▁ 0/, "неделя без событий — это семь нулей, а не пустота");
+
+  await sendWebhook(env, makeCtx(), messageUpdate("/broadcast всем привет", { chatId: 42 }));
+  assert.equal(lastText(calls), LANG.ru.broadcastEmpty);
+});
+
+test("a project without a title is still named, shared and keyed", () => {
+  // Имя без title — это не про каталог (проверка данных требует title у каждого
+  // проекта), а про то, что карточка, шеринг и клавиатура подписаны одинаково.
+  const bare = { name: "ghost-project", lang: "Python", desc: "d", desc_en: "d" };
+  assert.equal(displayName(bare), "ghost-project");
+  assert.equal(displayName({ ...bare, title: "Ghost" }), "Ghost");
+  assert.ok(projectCard(bare, {}, "ru").startsWith("<b>ghost-project</b>"));
+  assert.match(
+    projectCard({ ...bare, stars: 0, private: true }, { "ghost-project": { stars: 0 } }, "ru"),
+    /исходники закрыты/
+  );
+  assert.ok(shareProjectUrl("ru", bare).includes("start%3Dp_ghost-project"), shareProjectUrl("ru", bare));
+  assert.deepEqual(
+    projectDetailKeyboard("ru", bare).flat().map((button) => button.callback_data ?? "url"),
+    ["url", "page:0", "show:menu"],
+    "без site, repo и бота остаётся только шеринг и возвращальные кнопки"
+  );
+});

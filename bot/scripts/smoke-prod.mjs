@@ -7,7 +7,8 @@ import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const DEFAULT_URL = "https://ssrjkk-bot.ray013lefe.workers.dev";
+// Экспортируется только для тестов: дефолт обязан вести на прод-воркер, а не на localhost.
+export const DEFAULT_URL = "https://ssrjkk-bot.ray013lefe.workers.dev";
 export const ATTEMPTS = 3;
 const RETRY_DELAY_MS = 2000;
 const REQUEST_TIMEOUT_MS = 15000;
@@ -113,15 +114,24 @@ export async function runChecks(fetchImpl, options = {}) {
   return { results, ok: results.every((result) => result.ok) };
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const baseUrl = (process.env.WORKER_URL ?? DEFAULT_URL).replace(/\/+$/, "");
-  const { results, ok } = await runChecks(fetch, { baseUrl });
+// Экспортируется только для тестов: тот же прогон, что делает CLI, но с подменяемым
+// fetch — так проверяется и адрес прода по умолчанию, и вывод, и код возврата.
+export async function main({
+  fetchImpl = fetch,
+  baseUrl = (process.env.WORKER_URL ?? DEFAULT_URL).replace(/\/+$/, "")
+} = {}) {
+  const { results, ok } = await runChecks(fetchImpl, { baseUrl });
   for (const result of results) {
     console.log(`${result.ok ? "OK  " : "FAIL"} ${result.name}: ${result.detail}`);
   }
   console.log(
     `${baseUrl}: ${results.filter((result) => result.ok).length}/${results.length} проверок пройдено`
   );
+  return { results, ok };
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const { ok } = await main();
   // process.exit() на Windows обрывает живые handle'ы fetch, и Node падает ассертом
   // libuv уже после вывода результата. Ставим код возврата и даём петле догореть.
   process.exitCode = ok ? 0 : 1;

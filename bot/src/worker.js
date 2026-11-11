@@ -37,40 +37,40 @@ export const LANG = {
     help: "/start - запуск\n/projects - проекты GitHub\n/news - обновления с GitHub\n/sites - сайты проектов\n/bots - Telegram-боты\n/search <запрос> - поиск проектов\n/top - топ по звёздам\n/links - ссылки\n/channels - каналы\n/about - обо мне\n/feedback <текст> - написать владельцу\n/stats - статистика (владелец)\n/myid - мой ID\n/help - справка",
     unknown: "Не знаю такой команды.\n\n",
     page: (cur, total) => `Стр. ${cur}/${total}`,
-    prev: "⬅️",
-    next: "➡️",
-    projects: "📦 Проекты",
-    top: "🏆 Топ",
-    links: "🔗 Ссылки",
-    channels: "📢 Каналы",
-    sites: "🌐 Сайты",
-    bots: "🤖 Боты",
-    helpBtn: "❓ Помощь",
-    lang: "🌐 Язык",
-    aboutBtn: "👤 Обо мне",
+    prev: "←",
+    next: "→",
+    projects: "Проекты",
+    top: "Топ",
+    links: "Ссылки",
+    channels: "Каналы",
+    sites: "Сайты",
+    bots: "Боты",
+    helpBtn: "Помощь",
+    lang: "Язык",
+    aboutBtn: "Обо мне",
     langMenu: "Выбери язык:",
-    langSet: (l) => `Язык: ${l === "ru" ? "🇷🇺 Русский" : "🇬🇧 English"}`,
-    back: "🔙 Назад",
+    langSet: "Язык: Русский",
+    back: "Назад",
     toMenu: "В меню",
     toProjects: "К проектам",
     siteLabel: "Сайт",
     botLabel: "Бот",
     shotLabel: "Скриншот",
     privateLabel: "исходники закрыты",
-    invite: "👥 Пригласить",
-    share: "📣 Поделиться",
+    invite: "Пригласить",
+    share: "Поделиться",
     shareText: (title) => `Мои проекты у ${GITHUB_USERNAME}: ${title}`,
-    shareProject: "📣 Поделиться проектом",
+    shareProject: "Поделиться проектом",
     shareProjectText: (title, description) => `${title} — ${description}`,
-    newsBtn: "📰 Обновления",
-    newsTitle: "<b>📰 Что произошло на GitHub:</b>",
+    newsBtn: "Обновления",
+    newsTitle: "<b>Что произошло на GitHub:</b>",
     newsEmpty: "Свежих событий нет: публичный API GitHub не ответил или репозитории молчат.",
     newsPush: (branch) => `push в ${branch}`,
     newsRelease: (tag) => `релиз ${tag}`,
     newsCreate: (type, ref) => `создан ${type} ${ref}`,
     newsDelete: (type, ref) => `удалён ${type} ${ref}`,
     newsPull: (action, title) => `pull request ${action}: ${title}`,
-    feedbackNote: (note, id) => `💬 <b>Обратная связь</b>\n\n${note}\n\nот <code>${id}</code>`,
+    feedbackNote: (note, id) => `<b>Обратная связь</b>\n\n${note}\n\nот <code>${id}</code>`,
     stackTitle: (token) => `<b>Мои проекты — ${token}:</b>`,
     stackAll: "Все стеки",
     stackEmpty: (token) => `Проектов со стеком «${token}» в каталоге нет.`,
@@ -83,7 +83,7 @@ export const LANG = {
     notOwner: "Команда доступна только владельцу.",
     notConfigured: "Владелец не настроен (OWNER_ID).",
     statsEmpty: "Пока нет данных.",
-    stats: (s) => `📊 <b>Статистика</b>
+    stats: (s) => `<b>Статистика</b>
 
 Пользователей: <b>${s.users}</b>
 Сообщений: <b>${s.msgs}</b>
@@ -115,8 +115,8 @@ ${s.refList}`,
     searchPrompt: "Формат: /search <запрос>\nНапример: /search python",
     searchEmpty: (q) => `По запросу «${q}» ничего не найдено.`,
     searchTitle: (q) => `<b>Результаты по запросу «${q}»:</b>`,
-    topTitle: "<b>🏆 Топ проектов по звёздам:</b>",
-    about: (projects) => `👤 <b>Обо мне</b>\n\nРазрабатываю ботов, AI-инструменты, Web3 и QA-платформы.\nВсе проекты — открытый код на GitHub.\n\n🛠 Стек: Python, TypeScript, Go, Rust, C++, Solidity\n📦 Проектов: ${projects} — сайты, боты и инженерные инструменты\n📢 Канал: @b2wmain\n\nКнопки ниже — мои ссылки 👇`,
+    topTitle: "<b>Топ проектов по звёздам:</b>",
+    about: (projects) => `<b>Обо мне</b>\n\nРазрабатываю ботов, AI-инструменты, Web3 и QA-платформы.\nВсе проекты — открытый код на GitHub.\n\nСтек: Python, TypeScript, Go, Rust, C++, Solidity\nПроектов: ${projects} — сайты, боты и инженерные инструменты\nКанал: @b2wmain\n\nКнопки ниже — мои ссылки.`,
     broadcastPrompt: "Формат: /broadcast <текст>",
     broadcastDone: (ok, fail) => `Отправлено: <b>${ok}</b>, не доставлено: <b>${fail}</b>.`,
     broadcastEmpty: "В рассылке нет ни одного пользователя."
@@ -131,40 +131,40 @@ ${s.refList}`,
     help: "/start - start\n/projects - GitHub projects\n/news - what happened on GitHub\n/sites - project sites\n/bots - Telegram bots\n/search <query> - search projects\n/top - top by stars\n/links - links\n/channels - channels\n/about - about me\n/feedback <text> - write to the owner\n/stats - stats (owner)\n/myid - my ID\n/help - help",
     unknown: "Unknown command.\n\n",
     page: (cur, total) => `Page ${cur}/${total}`,
-    prev: "⬅️",
-    next: "➡️",
-    projects: "📦 Projects",
-    top: "🏆 Top",
-    links: "🔗 Links",
-    channels: "📢 Channels",
-    sites: "🌐 Sites",
-    bots: "🤖 Bots",
-    helpBtn: "❓ Help",
-    lang: "🌐 Language",
-    aboutBtn: "👤 About me",
+    prev: "←",
+    next: "→",
+    projects: "Projects",
+    top: "Top",
+    links: "Links",
+    channels: "Channels",
+    sites: "Sites",
+    bots: "Bots",
+    helpBtn: "Help",
+    lang: "Language",
+    aboutBtn: "About me",
     langMenu: "Choose language:",
-    langSet: (l) => `Language: ${l === "ru" ? "🇷🇺 Russian" : "🇬🇧 English"}`,
-    back: "🔙 Back",
+    langSet: "Language: English",
+    back: "Back",
     toMenu: "Menu",
     toProjects: "Projects",
     siteLabel: "Site",
     botLabel: "Bot",
     shotLabel: "Screenshot",
     privateLabel: "source private",
-    invite: "👥 Invite",
-    share: "📣 Share",
+    invite: "Invite",
+    share: "Share",
     shareText: (title) => `${GITHUB_USERNAME}'s projects: ${title}`,
-    shareProject: "📣 Share this project",
+    shareProject: "Share this project",
     shareProjectText: (title, description) => `${title} — ${description}`,
-    newsBtn: "📰 Updates",
-    newsTitle: "<b>📰 What happened on GitHub:</b>",
+    newsBtn: "Updates",
+    newsTitle: "<b>What happened on GitHub:</b>",
     newsEmpty: "No fresh events: the public GitHub API did not answer or the repositories are quiet.",
     newsPush: (branch) => `pushed to ${branch}`,
     newsRelease: (tag) => `release ${tag}`,
     newsCreate: (type, ref) => `created ${type} ${ref}`,
     newsDelete: (type, ref) => `deleted ${type} ${ref}`,
     newsPull: (action, title) => `pull request ${action}: ${title}`,
-    feedbackNote: (note, id) => `💬 <b>Feedback</b>\n\n${note}\n\nfrom <code>${id}</code>`,
+    feedbackNote: (note, id) => `<b>Feedback</b>\n\n${note}\n\nfrom <code>${id}</code>`,
     stackTitle: (token) => `<b>My projects — ${token}:</b>`,
     stackAll: "All stacks",
     stackEmpty: (token) => `No catalogue project uses «${token}».`,
@@ -177,7 +177,7 @@ ${s.refList}`,
     notOwner: "Only the owner can use this command.",
     notConfigured: "Owner is not configured (OWNER_ID).",
     statsEmpty: "No data yet.",
-    stats: (s) => `📊 <b>Statistics</b>
+    stats: (s) => `<b>Statistics</b>
 
 Users: <b>${s.users}</b>
 Messages: <b>${s.msgs}</b>
@@ -209,8 +209,8 @@ ${s.refList}`,
     searchPrompt: "Format: /search <query>\nExample: /search python",
     searchEmpty: (q) => `Nothing found for «${q}».`,
     searchTitle: (q) => `<b>Results for «${q}»:</b>`,
-    topTitle: "<b>🏆 Top projects by stars:</b>",
-    about: (projects) => `👤 <b>About me</b>\n\nI build bots, AI tools, Web3 and QA platforms.\nAll projects are open source on GitHub.\n\n🛠 Stack: Python, TypeScript, Go, Rust, C++, Solidity\n📦 Projects: ${projects} — sites, bots and engineering tools\n📢 Channel: @b2wmain\n\nButtons below are my links 👇`,
+    topTitle: "<b>Top projects by stars:</b>",
+    about: (projects) => `<b>About me</b>\n\nI build bots, AI tools, Web3 and QA platforms.\nAll projects are open source on GitHub.\n\nStack: Python, TypeScript, Go, Rust, C++, Solidity\nProjects: ${projects} — sites, bots and engineering tools\nChannel: @b2wmain\n\nButtons below are my links.`,
     broadcastPrompt: "Format: /broadcast <text>",
     broadcastDone: (ok, fail) => `Sent: <b>${ok}</b>, failed: <b>${fail}</b>.`,
     broadcastEmpty: "No users to broadcast to."
@@ -260,6 +260,14 @@ const langCache = new Map();
 export const LANG_CACHE_LIMIT = 2000;
 let starsCache = null;
 let starsFetchedAt = 0;
+
+// Только для тестов: оба кеша живут в памяти модуля, и без сброса проверки, которым
+// важно начало TTL, зависели бы от порядка запуска, а не от кода.
+export function resetCaches() {
+  langCache.clear();
+  starsCache = null;
+  starsFetchedAt = 0;
+}
 
 function esc(value) {
   return String(value)
@@ -394,7 +402,11 @@ async function getStars(env, ctx) {
   await Promise.allSettled(
     PROJECTS.filter((project) => !project.private).map(async (project) => {
       const body = await fetchGithub(`${GH_API}/${GITHUB_USERNAME}/${project.name}`, project.name);
-      if (body) result[project.name] = { stars: body.stargazers_count ?? 0 };
+      // Только число засчитываем: ответ без stargazers_count (редкий 200 от прокси или
+      // изменённый API) иначе обнулил бы звёзды, которые уже лежат в каталоге.
+      if (body && typeof body.stargazers_count === "number") {
+        result[project.name] = { stars: body.stargazers_count };
+      }
     })
   );
 
@@ -470,14 +482,25 @@ function describeEvent(event) {
     const tag = (payload.release || {}).tag_name;
     return tag ? { ...base, what: ["release", tag] } : null;
   }
+  // Правило одно для всех типов: нечем подписать — нет строки. Иначе читатель
+  // получает «создан branch » с пустым местом вместо имени ветки или «pull request
+  // opened: » без заголовка. ref_type и заголовок GitHub кладёт всегда, поэтому
+  // отсутствие любого из них — это обрывок ответа, а не событие.
   if (event.type === "CreateEvent") {
-    return { ...base, what: ["create", payload.ref_type || "", payload.ref || ""] };
+    return payload.ref && payload.ref_type
+      ? { ...base, what: ["create", payload.ref_type, payload.ref] }
+      : null;
   }
   if (event.type === "DeleteEvent") {
-    return { ...base, what: ["delete", payload.ref_type || "", payload.ref || ""] };
+    return payload.ref && payload.ref_type
+      ? { ...base, what: ["delete", payload.ref_type, payload.ref] }
+      : null;
   }
   if (event.type === "PullRequestEvent") {
-    return { ...base, what: ["pull", payload.action || "", (payload.pull_request || {}).title || ""] };
+    const title = (payload.pull_request || {}).title;
+    return payload.action && title
+      ? { ...base, what: ["pull", payload.action, title] }
+      : null;
   }
   return null;
 }
@@ -497,14 +520,22 @@ function newsLine(item, lang) {
   return `• <b>${esc(item.repo)}</b> — ${esc(what)}`;
 }
 
+// Стек проекта — одно поле lang со списком через запятую. Разбором занимается
+// только это место: фасеты и фильтр обязаны видеть одинаковые токены.
+function stackTokens(project) {
+  return String(project.lang || "")
+    .split(",")
+    .map((token) => token.trim())
+    .filter(Boolean);
+}
+
 // Фасеты собираются из каталога, а не из списка в коде: новый проект сам
 // появляется в фильтре, и в фильтре не остаётся технологии без карточек.
 function stackFacets(limit = STACK_FACETS) {
   const counts = new Map();
   for (const project of PROJECTS) {
-    for (const token of String(project.lang || "").split(",")) {
-      const name = token.trim();
-      if (name) counts.set(name, (counts.get(name) || 0) + 1);
+    for (const name of stackTokens(project)) {
+      counts.set(name, (counts.get(name) || 0) + 1);
     }
   }
   return [...counts.entries()]
@@ -521,14 +552,18 @@ function langCacheSet(chatId, lang) {
 }
 
 function matchesStack(project, stack) {
-  return String(project.lang || "")
-    .split(",")
-    .map((token) => token.trim().toLowerCase())
-    .includes(stack.toLowerCase());
+  const needle = stack.toLowerCase();
+  return stackTokens(project).some((token) => token.toLowerCase() === needle);
 }
 
 function desc(project, lang) {
   return lang === "en" && project.desc_en ? project.desc_en : project.desc;
+}
+
+// Как проект подписан в интерфейсе. Проверка данных требует title у каждого проекта,
+// но карточка не должна печатать пустое имя, если поле всё-таки потерялось.
+export function displayName(project) {
+  return project.title || project.name;
 }
 
 // Ключа в stars нет, когда GitHub API не ответил (лимит 60 запросов в час на IP идёт без токена).
@@ -548,7 +583,7 @@ export function projectCard(project, stars, lang) {
   if (project.bot) links.push(`<a href="${project.bot}">${LANG[lang].botLabel}</a>`);
   for (const link of project.links || []) links.push(`<a href="${esc(link.url)}">${esc(link.name)}</a>`);
   if (project.private) links.push(LANG[lang].privateLabel);
-  return `<b>${esc(project.title || project.name)}</b> [${esc(project.lang)}]${starCount}\n${esc(desc(project, lang))}\n${links.join(" · ")}`;
+  return `<b>${esc(displayName(project))}</b> [${esc(project.lang)}]${starCount}\n${esc(desc(project, lang))}\n${links.join(" · ")}`;
 }
 
 function sortByStars(projects, stars) {
@@ -577,20 +612,20 @@ function weekBars(rows) {
 
 function titleOf(name) {
   const project = PROJECTS.find((item) => item.name === name);
-  return project ? project.title || project.name : name;
+  return project ? displayName(project) : name;
 }
 
 export function shareProjectUrl(lang, project) {
   const link = `${BOT_URL}?start=p_${project.name}`;
-  const text = LANG[lang].shareProjectText(project.title || project.name, desc(project, lang));
+  const text = LANG[lang].shareProjectText(displayName(project), desc(project, lang));
   return `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`;
 }
 
 export function projectDetailKeyboard(lang, project, userId = null) {
   const row = [];
-  if (project.site) row.push({ text: `🌐 ${LANG[lang].siteLabel}`, url: project.site });
+  if (project.site) row.push({ text: `${LANG[lang].siteLabel} ↗`, url: project.site });
   if (project.repo && !project.private) row.push({ text: "GitHub", url: project.repo });
-  if (project.bot) row.push({ text: `🤖 ${LANG[lang].botLabel}`, url: project.bot });
+  if (project.bot) row.push({ text: `${LANG[lang].botLabel} ↗`, url: project.bot });
   const rows = [];
   if (row.length) rows.push(row);
   if (project.links?.length) rows.push(project.links.map((link) => ({ text: link.name, url: link.url })));
@@ -638,7 +673,7 @@ async function projectsList(env, ctx, lang, page, stack = null) {
 
   const rows = slice.map((project) => [
     {
-      text: `${project.shot ? "📷" : "ℹ️"} ${project.title || project.name}`,
+      text: displayName(project),
       callback_data: `p:${project.name}`
     }
   ]);
@@ -675,19 +710,18 @@ async function startText(env, ctx, lang) {
   const sites = PROJECTS.filter((project) => project.site).length;
   const bots = PROJECTS.filter((project) => project.bot).length;
   if (lang === "ru") {
-    return `👋 Привет! Я бот ssrjkk.\n\n📦 Проектов: ${PROJECTS.length} · 🌐 Сайтов: ${sites} · 🤖 Ботов: ${bots} · ⭐ Звёзд: ${sum}\n\nКоманды и кнопки ниже — проекты, сайты, боты, топ, поиск и ссылки.`;
+    return `Привет! Я бот ssrjkk.\n\nПроектов: ${PROJECTS.length} · Сайтов: ${sites} · Ботов: ${bots} · Звёзд: ${sum}★\n\nКоманды и кнопки ниже — проекты, сайты, боты, топ, поиск и ссылки.`;
   }
-  return `👋 Hi! I'm ssrjkk bot.\n\n📦 Projects: ${PROJECTS.length} · 🌐 Sites: ${sites} · 🤖 Bots: ${bots} · ⭐ Stars: ${sum}\n\nUse commands or the buttons below — projects, sites, bots, top, search and links.`;
+  return `Hi! I'm ssrjkk bot.\n\nProjects: ${PROJECTS.length} · Sites: ${sites} · Bots: ${bots} · Stars: ${sum}★\n\nUse commands or the buttons below — projects, sites, bots, top, search and links.`;
 }
 
 async function topText(env, ctx, lang) {
   const stars = await getStars(env, ctx);
-  const medals = ["🥇", "🥈", "🥉"];
   const lines = sortByStars(PROJECTS, stars)
     .slice(0, 3)
     .map((project, index) => {
       const count = starCountFor(project, stars);
-      return `${medals[index]} <b>${esc(project.title || project.name)}</b> [${esc(project.lang)}] — ${count}★`;
+      return `${index + 1}. <b>${esc(displayName(project))}</b> [${esc(project.lang)}] — ${count}★`;
     });
   return `${LANG[lang].topTitle}\n\n${lines.join("\n")}`;
 }
@@ -726,8 +760,8 @@ function urlKeyboard(lang, items) {
 function langKeyboard(lang) {
   return [
     [
-      { text: "🇷🇺 Русский", callback_data: "lang:ru" },
-      { text: "🇬🇧 English", callback_data: "lang:en" }
+      { text: "Русский", callback_data: "lang:ru" },
+      { text: "English", callback_data: "lang:en" }
     ],
     [{ text: LANG[lang].back, callback_data: "show:menu" }]
   ];
@@ -745,7 +779,7 @@ function track(env, ctx, userId, kind, value) {
 
 async function sendSites(env, ctx, chatId, lang) {
   const items = PROJECTS.filter((project) => project.site).map((project) => ({
-    name: `${project.title || project.name} — ${new URL(project.site).host}`,
+    name: `${displayName(project)} — ${new URL(project.site).host}`,
     url: project.site
   }));
   await sendMessage(env.BOT_TOKEN, chatId, LANG[lang].sitesTitle, urlKeyboard(lang, items));
@@ -753,7 +787,7 @@ async function sendSites(env, ctx, chatId, lang) {
 
 async function sendBots(env, ctx, chatId, lang) {
   const items = PROJECTS.filter((project) => project.bot).map((project) => ({
-    name: `${project.title || project.name} — @${new URL(project.bot).pathname.slice(1)}`,
+    name: `${displayName(project)} — @${new URL(project.bot).pathname.slice(1)}`,
     url: project.bot
   }));
   await sendMessage(env.BOT_TOKEN, chatId, LANG[lang].botsTitle, urlKeyboard(lang, items));
@@ -1138,7 +1172,7 @@ async function handleCallback(env, ctx, callback) {
       keyboard = urlKeyboard(
         lang,
         PROJECTS.filter((project) => project.site).map((project) => ({
-          name: `${project.title || project.name} — ${new URL(project.site).host}`,
+          name: `${displayName(project)} — ${new URL(project.site).host}`,
           url: project.site
         }))
       );
@@ -1147,7 +1181,7 @@ async function handleCallback(env, ctx, callback) {
       keyboard = urlKeyboard(
         lang,
         PROJECTS.filter((project) => project.bot).map((project) => ({
-          name: `${project.title || project.name} — @${new URL(project.bot).pathname.slice(1)}`,
+          name: `${displayName(project)} — @${new URL(project.bot).pathname.slice(1)}`,
           url: project.bot
         }))
       );
@@ -1178,7 +1212,8 @@ async function handleCallback(env, ctx, callback) {
         env.BOT_KV.put(`lang:${chatId}`, next).catch((error) => console.error("lang put:", error))
       );
     }
-    await editMessage(token, chatId, messageId, LANG[next].langSet(next), langKeyboard(next));
+    // Ответ уже на новом языке: langSet — строка своей таблицы, а не выбор по параметру.
+    await editMessage(token, chatId, messageId, LANG[next].langSet, langKeyboard(next));
     await callApi(token, "answerCallbackQuery", { callback_query_id: callback.id });
   }
 }
@@ -1202,9 +1237,9 @@ async function handleInline(env, query) {
     // из выборки в чужом чате сразу видно, какой проект показали.
     .map((project) => {
       const buttons = [];
-      if (project.site) buttons.push({ text: `🌐 ${LANG[lang].siteLabel}`, url: project.site });
+      if (project.site) buttons.push({ text: `${LANG[lang].siteLabel} ↗`, url: project.site });
       if (project.repo && !project.private) buttons.push({ text: "GitHub", url: project.repo });
-      if (project.bot) buttons.push({ text: `🤖 ${LANG[lang].botLabel}`, url: project.bot });
+      if (project.bot) buttons.push({ text: `${LANG[lang].botLabel} ↗`, url: project.bot });
       const rows = [];
       if (buttons.length) rows.push(buttons);
       if (project.links?.length) rows.push(project.links.map((link) => ({ text: link.name, url: link.url })));
@@ -1216,7 +1251,7 @@ async function handleInline(env, query) {
           id: project.name,
           photo_url: project.shot,
           thumbnail_url: project.shot,
-          title: project.title || project.name,
+          title: displayName(project),
           description: desc(project, lang).slice(0, 100),
           caption: card,
           parse_mode: "HTML",
@@ -1226,7 +1261,7 @@ async function handleInline(env, query) {
       return {
         type: "article",
         id: project.name,
-        title: project.title || project.name,
+        title: displayName(project),
         description: desc(project, lang).slice(0, 100),
         ...(markup ? { reply_markup: markup } : {}),
         input_message_content: {

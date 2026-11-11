@@ -8,7 +8,8 @@
     "build": "esbuild src/worker.js --bundle --format=esm --platform=neutral --target=es2022 --charset=utf8 --legal-comments=none --outfile=cloudflare-worker/worker.js",
     "check": "node --check cloudflare-worker/worker.js && node --check scripts/smoke-prod.mjs && node scripts/check-bundle.mjs",
     "smoke": "node scripts/smoke-prod.mjs",
-    "test": "node --test tests/worker.test.mjs tests/smoke.test.mjs"
+    "test": "node --test tests/worker.test.mjs tests/smoke.test.mjs",
+    "coverage": "node --test --experimental-test-coverage --test-coverage-lines=99.5 --test-coverage-branches=96.5 --test-coverage-functions=97 tests/worker.test.mjs tests/smoke.test.mjs"
   },
   "devDependencies": {
     "esbuild": "^0.28.2"
