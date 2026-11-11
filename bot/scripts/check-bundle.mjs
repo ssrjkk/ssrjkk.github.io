@@ -25,6 +25,8 @@
  *   6. Привязки из wrangler.toml и обязательные секреты встречаются в бандле.
  *   7. В бандле нет токенов Telegram и приватных ключей.
  *   8. Бандл остаётся модулем воркера и не ссылается на отсутствующий source map.
+ *   9. README ссылается только на существующие workflow, а таблица команд
+ *      совпадает с обработками в src/worker.js — в обе стороны.
  *
  * Запуск: node scripts/check-bundle.mjs
  * Выход: 0 — всё в порядке, 1 — есть замечания (они печатаются в stderr).
@@ -135,6 +137,7 @@ try {
   process.exit(1);
 }
 if (!existsSync(SOURCE)) fail("нет src/worker.js — бандл не из чего пересобрать");
+const SOURCE_TEXT = existsSync(SOURCE) ? readFileSync(SOURCE, "utf8") : "";
 
 for (const p of data.projects || []) {
   if (!bundle.includes(`"${p.name}"`)) {
@@ -191,6 +194,37 @@ if (mapMatch) {
   const mapPath = join(dirname(BUNDLE), mapMatch[1]);
   if (!existsSync(mapPath)) {
     fail(`бандл ссылается на source map «${mapMatch[1]}», которого нет рядом`);
+  }
+}
+
+// --- 9. Документы не обещают того, чего нет ------------------------------
+// README — то, по чему правят бота. Если в нём указан workflow, которого нет,
+// или команда, которой нет в исходнике, документ расходится с продом молча.
+const README = join(ROOT, "README.md");
+if (!existsSync(README)) {
+  fail("нет bot/README.md — по нему настраивают воркер");
+} else {
+  const readme = readFileSync(README, "utf8");
+  const workflowsDir = resolve(ROOT, "..", ".github", "workflows");
+  if (!existsSync(workflowsDir)) {
+    fail(`bot/ лежит в хабе, но каталога с workflow нет: ${workflowsDir}`);
+  }
+  for (const wf of new Set(readme.match(/\.github\/workflows\/[\w.-]+\.ya?ml/g) || [])) {
+    if (!existsSync(resolve(ROOT, "..", wf))) {
+      fail(`README ссылается на ${wf}, которого нет в репозитории`);
+    }
+  }
+  const documented = new Set(
+    [...readme.matchAll(/^\| `(\/\w+)[^`]*` \|/gm)].map((m) => m[1])
+  );
+  const implemented = new Set(
+    [...SOURCE_TEXT.matchAll(/cmd === "(\/\w+)"/g)].map((m) => m[1])
+  );
+  for (const cmd of documented) {
+    if (!implemented.has(cmd)) fail(`README документирует ${cmd}, но воркер её не обрабатывает`);
+  }
+  for (const cmd of implemented) {
+    if (!documented.has(cmd)) fail(`воркер обрабатывает ${cmd}, но её нет в таблице команд README`);
   }
 }
 

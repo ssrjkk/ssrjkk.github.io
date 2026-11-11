@@ -1,8 +1,18 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  writeFileSync
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
 import worker, { projectCard, projectDetailKeyboard } from "../cloudflare-worker/worker.js";
@@ -10,19 +20,29 @@ import worker, { projectCard, projectDetailKeyboard } from "../cloudflare-worker
 const BASE = "https://bot.example";
 const SECRET = "hook-secret";
 
-function checkBundleData(mutate = () => {}) {
-  const root = mkdtempSync(join(tmpdir(), "port-bundle-"));
+function checkBundleData(mutate = () => {}, editReadme = (text) => text) {
+  // Проверка читает README и соседний .github/workflows, поэтому фикстура —
+  // копия раскладки репозитория: <tmp>/bot рядом с <tmp>/.github.
+  const base = mkdtempSync(join(tmpdir(), "port-bundle-"));
+  const root = join(base, "bot");
   try {
+    mkdirSync(root);
     for (const folder of ["scripts", "src", "cloudflare-worker"]) mkdirSync(join(root, folder));
-    for (const file of ["scripts/check-bundle.mjs", "src/worker.js", "cloudflare-worker/worker.js", "cloudflare-worker/wrangler.toml"]) {
+    for (const file of ["scripts/check-bundle.mjs", "src/worker.js", "cloudflare-worker/worker.js", "cloudflare-worker/wrangler.toml", "README.md"]) {
       copyFileSync(new URL(`../${file}`, import.meta.url), join(root, file));
     }
+    const workflowsDir = fileURLToPath(new URL("../../.github/workflows/", import.meta.url));
+    const workflows = existsSync(workflowsDir) ? readdirSync(workflowsDir) : [];
+    mkdirSync(join(base, ".github", "workflows"), { recursive: true });
+    for (const file of workflows) writeFileSync(join(base, ".github", "workflows", file), "");
+    const readmePath = join(root, "README.md");
+    writeFileSync(readmePath, editReadme(readFileSync(readmePath, "utf8")));
     const data = JSON.parse(readFileSync(new URL("../projects.json", import.meta.url), "utf8"));
     mutate(data);
     writeFileSync(join(root, "projects.json"), JSON.stringify(data));
     return spawnSync(process.execPath, [join(root, "scripts/check-bundle.mjs")], { encoding: "utf8" });
   } finally {
-    rmSync(root, { recursive: true, force: true });
+    rmSync(base, { recursive: true, force: true });
   }
 }
 
@@ -163,6 +183,17 @@ test("bundle validation accepts the current catalogue", () => {
   const result = checkBundleData();
   assert.equal(result.status, 0, result.stderr);
 });
+
+for (const [name, editReadme] of [
+  ["a workflow the README points at but the repo has not", (text) => text.replace(".github/workflows/bot-ci.yml", ".github/workflows/bot-codeql.yml")],
+  ["a documented command the worker does not handle", (text) => text.replace("| `/help` |", "| `/ghost` | ничего |\n| `/help` |")],
+  ["a handled command missing from the README table", (text) => text.replace("| `/myid` | Chat ID |\n", "")]
+]) {
+  test(`bundle validation rejects ${name}`, () => {
+    const result = checkBundleData(() => {}, editReadme);
+    assert.equal(result.status, 1, result.stdout);
+  });
+}
 
 for (const [name, mutate] of [
   ["impostor repository host", (data) => { const p = data.projects[0]; p.repo = `https://example.test/ssrjkk/${p.name}`; }],
@@ -428,9 +459,19 @@ test("language switch changes the next reply", async () => {
   const ctx = makeCtx();
   await sendWebhook(env, ctx, callbackUpdate("lang:en", { chatId: 112 }));
   assert.match(callsOf(calls, "editMessageText").at(-1).body.text, /Language: 🇬🇧 English/);
+  assert.equal(await env.BOT_KV.get("lang:112"), "en");
 
   await sendWebhook(env, makeCtx(), messageUpdate("/start", { chatId: 112 }));
   assert.match(lastText(calls), /Hi! I'm ssrjkk bot/);
+});
+
+test("cards fall back to catalogue stars when GitHub rate-limits", () => {
+  // Кеш звёзд живёт в модуле, поэтому интеграционный прогон не отличил бы 403 от
+  // прошлого успеха — фолбэк проверяется прямо на сборке карточки.
+  const project = { name: "raven", title: "Raven", lang: "Python", desc: "r", desc_en: "e", stars: 3 };
+  assert.match(projectCard(project, {}, "ru"), /3★/, "без ответа GitHub берём stars из projects.json");
+  assert.match(projectCard(project, { raven: { stars: 7 } }, "ru"), /7★/, "живой GitHub важнее данных");
+  assert.match(projectCard({ ...project, stars: 0 }, {}, "ru"), /Raven/, "ноль в данных не печатается как звёзды");
 });
 
 test("inline query returns photos for projects with screenshots", async () => {

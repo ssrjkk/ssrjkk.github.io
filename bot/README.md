@@ -31,6 +31,7 @@ Commands:
 | `/channels` | Telegram channels |
 | `/about` | Short profile |
 | `/stats` | Owner only: users, messages, commands, referrals |
+| `/broadcast <text>` | Owner only: send text to every user the bot has seen |
 | `/myid` | Chat ID |
 | `/help` | Command list |
 
@@ -129,8 +130,9 @@ bot/scripts/check-bundle.mjs      data and bundle checks
 bot/tests/worker.test.mjs         node:test suite
 ```
 
-CI for the bot is `.github/workflows/bot-ci.yml` (build, bundle diff, check, test) and
-`.github/workflows/bot-codeql.yml`, both scoped to `bot/`. The hub's own live-status workflow is separate.
+CI for the bot is `.github/workflows/bot-ci.yml` (build, bundle diff, check, test), scoped to `bot/`.
+CodeQL runs through GitHub's default setup for the repository, so there is no committed CodeQL workflow.
+The hub's own live-status workflow is separate.
 
 ## Русский
 

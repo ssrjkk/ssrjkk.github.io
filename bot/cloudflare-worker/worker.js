@@ -538,8 +538,13 @@ async function getStars(env, ctx) {
 function desc(project, lang) {
   return lang === "en" && project.desc_en ? project.desc_en : project.desc;
 }
+function starCountFor(project, stars) {
+  const live = stars && stars[project.name];
+  if (live) return live.stars || 0;
+  return project.stars || 0;
+}
 function projectCard(project, stars, lang) {
-  const star = stars && stars[project.name] ? stars[project.name].stars : 0;
+  const star = starCountFor(project, stars);
   const starCount = star > 0 ? ` ${star}★` : "";
   const links = [];
   if (project.site) links.push(`<a href="${project.site}">${LANG[lang].siteLabel}</a>`);
@@ -552,9 +557,7 @@ ${esc(desc(project, lang))}
 ${links.join(" · ")}`;
 }
 function sortByStars(projects, stars) {
-  return [...projects].sort(
-    (a, b) => (stars[b.name] ? stars[b.name].stars : 0) - (stars[a.name] ? stars[a.name].stars : 0)
-  );
+  return [...projects].sort((a, b) => starCountFor(b, stars) - starCountFor(a, stars));
 }
 function projectDetailKeyboard(lang, project) {
   const row = [];
@@ -620,7 +623,7 @@ async function startText(env, ctx, lang) {
   let sum = 0;
   try {
     const stars = await getStars(env, ctx);
-    for (const project of PROJECTS) sum += (stars[project.name] ? stars[project.name].stars : 0) || 0;
+    for (const project of PROJECTS) sum += starCountFor(project, stars);
   } catch {
   }
   const sites = PROJECTS.filter((project) => project.site).length;
@@ -642,7 +645,7 @@ async function topText(env, ctx, lang) {
   const stars = await getStars(env, ctx);
   const medals = ["🥇", "🥈", "🥉"];
   const lines = sortByStars(PROJECTS, stars).slice(0, 3).map((project, index) => {
-    const count = stars[project.name] ? stars[project.name].stars : 0;
+    const count = starCountFor(project, stars);
     return `${medals[index]} <b>${esc(project.title || project.name)}</b> [${esc(project.lang)}] — ${count}★`;
   });
   return `${LANG[lang].topTitle}
