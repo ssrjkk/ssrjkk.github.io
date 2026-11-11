@@ -15,7 +15,13 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
-import worker, { LANG, projectCard, projectDetailKeyboard } from "../cloudflare-worker/worker.js";
+import worker, {
+  LANG,
+  COMMANDS,
+  projectCard,
+  projectDetailKeyboard,
+  shareProjectUrl
+} from "../cloudflare-worker/worker.js";
 
 const BASE = "https://bot.example";
 const SECRET = "hook-secret";
@@ -111,11 +117,15 @@ function makeCtx() {
   };
 }
 
-function installFetch({ photoFails = false } = {}) {
+function installFetch({ photoFails = false, events = [] } = {}) {
   const calls = [];
   globalThis.fetch = async (input, init = {}) => {
     const url = String(input);
     if (url.startsWith("https://api.github.com/")) {
+      // Запросы к GitHub пишутся в тот же журнал: `/news` должен подтверждать,
+      // что свежий кеш в KV экономит бюджет (60 запросов в час на IP).
+      calls.push({ method: "github", body: { url } });
+      if (url.includes("/events/public")) return jsonResponse(events);
       return jsonResponse({ stargazers_count: 7 });
     }
     if (url.startsWith("https://api.telegram.org/")) {
@@ -544,11 +554,15 @@ test("/setup requires the setup key and registers commands", async () => {
   assert.equal(webhook.body.url, `${BASE}/webhook`);
   assert.equal(webhook.body.secret_token, SECRET);
 
-  const commands = callsOf(calls, "setMyCommands").at(-1);
-  const names = commands.body.commands.map((command) => command.command);
-  assert.deepEqual(names, [
+  // Меню команд регистрируется отдельно на каждый язык, иначе Telegram покажет
+  // русские подсказки англоязычным пользователям.
+  const registrations = callsOf(calls, "setMyCommands");
+  assert.deepEqual(registrations.map((call) => call.body.language_code), ["ru", "en"]);
+  const names = registrations.map((call) => call.body.commands.map((command) => command.command));
+  assert.deepEqual(names[0], [
     "start",
     "projects",
+    "news",
     "sites",
     "bots",
     "search",
@@ -556,10 +570,17 @@ test("/setup requires the setup key and registers commands", async () => {
     "links",
     "channels",
     "about",
+    "feedback",
     "stats",
     "myid",
     "help"
   ]);
+  assert.deepEqual(names[1], names[0], "наборы команд ru и en совпадают");
+  assert.notDeepEqual(
+    registrations[0].body.commands.map((command) => command.description),
+    registrations[1].body.commands.map((command) => command.description),
+    "подсказки переведены"
+  );
 });
 
 test("/start p_<project> opens that card directly", async () => {
@@ -680,7 +701,7 @@ test("/stats reports opens, inline picks, the week and referrers", async () => {
             return { success: true };
           },
           async first() {
-            return { users: 12, msgs: 40, cmds: 9, opens: 3, inline_picks: 2, today: 5 };
+            return { users: 12, msgs: 40, cmds: 9, opens: 3, inline_picks: 2, feedback: 4, today: 5 };
           }
         };
       }
@@ -691,6 +712,7 @@ test("/stats reports opens, inline picks, the week and referrers", async () => {
   assert.match(text, /Пользователей: <b>12<\/b>/);
   assert.match(text, /Открытий карточек: <b>3<\/b>/);
   assert.match(text, /Выборов из inline: <b>2<\/b>/);
+  assert.match(text, /Отзывов: <b>4<\/b>/);
   assert.match(text, /Raven — 3/, "топ открытых проектов по названиям, а не по id");
   assert.match(text, /python — 2/);
   assert.match(text, /<code>42<\/code> → 1/);
@@ -705,3 +727,234 @@ test("both language packs cover every string the worker uses", () => {
   assert.deepEqual(ru, en, "ru и en должны нести одни и те же ключи");
   for (const key of used) assert.ok(ru.includes(key), `LANG[lang].${key} есть в коде, но не в словарях`);
 });
+
+test("every command the Telegram menu advertises is handled", () => {
+  const source = readFileSync(new URL("../src/worker.js", import.meta.url), "utf8");
+  for (const [language, list] of Object.entries(COMMANDS)) {
+    for (const { command } of list) {
+      assert.match(
+        source,
+        new RegExp(`cmd === "/${command}"`),
+        `«/${command}» есть в меню ${language}, но воркер её не обрабатывает`
+      );
+    }
+  }
+});
+
+test("/news describes public events, escapes them and caches the set in KV", async () => {
+  const calls = installFetch({
+    events: [
+      { type: "PushEvent", repo: { name: "ssrjkk/raven" }, payload: { ref: "refs/heads/main", commits: [{}, {}] } },
+      { type: "ReleaseEvent", repo: { name: "ssrjkk/wake" }, payload: { release: { tag_name: "v1.2.0" } } },
+      {
+        type: "PullRequestEvent",
+        repo: { name: "ssrjkk/harvest" },
+        payload: { action: "opened", pull_request: { title: "<b>hot</b> fix" } }
+      },
+      { type: "WatchEvent", repo: { name: "ssrjkk/mobius" }, payload: {} }
+    ]
+  });
+  const env = makeEnv();
+  await sendWebhook(env, makeCtx(), messageUpdate("/news", { chatId: 140 }));
+
+  const sent = callsOf(calls, "sendMessage").at(-1);
+  assert.match(sent.body.text, /raven<\/b> — 2 коммит\(ов\) в main/);
+  assert.match(sent.body.text, /wake<\/b> — релиз v1\.2\.0/);
+  assert.match(sent.body.text, /&lt;b&gt;hot&lt;\/b&gt; fix/, "заголовок чужого pull request экранируется");
+  assert.ok(!sent.body.text.includes("mobius"), "неописанный тип события не попадает в выдачу");
+  assert.deepEqual(
+    keyboardData(sent).filter((value) => value.startsWith("https://github.com/")),
+    ["https://github.com/ssrjkk/raven", "https://github.com/ssrjkk/wake", "https://github.com/ssrjkk/harvest"]
+  );
+
+  const cached = JSON.parse(await env.BOT_KV.get("news"));
+  assert.equal(cached.data.length, 3, "в кеш ложится тот же набор, что показан");
+  assert.ok(cached.ts > 0 && cached.ts <= Date.now(), "кеш помечен временем сборки");
+});
+
+test("/news answers from a fresh KV entry without touching GitHub", async () => {
+  const calls = installFetch();
+  const env = makeEnv();
+  await env.BOT_KV.put(
+    "news",
+    JSON.stringify({
+      ts: Date.now(),
+      data: [{ repo: "qualix", url: "https://github.com/ssrjkk/qualix", what: ["release", "v9.0"] }]
+    })
+  );
+  await sendWebhook(env, makeCtx(), messageUpdate("/news", { chatId: 141 }));
+
+  assert.equal(callsOf(calls, "github").length, 0, "свежий кеш не тратит бюджет GitHub");
+  assert.match(lastText(calls), /qualix<\/b> — релиз v9\.0/);
+});
+
+test("/news ignores a KV entry that is not a list", async () => {
+  const calls = installFetch();
+  const env = makeEnv();
+  await env.BOT_KV.put("news", JSON.stringify({ ts: Date.now(), data: { repo: "raven" } }));
+  await sendWebhook(env, makeCtx(), messageUpdate("/news", { chatId: 142 }));
+  assert.equal(callsOf(calls, "github").length, 1, "битая запись не считается кешем");
+  assert.match(lastText(calls), /Свежих событий нет/);
+});
+
+test("/news says so when GitHub has nothing to show", async () => {
+  const calls = installFetch();
+  await sendWebhook(makeEnv(), makeCtx(), messageUpdate("/news", { chatId: 142 }));
+  assert.match(lastText(calls), /Свежих событий нет/);
+  assert.deepEqual(keyboardData(callsOf(calls, "sendMessage").at(-1)), ["show:menu"]);
+});
+
+test("/news is translated through the same cached set", async () => {
+  const calls = installFetch({
+    events: [{ type: "CreateEvent", repo: { name: "ssrjkk/noema" }, payload: { ref_type: "tag", ref: "v0.1" } }]
+  });
+  const env = makeEnv();
+  await sendWebhook(env, makeCtx(), messageUpdate("/news", { chatId: 143 }));
+  await sendWebhook(env, makeCtx(), callbackUpdate("lang:en", { chatId: 143 }));
+  await sendWebhook(env, makeCtx(), messageUpdate("/news", { chatId: 143 }));
+  const en = lastText(calls);
+  assert.match(en, /noema<\/b> — created tag v0\.1/);
+  assert.match(en, /What happened on GitHub/);
+});
+
+test("the menu and the callback both open /news", async () => {
+  const calls = installFetch({
+    events: [
+      { type: "ReleaseEvent", repo: { name: "ssrjkk/raven" }, payload: { release: { tag_name: "v2.0" } } }
+    ]
+  });
+  const env = makeEnv();
+  await sendWebhook(env, makeCtx(), messageUpdate("/start", { chatId: 144 }));
+  const menu = callsOf(calls, "sendMessage").at(-1);
+  assert.ok(keyboardData(menu).includes("show:news"), "в главном меню есть кнопка обновлений");
+
+  await sendWebhook(env, makeCtx(), callbackUpdate("show:news", { chatId: 144 }));
+  assert.match(callsOf(calls, "editMessageText").at(-1).body.text, /Что произошло на GitHub/);
+});
+
+test("/projects offers stack facets taken from the catalogue", async () => {
+  const calls = installFetch();
+  const env = makeEnv();
+  const catalogue = JSON.parse(readFileSync(new URL("../projects.json", import.meta.url), "utf8"));
+
+  await sendWebhook(env, makeCtx(), messageUpdate("/projects", { chatId: 145 }));
+  const sent = callsOf(calls, "sendMessage").at(-1);
+  const facets = sent.body.reply_markup.inline_keyboard
+    .flat()
+    .filter((button) => (button.callback_data || "").startsWith("stack:"));
+  assert.equal(facets.length, 6, "показываем шесть самых частых технологий");
+  const stacks = new Set(catalogue.projects.flatMap((project) => String(project.lang).split(",").map((t) => t.trim())));
+  for (const facet of facets) {
+    const token = facet.callback_data.slice(6, facet.callback_data.lastIndexOf(":"));
+    assert.ok(stacks.has(token), `фасет «${token}» не из каталога`);
+  }
+
+  await sendWebhook(env, makeCtx(), callbackUpdate("stack:Python:0", { chatId: 145 }));
+  const edited = callsOf(calls, "editMessageText").at(-1);
+  assert.match(edited.body.text, /<b>Мои проекты — Python:<\/b>/);
+  const python = new Set(
+    catalogue.projects
+      .filter((project) =>
+        String(project.lang).split(",").map((token) => token.trim().toLowerCase()).includes("python")
+      )
+      .map((project) => project.name)
+  );
+  const shown = edited.body.reply_markup.inline_keyboard
+    .flat()
+    .filter((button) => (button.callback_data || "").startsWith("p:"))
+    .map((button) => button.callback_data.slice(2));
+  assert.ok(shown.length > 0 && shown.length <= 3);
+  for (const name of shown) assert.ok(python.has(name), `${name} не Python-проект`);
+  assert.deepEqual(
+    edited.body.reply_markup.inline_keyboard
+      .flat()
+      .filter((button) => (button.callback_data || "").startsWith("stack:"))
+      .map((button) => button.text)
+      .filter((text) => text.startsWith("✓")),
+    ["✓ Python"],
+    "активный фасет отмечен"
+  );
+  assert.ok(keyboardData(edited).includes("page:0"), "есть кнопка сброса фильтра");
+  assert.ok(
+    keyboardData(edited).some((value) => value.startsWith("stack:Python:1")),
+    "пагинация внутри фильтра остаётся в фильтре"
+  );
+});
+
+test("a facet without projects says so instead of showing an empty list", async () => {
+  const calls = installFetch();
+  await sendWebhook(makeEnv(), makeCtx(), callbackUpdate("stack:cobol:0", { chatId: 146 }));
+  const edited = callsOf(calls, "editMessageText").at(-1);
+  assert.match(edited.body.text, /<b>Мои проекты — cobol:<\/b>/);
+  assert.match(edited.body.text, /Проектов со стеком «cobol»/);
+  assert.ok(!keyboardData(edited).some((value) => value.startsWith("p:")), "пустой список не предлагает карточек");
+});
+
+test("facet clicks are counted as navigation", async () => {
+  installFetch();
+  const env = makeEnv();
+  await sendWebhook(env, makeCtx(), callbackUpdate("stack:TypeScript:0", { chatId: 147 }));
+  assert.equal(trackedInserts(env, "nav").at(-1).args[2], "stack:TypeScript");
+});
+
+test("/feedback forwards a note to the owner escaped and counted", async () => {
+  const calls = installFetch();
+  const env = makeEnv();
+  await sendWebhook(env, makeCtx(), messageUpdate("/feedback <b>привет</b> & <i>мир</i>", { chatId: 148, userId: 148 }));
+
+  const toOwner = callsOf(calls, "sendMessage").filter((call) => String(call.body.chat_id) === "42");
+  assert.equal(toOwner.length, 1);
+  assert.match(toOwner[0].body.text, /&lt;b&gt;привет&lt;\/b&gt; &amp; &lt;i&gt;мир&lt;\/i&gt;/);
+  assert.match(toOwner[0].body.text, /<code>148<\/code>/);
+  assert.match(lastText(calls), /передано владельцу/);
+  assert.equal(trackedInserts(env, "feedback").length, 1);
+
+  await sendWebhook(env, makeCtx(), messageUpdate("/feedback", { chatId: 148, userId: 148 }));
+  assert.match(lastText(calls), /Формат: \/feedback/);
+  assert.equal(
+    callsOf(calls, "sendMessage").filter((call) => String(call.body.chat_id) === "42").length,
+    1,
+    "пустой отзыв владельцу не отправляется"
+  );
+  assert.equal(trackedInserts(env, "feedback").length, 1, "несданный отзыв не считается");
+});
+
+test("/feedback without an owner configured does not claim delivery", async () => {
+  const calls = installFetch();
+  const env = makeEnv({ OWNER_ID: "" });
+  await sendWebhook(env, makeCtx(), messageUpdate("/feedback есть замечание", { chatId: 149, userId: 149 }));
+  assert.match(lastText(calls), /не настроен|not configured/i);
+  assert.deepEqual(
+    [...new Set(callsOf(calls, "sendMessage").map((call) => String(call.body.chat_id)))],
+    ["149"],
+    "без OWNER_ID сообщения летят только ответившему, а не в пустой чат"
+  );
+  assert.equal(trackedInserts(env, "feedback").length, 0);
+});
+
+test("/feedback truncates a long note so the owner chat stays readable", async () => {
+  const calls = installFetch();
+  const env = makeEnv();
+  await sendWebhook(env, makeCtx(), messageUpdate(`/feedback ${"а".repeat(1200)}`, { chatId: 150, userId: 150 }));
+  const toOwner = callsOf(calls, "sendMessage").find((call) => String(call.body.chat_id) === "42");
+  assert.equal("а".repeat(900), toOwner.body.text.match(/а+/g).sort((x, y) => y.length - x.length)[0]);
+  assert.ok(toOwner.body.text.length < 950);
+});
+
+test("a project card shares a deep link with the project description", () => {
+  const project = { name: "raven", title: "Raven", desc: "Поиск по репозиториям.", desc_en: "Repository search." };
+
+  const ru = new URL(shareProjectUrl("ru", project));
+  assert.equal(ru.searchParams.get("url"), "https://t.me/ssrjkk_bot?start=p_raven");
+  assert.equal(ru.searchParams.get("text"), "Raven — Поиск по репозиториям.");
+  assert.equal(
+    new URL(shareProjectUrl("en", project)).searchParams.get("text"),
+    "Raven — Repository search."
+  );
+
+  const buttons = projectDetailKeyboard("ru", project).flat();
+  const share = buttons.find((button) => (button.url || "").startsWith("https://t.me/share"));
+  assert.equal(share.text, LANG.ru.shareProject);
+  assert.equal(share.url, shareProjectUrl("ru", project));
+});
+

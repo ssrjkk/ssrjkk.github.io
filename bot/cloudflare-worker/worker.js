@@ -281,7 +281,10 @@ var CHANNELS = projects_default.channels;
 var LINKS = projects_default.links;
 var API = "https://api.telegram.org";
 var GH_API = "https://api.github.com/repos";
+var GH_USERS_API = "https://api.github.com/users";
 var STARS_TTL = 3600;
+var NEWS_TTL = 900;
+var STACK_FACETS = 6;
 var PAGE_SIZE = 3;
 var LANG = {
   ru: {
@@ -291,7 +294,7 @@ var LANG = {
     channelsTitle: "Telegram-каналы:",
     sitesTitle: "<b>Сайты проектов:</b>",
     botsTitle: "<b>Telegram-боты:</b>",
-    help: "/start - запуск\n/projects - проекты GitHub\n/sites - сайты проектов\n/bots - Telegram-боты\n/search <запрос> - поиск проектов\n/top - топ по звёздам\n/links - ссылки\n/channels - каналы\n/about - обо мне\n/stats - статистика (владелец)\n/myid - мой ID\n/help - справка",
+    help: "/start - запуск\n/projects - проекты GitHub\n/news - обновления с GitHub\n/sites - сайты проектов\n/bots - Telegram-боты\n/search <запрос> - поиск проектов\n/top - топ по звёздам\n/links - ссылки\n/channels - каналы\n/about - обо мне\n/feedback <текст> - написать владельцу\n/stats - статистика (владелец)\n/myid - мой ID\n/help - справка",
     unknown: "Не знаю такой команды.\n\n",
     page: (cur, total) => `Стр. ${cur}/${total}`,
     prev: "⬅️",
@@ -317,6 +320,26 @@ var LANG = {
     invite: "👥 Пригласить",
     share: "📣 Поделиться",
     shareText: (title) => `Мои проекты у ${GITHUB_USERNAME}: ${title}`,
+    shareProject: "📣 Поделиться проектом",
+    shareProjectText: (title, description) => `${title} — ${description}`,
+    newsBtn: "📰 Обновления",
+    newsTitle: "<b>📰 Что произошло на GitHub:</b>",
+    newsEmpty: "Свежих событий нет: публичный API GitHub не ответил или репозитории молчат.",
+    newsPush: (branch, count) => `${count} коммит(ов) в ${branch}`,
+    newsRelease: (tag) => `релиз ${tag}`,
+    newsCreate: (type, ref) => `создан ${type} ${ref}`,
+    newsPull: (action, title) => `pull request ${action}: ${title}`,
+    feedbackNote: (note, id) => `💬 <b>Обратная связь</b>
+
+${note}
+
+от <code>${id}</code>`,
+    stackTitle: (token) => `<b>Мои проекты — ${token}:</b>`,
+    stackAll: "Все стеки",
+    stackEmpty: (token) => `Проектов со стеком «${token}» в каталоге нет.`,
+    feedbackPrompt: "Формат: /feedback <текст>",
+    feedbackDone: "Сообщение передано владельцу. Спасибо!",
+    feedbackFailed: "Не удалось передать сообщение, попробуй позже.",
     inviteLink: (url) => `Твоя ссылка: <code>${url}</code>
 
 Первый <code>/start</code> по ней попадёт в раздел «Рефералы» в /stats.`,
@@ -332,6 +355,7 @@ var LANG = {
 Команд: <b>${s.cmds}</b>
 Открытий карточек: <b>${s.opens}</b>
 Выборов из inline: <b>${s.inlinePicks}</b>
+Отзывов: <b>${s.feedback}</b>
 
 7 дней: ${s.week}
 
@@ -377,7 +401,7 @@ ${s.refList}`,
     channelsTitle: "Telegram channels:",
     sitesTitle: "<b>Project sites:</b>",
     botsTitle: "<b>Telegram bots:</b>",
-    help: "/start - start\n/projects - GitHub projects\n/sites - project sites\n/bots - Telegram bots\n/search <query> - search projects\n/top - top by stars\n/links - links\n/channels - channels\n/about - about me\n/stats - stats (owner)\n/myid - my ID\n/help - help",
+    help: "/start - start\n/projects - GitHub projects\n/news - what happened on GitHub\n/sites - project sites\n/bots - Telegram bots\n/search <query> - search projects\n/top - top by stars\n/links - links\n/channels - channels\n/about - about me\n/feedback <text> - write to the owner\n/stats - stats (owner)\n/myid - my ID\n/help - help",
     unknown: "Unknown command.\n\n",
     page: (cur, total) => `Page ${cur}/${total}`,
     prev: "⬅️",
@@ -403,6 +427,26 @@ ${s.refList}`,
     invite: "👥 Invite",
     share: "📣 Share",
     shareText: (title) => `${GITHUB_USERNAME}'s projects: ${title}`,
+    shareProject: "📣 Share this project",
+    shareProjectText: (title, description) => `${title} — ${description}`,
+    newsBtn: "📰 Updates",
+    newsTitle: "<b>📰 What happened on GitHub:</b>",
+    newsEmpty: "No fresh events: the public GitHub API did not answer or the repositories are quiet.",
+    newsPush: (branch, count) => `${count} commit(s) to ${branch}`,
+    newsRelease: (tag) => `release ${tag}`,
+    newsCreate: (type, ref) => `created ${type} ${ref}`,
+    newsPull: (action, title) => `pull request ${action}: ${title}`,
+    feedbackNote: (note, id) => `💬 <b>Feedback</b>
+
+${note}
+
+from <code>${id}</code>`,
+    stackTitle: (token) => `<b>My projects — ${token}:</b>`,
+    stackAll: "All stacks",
+    stackEmpty: (token) => `No catalogue project uses «${token}».`,
+    feedbackPrompt: "Format: /feedback <text>",
+    feedbackDone: "Message passed to the owner. Thanks!",
+    feedbackFailed: "Could not deliver the message, try again later.",
     inviteLink: (url) => `Your link: <code>${url}</code>
 
 The first <code>/start</code> through it appears under Referrals in /stats.`,
@@ -418,6 +462,7 @@ Today: <b>${s.today}</b>
 Commands: <b>${s.cmds}</b>
 Cards opened: <b>${s.opens}</b>
 Inline picks: <b>${s.inlinePicks}</b>
+Feedback: <b>${s.feedback}</b>
 
 7 days: ${s.week}
 
@@ -457,21 +502,42 @@ Buttons below are my links 👇`,
     broadcastEmpty: "No users to broadcast to."
   }
 };
-var COMMANDS = [
-  { command: "start", description: "Запуск" },
-  { command: "projects", description: "Проекты GitHub" },
-  { command: "sites", description: "Сайты проектов" },
-  { command: "bots", description: "Telegram-боты" },
-  { command: "search", description: "Поиск проектов" },
-  { command: "top", description: "Топ по звёздам" },
-  { command: "links", description: "Все ссылки" },
-  { command: "channels", description: "Telegram-каналы" },
-  { command: "about", description: "Обо мне" },
-  { command: "stats", description: "Статистика" },
-  { command: "myid", description: "Мой ID" },
-  { command: "help", description: "Справка" }
-];
+var COMMANDS = {
+  ru: [
+    { command: "start", description: "Запуск" },
+    { command: "projects", description: "Проекты GitHub" },
+    { command: "news", description: "Обновления с GitHub" },
+    { command: "sites", description: "Сайты проектов" },
+    { command: "bots", description: "Telegram-боты" },
+    { command: "search", description: "Поиск проектов" },
+    { command: "top", description: "Топ по звёздам" },
+    { command: "links", description: "Все ссылки" },
+    { command: "channels", description: "Telegram-каналы" },
+    { command: "about", description: "Обо мне" },
+    { command: "feedback", description: "Написать владельцу" },
+    { command: "stats", description: "Статистика (владелец)" },
+    { command: "myid", description: "Мой ID" },
+    { command: "help", description: "Справка" }
+  ],
+  en: [
+    { command: "start", description: "Start" },
+    { command: "projects", description: "GitHub projects" },
+    { command: "news", description: "GitHub updates" },
+    { command: "sites", description: "Project sites" },
+    { command: "bots", description: "Telegram bots" },
+    { command: "search", description: "Search projects" },
+    { command: "top", description: "Top by stars" },
+    { command: "links", description: "All links" },
+    { command: "channels", description: "Telegram channels" },
+    { command: "about", description: "About me" },
+    { command: "feedback", description: "Write to the owner" },
+    { command: "stats", description: "Statistics (owner)" },
+    { command: "myid", description: "My ID" },
+    { command: "help", description: "Help" }
+  ]
+};
 var langCache = /* @__PURE__ */ new Map();
+var LANG_CACHE_LIMIT = 2e3;
 var starsCache = null;
 var starsFetchedAt = 0;
 function esc(value) {
@@ -530,7 +596,7 @@ async function getLang(env, chatId) {
   } catch (error) {
     console.error("getLang error:", error);
   }
-  langCache.set(chatId, lang);
+  langCacheSet(chatId, lang);
   return lang;
 }
 async function getStars(env, ctx) {
@@ -575,6 +641,78 @@ async function getStars(env, ctx) {
   }
   return result;
 }
+async function getNews(env, ctx) {
+  const now = Date.now();
+  let cached = null;
+  try {
+    cached = JSON.parse(await env.BOT_KV.get("news"));
+  } catch (error) {
+    console.error("getNews KV error:", error);
+  }
+  if (cached && now - cached.ts < NEWS_TTL * 1e3 && Array.isArray(cached.data)) return cached.data;
+  let events = [];
+  try {
+    const res = await fetch(`${GH_USERS_API}/${GITHUB_USERNAME}/events/public?per_page=30`, {
+      headers: { "User-Agent": "ssrjkk-bot", Accept: "application/vnd.github+json" },
+      signal: AbortSignal.timeout(8e3)
+    });
+    if (res.ok) events = (await res.json()).slice(0, 30);
+  } catch (error) {
+    console.error("GitHub events fetch:", error);
+  }
+  const result = events.map(describeEvent).filter(Boolean).slice(0, 10);
+  if (ctx && typeof ctx.waitUntil === "function") {
+    ctx.waitUntil(
+      env.BOT_KV.put("news", JSON.stringify({ ts: now, data: result }), { expirationTtl: NEWS_TTL }).catch((error) => console.error("news KV put:", error))
+    );
+  }
+  return result;
+}
+function describeEvent(event) {
+  const repo = event.repo && event.repo.name;
+  if (!repo) return null;
+  const payload = event.payload || {};
+  const base = { repo: repo.split("/")[1] || repo, url: `https://github.com/${repo}` };
+  if (event.type === "PushEvent") {
+    const count = (payload.commits || []).length;
+    return count ? { ...base, what: ["push", (payload.ref || "").split("/").pop(), count] } : null;
+  }
+  if (event.type === "ReleaseEvent") {
+    const tag = (payload.release || {}).tag_name;
+    return tag ? { ...base, what: ["release", tag] } : null;
+  }
+  if (event.type === "CreateEvent") {
+    return { ...base, what: ["create", payload.ref_type || "", payload.ref || ""] };
+  }
+  if (event.type === "PullRequestEvent") {
+    return { ...base, what: ["pull", payload.action || "", (payload.pull_request || {}).title || ""] };
+  }
+  return null;
+}
+function newsLine(item, lang) {
+  const [kind, first, second] = item.what;
+  const what = kind === "push" ? LANG[lang].newsPush(first, second) : kind === "release" ? LANG[lang].newsRelease(first) : kind === "create" ? LANG[lang].newsCreate(first, second) : LANG[lang].newsPull(first, second);
+  return `• <b>${esc(item.repo)}</b> — ${esc(what)}`;
+}
+function stackFacets(limit = STACK_FACETS) {
+  const counts = /* @__PURE__ */ new Map();
+  for (const project of PROJECTS) {
+    for (const token of String(project.lang || "").split(",")) {
+      const name = token.trim();
+      if (name) counts.set(name, (counts.get(name) || 0) + 1);
+    }
+  }
+  return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, limit).map(([name]) => name);
+}
+function langCacheSet(chatId, lang) {
+  if (langCache.size >= LANG_CACHE_LIMIT && !langCache.has(chatId)) {
+    langCache.delete(langCache.keys().next().value);
+  }
+  langCache.set(chatId, lang);
+}
+function matchesStack(project, stack) {
+  return String(project.lang || "").split(",").map((token) => token.trim().toLowerCase()).includes(stack.toLowerCase());
+}
 function desc(project, lang) {
   return lang === "en" && project.desc_en ? project.desc_en : project.desc;
 }
@@ -616,6 +754,11 @@ function titleOf(name) {
   const project = PROJECTS.find((item) => item.name === name);
   return project ? project.title || project.name : name;
 }
+function shareProjectUrl(lang, project) {
+  const link = `${BOT_URL}?start=p_${project.name}`;
+  const text = LANG[lang].shareProjectText(project.title || project.name, desc(project, lang));
+  return `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`;
+}
 function projectDetailKeyboard(lang, project, userId = null) {
   const row = [];
   if (project.site) row.push({ text: `🌐 ${LANG[lang].siteLabel}`, url: project.site });
@@ -624,7 +767,9 @@ function projectDetailKeyboard(lang, project, userId = null) {
   const rows = [];
   if (row.length) rows.push(row);
   if (project.links?.length) rows.push(project.links.map((link) => ({ text: link.name, url: link.url })));
-  if (userId !== null) rows.push([{ text: LANG[lang].invite, callback_data: `ref:${project.name}` }]);
+  const shareRow = [{ text: LANG[lang].shareProject, url: shareProjectUrl(lang, project) }];
+  if (userId !== null) shareRow.push({ text: LANG[lang].invite, callback_data: `ref:${project.name}` });
+  rows.push(shareRow);
   rows.push([
     { text: LANG[lang].toProjects, callback_data: "page:0" },
     { text: LANG[lang].toMenu, callback_data: "show:menu" }
@@ -648,14 +793,14 @@ async function sendProjectDetail(env, ctx, chatId, name, lang, userId = null) {
 <a href="${project.shot}">${LANG[lang].shotLabel}</a>` : caption;
   await sendMessage(env.BOT_TOKEN, chatId, text, keyboard);
 }
-async function projectsList(env, ctx, lang, page) {
+async function projectsList(env, ctx, lang, page, stack = null) {
   const stars = await getStars(env, ctx);
-  const total = PROJECTS.length;
-  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const pool = stack ? PROJECTS.filter((project) => matchesStack(project, stack)) : PROJECTS;
+  const pages = Math.max(1, Math.ceil(pool.length / PAGE_SIZE));
   const safe = Math.min(Math.max(page, 0), pages - 1);
-  const start = safe * PAGE_SIZE;
-  const slice = PROJECTS.slice(start, start + PAGE_SIZE);
+  const slice = pool.slice(safe * PAGE_SIZE, safe * PAGE_SIZE + PAGE_SIZE);
   const lines = slice.map((project) => projectCard(project, stars, lang));
+  const pageData = (index) => stack ? `stack:${stack}:${index}` : `page:${index}`;
   const rows = slice.map((project) => [
     {
       text: `${project.shot ? "📷" : "ℹ️"} ${project.title || project.name}`,
@@ -663,15 +808,21 @@ async function projectsList(env, ctx, lang, page) {
     }
   ]);
   const nav = [];
-  if (safe > 0) nav.push({ text: LANG[lang].prev, callback_data: `page:${safe - 1}` });
+  if (safe > 0) nav.push({ text: LANG[lang].prev, callback_data: pageData(safe - 1) });
   nav.push({ text: LANG[lang].page(safe + 1, pages), callback_data: "noop" });
-  if (safe < pages - 1) nav.push({ text: LANG[lang].next, callback_data: `page:${safe + 1}` });
+  if (safe < pages - 1) nav.push({ text: LANG[lang].next, callback_data: pageData(safe + 1) });
   rows.push(nav);
+  const facetRow = stackFacets().map((token) => ({
+    text: token === stack ? `✓ ${token}` : token,
+    callback_data: `stack:${token}:0`
+  }));
+  if (facetRow.length) rows.push(facetRow);
+  if (stack) rows.push([{ text: LANG[lang].stackAll, callback_data: "page:0" }]);
   rows.push([{ text: LANG[lang].back, callback_data: "show:menu" }]);
   return {
-    text: `${LANG[lang].projectsTitle}
+    text: `${stack ? LANG[lang].stackTitle(stack) : LANG[lang].projectsTitle}
 
-${lines.join("\n\n")}`,
+${lines.length ? lines.join("\n\n") : LANG[lang].stackEmpty(stack)}`,
     keyboard: rows,
     page: safe,
     pages
@@ -728,7 +879,10 @@ function mainMenu(lang) {
       { text: LANG[lang].helpBtn, callback_data: "show:help" },
       { text: LANG[lang].lang, callback_data: "show:lang" }
     ],
-    [{ text: LANG[lang].aboutBtn, callback_data: "show:about" }]
+    [
+      { text: LANG[lang].newsBtn, callback_data: "show:news" },
+      { text: LANG[lang].aboutBtn, callback_data: "show:about" }
+    ]
   ];
 }
 function urlKeyboard(lang, items) {
@@ -811,6 +965,16 @@ async function handleMessage(env, ctx, msg) {
     await sendMessage(token, chatId, await topText(env, ctx, lang));
     return;
   }
+  if (cmd === "/news") {
+    track(env, ctx, userId, "cmd", "news");
+    await sendNews(env, ctx, chatId, lang);
+    return;
+  }
+  if (cmd === "/feedback") {
+    track(env, ctx, userId, "cmd", "feedback");
+    await handleFeedback(env, ctx, token, chatId, userId, lang, raw);
+    return;
+  }
   if (cmd === "/search") {
     track(env, ctx, userId, "cmd", "search");
     const query = rest.join(" ").trim();
@@ -874,6 +1038,45 @@ ${lines.join("\n\n")}`);
   if (cmd.startsWith("/")) track(env, ctx, userId, "cmd", cmd);
   await sendMessage(token, chatId, LANG[lang].unknown + LANG[lang].help);
 }
+async function newsContent(env, ctx, lang) {
+  const items = await getNews(env, ctx);
+  const rows = [];
+  if (!items.length) {
+    return { text: LANG[lang].newsEmpty, rows: [[{ text: LANG[lang].toMenu, callback_data: "show:menu" }]] };
+  }
+  for (const name of [...new Set(items.map((item) => item.repo))].slice(0, 4)) {
+    rows.push([{ text: name, url: items.find((item) => item.repo === name).url }]);
+  }
+  rows.push([{ text: LANG[lang].toMenu, callback_data: "show:menu" }]);
+  return {
+    text: `${LANG[lang].newsTitle}
+
+${items.map((item) => newsLine(item, lang)).join("\n")}`,
+    rows
+  };
+}
+async function sendNews(env, ctx, chatId, lang) {
+  const content = await newsContent(env, ctx, lang);
+  await sendMessage(env.BOT_TOKEN, chatId, content.text, content.rows);
+}
+async function handleFeedback(env, ctx, token, chatId, userId, lang, raw) {
+  const note = raw.replace(/^\/feedback(?:@\w+)?/i, "").trim();
+  if (!note) {
+    await sendMessage(token, chatId, LANG[lang].feedbackPrompt);
+    return;
+  }
+  if (!env.OWNER_ID) {
+    await sendMessage(token, chatId, LANG[lang].notConfigured);
+    return;
+  }
+  const delivered = await sendMessage(
+    token,
+    env.OWNER_ID,
+    LANG[lang].feedbackNote(esc(note.slice(0, 900)), esc(userId))
+  );
+  if (delivered) track(env, ctx, userId, "feedback");
+  await sendMessage(token, chatId, delivered ? LANG[lang].feedbackDone : LANG[lang].feedbackFailed);
+}
 async function handleBroadcast(env, token, chatId, lang, raw) {
   const owner = env.OWNER_ID;
   if (!owner) {
@@ -922,7 +1125,7 @@ async function showStats(env, ctx, chatId, lang) {
   }
   const db = env.BOT_DB;
   const totals = await db.prepare(
-    "SELECT COUNT(DISTINCT user_id) users, SUM(kind = 'msg') msgs, SUM(kind = 'cmd') cmds, SUM(kind = 'open') opens, SUM(kind = 'inline') inline_picks, SUM(kind IN ('msg','cmd') AND ts >= date('now','start of day')) today FROM events WHERE user_id IS NOT NULL"
+    "SELECT COUNT(DISTINCT user_id) users, SUM(kind = 'msg') msgs, SUM(kind = 'cmd') cmds, SUM(kind = 'open') opens, SUM(kind = 'inline') inline_picks, SUM(kind = 'feedback') feedback, SUM(kind IN ('msg','cmd') AND ts >= date('now','start of day')) today FROM events WHERE user_id IS NOT NULL"
   ).first() || {};
   const grouped = async (kind, limit) => {
     const statement = limit ? db.prepare("SELECT value, COUNT(*) c FROM events WHERE kind = ? GROUP BY value ORDER BY c DESC LIMIT ?").bind(kind, limit) : db.prepare("SELECT value, COUNT(*) c FROM events WHERE kind = ? GROUP BY value ORDER BY c DESC").bind(kind);
@@ -951,6 +1154,7 @@ async function showStats(env, ctx, chatId, lang) {
       cmds: totals.cmds || 0,
       opens: totals.opens || 0,
       inlinePicks: totals.inline_picks || 0,
+      feedback: totals.feedback || 0,
       week: weekBars(weekRows),
       cmdList: list(cmdRows, (row) => `  /${esc(row.value)} — ${row.c}`),
       navList: list(navRows, (row) => `  ${esc(row.value)} — ${row.c}`),
@@ -969,6 +1173,22 @@ async function handleCallback(env, ctx, callback) {
   const payload = callback.data || "";
   const lang = await getLang(env, chatId);
   if (payload === "noop") {
+    await callApi(token, "answerCallbackQuery", { callback_query_id: callback.id });
+    return;
+  }
+  if (payload.startsWith("stack:")) {
+    const body = payload.slice(6);
+    const cut = body.lastIndexOf(":");
+    const stack = body.slice(0, cut);
+    track(env, ctx, userId, "nav", `stack:${stack}`);
+    const { text, keyboard } = await projectsList(
+      env,
+      ctx,
+      lang,
+      parseInt(body.slice(cut + 1), 10) || 0,
+      stack
+    );
+    await editMessage(token, chatId, messageId, text, keyboard);
     await callApi(token, "answerCallbackQuery", { callback_query_id: callback.id });
     return;
   }
@@ -1015,6 +1235,10 @@ async function handleCallback(env, ctx, callback) {
     } else if (what === "top") {
       text = await topText(env, ctx, lang);
       keyboard = [[{ text: LANG[lang].back, callback_data: "show:menu" }]];
+    } else if (what === "news") {
+      const content = await newsContent(env, ctx, lang);
+      text = content.text;
+      keyboard = content.rows;
     } else if (what === "links") {
       text = LANG[lang].linksTitle;
       keyboard = urlKeyboard(lang, LINKS);
@@ -1059,7 +1283,7 @@ async function handleCallback(env, ctx, callback) {
   if (payload.startsWith("lang:")) {
     const next = payload.split(":")[1] === "en" ? "en" : "ru";
     track(env, ctx, userId, "lang", next);
-    langCache.set(chatId, next);
+    langCacheSet(chatId, next);
     if (ctx && typeof ctx.waitUntil === "function") {
       ctx.waitUntil(
         env.BOT_KV.put(`lang:${chatId}`, next).catch((error) => console.error("lang put:", error))
@@ -1126,7 +1350,13 @@ async function setupWebhook(env, origin) {
     allowed_updates: ["message", "callback_query", "inline_query", "chosen_inline_result"],
     ...env.WEBHOOK_SECRET ? { secret_token: env.WEBHOOK_SECRET } : {}
   });
-  const commands = await callApi(env.BOT_TOKEN, "setMyCommands", { commands: COMMANDS });
+  const commands = {};
+  for (const language of Object.keys(COMMANDS)) {
+    commands[language] = await callApi(env.BOT_TOKEN, "setMyCommands", {
+      commands: COMMANDS[language],
+      language_code: language
+    });
+  }
   return { webhook, commands };
 }
 var worker_default = {
@@ -1191,8 +1421,10 @@ var worker_default = {
   }
 };
 export {
+  COMMANDS,
   LANG,
   worker_default as default,
   projectCard,
-  projectDetailKeyboard
+  projectDetailKeyboard,
+  shareProjectUrl
 };

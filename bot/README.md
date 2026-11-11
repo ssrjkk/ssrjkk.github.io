@@ -23,6 +23,7 @@ Commands:
 | --- | --- |
 | `/start` | Menu with projects, sites, bots, links and language switch |
 | `/projects` | Three project cards per page, each opens a detail view |
+| `/news` | Recent public GitHub events for the profile, cached for 15 minutes |
 | `/sites` | URL buttons for all project sites |
 | `/bots` | URL buttons for all Telegram bots |
 | `/search <query>` | Search by name, stack or description, RU and EN |
@@ -30,6 +31,7 @@ Commands:
 | `/links` | GitHub, Telegram, hub and bot catalogue |
 | `/channels` | Telegram channels |
 | `/about` | Short profile |
+| `/feedback <text>` | Forward the text to the owner |
 | `/stats` | Owner only: users, messages, opens, inline picks, week bars, top projects, referrers |
 | `/broadcast <text>` | Owner only: send text to every user the bot has seen |
 | `/myid` | Chat ID |
@@ -37,6 +39,15 @@ Commands:
 
 The bot also answers inline queries: projects with screenshots come back as photo results, the rest as
 articles with site, repository and bot buttons.
+
+`/projects` ends with a facet row built from the `lang` field of the catalogue — the six most common stacks,
+each filter paging inside itself — so a new technology shows up in the filter without a code change. `/news`
+renders the public profile events and keeps them in KV for 15 minutes: events draw from the same 60 requests
+per hour GitHub budget as the star counts, so the rendered descriptors, not raw events, are what is cached.
+Every detail card has a share button opening `t.me/share/url` with that project's own `?start=p_` link.
+`/setup` registers the command menu once per language scope, so Telegram autocompletes `/news` in Russian or
+English according to the client language. `/feedback <text>` delivers the note to the owner chat with the
+author's ID, HTML-escaped and cut to 900 characters; without `OWNER_ID` it says it did not send anything.
 
 ## Deep links
 
@@ -100,16 +111,16 @@ npm test          # node:test suite against the built bundle, Telegram and GitHu
 The worker expects four secrets, set with `wrangler secret put` and never committed:
 
 - `BOT_TOKEN` — from [@BotFather](https://t.me/BotFather)
-- `OWNER_ID` — Telegram user ID for `/stats` and `/broadcast`, the bot reports it with `/myid`
+- `OWNER_ID` — Telegram user ID for `/stats`, `/broadcast` and the target of `/feedback`, the bot reports it with `/myid`
 - `SETUP_KEY` — query key for the one-time `/setup` call
 - `WEBHOOK_SECRET` — value Telegram sends in `X-Telegram-Bot-Api-Secret-Token`
 
 Bindings in [`cloudflare-worker/wrangler.toml`](cloudflare-worker/wrangler.toml):
 
-- KV `BOT_KV` — language preferences, star cache
+- KV `BOT_KV` — language preferences, star cache, news cache
 - D1 `BOT_DB` — `events (user_id, kind, value, ts)`, where `kind` is `msg`, `cmd`, `search`, `open`
-  (a project card), `nav` (a menu section), `lang`, `inline` (an inline result picked in another chat)
-  and `ref` (who invited this user)
+  (a project card), `nav` (a menu section or a `stack:<tech>` filter), `lang`, `inline` (an inline result
+  picked in another chat), `feedback` (a note delivered to the owner) and `ref` (who invited this user)
 
 ## Deploy
 
@@ -128,8 +139,8 @@ Then point Telegram at the worker once:
 https://<worker-host>/setup?key=<SETUP_KEY>
 ```
 
-`/setup` calls `setWebhook` with the secret header and uploads the command list. `GET /health` returns `OK`;
-`GET /` returns the catalogue size as JSON.
+`/setup` calls `setWebhook` with the secret header and uploads the command list for both language scopes.
+`GET /health` returns `OK`; `GET /` returns the catalogue size as JSON.
 
 ## Structure
 
@@ -154,15 +165,19 @@ The hub's own live-status workflow is separate.
 Cloudflare Workers лежит в этом репозитории в `bot/`, рядом с хабом. Данные в [`projects.json`](projects.json),
 сборка esbuild, состояние в KV и D1.
 
-Команды: `/projects` — карточки проектов со скриншотами и ссылками, `/sites` — все сайты, `/bots` — все
-боты, `/search` — поиск по названию, стеку и описанию, `/top` — топ по звёздам, `/links` и `/channels` —
-ссылки и каналы, `/stats` — статистика для владельца: пользователи, сообщения, открытия карточек, выборы
-из inline, неделя по дням, топ проектов и кто кого пригласил.
+Команды: `/projects` — карточки проектов со скриншотами и ссылками, внизу строка фасетов по стеку (шесть
+самых частых технологий из `projects.lang`, пагинация остаётся внутри фильтра), `/news` — свежие публичные
+события профиля на GitHub, кеш в KV 15 минут, `/sites` — все сайты, `/bots` — все боты, `/search` — поиск по
+названию, стеку и описанию, `/top` — топ по звёздам, `/links` и `/channels` — ссылки и каналы,
+`/feedback <текст>` — сообщение владельцу (экранируется и режется до 900 символов), `/stats` — статистика для
+владельца: пользователи, сообщения, открытия карточек, выборы из inline, отзывы, неделя по дням, топ
+проектов и кто кого пригласил. Меню команд регистрируется отдельно для `ru` и `en`, поэтому подсказки Telegram
+переведены.
 
 Deep-ссылки: `https://t.me/ssrjkk_bot?start=p_<name>` сразу открывает карточку проекта,
 `?start=ref_<user id>` один раз засчитывает пригласившего. С карточек хаба ведут ссылки `?start=p_`,
-а в карточке бота есть кнопка «Пригласить» с личной ссылкой `?start=ref_`. `npm run check` ловит
-расхождение: имя проекта в ссылке хаба должно быть в каталоге.
+а в карточке бота есть «Поделиться» с той же ссылкой проекта и «Пригласить» с личной `?start=ref_`.
+`npm run check` ловит расхождение: имя проекта в ссылке хаба должно быть в каталоге.
 
 Правка контента: изменить `projects.json`, затем из `bot/`: `npm run build && npm run check && npm test`.
 Секреты (`BOT_TOKEN`, `OWNER_ID`, `SETUP_KEY`, `WEBHOOK_SECRET`) задаются через `wrangler secret put` и в
