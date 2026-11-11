@@ -287,6 +287,10 @@ var NEWS_TTL = 900;
 var NEWS_STALE_TTL = 86400;
 var STACK_FACETS = 6;
 var PAGE_SIZE = 3;
+var API_RETRY_STATUS = /* @__PURE__ */ new Set([429, 502, 503, 504]);
+var API_RETRY_ATTEMPTS = 3;
+var API_RETRY_BUDGET = 3e3;
+var API_RETRY_FALLBACK = 400;
 var LANG = {
   ru: {
     menu: "Главное меню:",
@@ -546,23 +550,38 @@ var starsFetchedAt = 0;
 function esc(value) {
   return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
+function retryAfterMs(res, body, attempt) {
+  const seconds = Number(body?.parameters?.retry_after ?? res.headers.get("retry-after"));
+  return Number.isFinite(seconds) && seconds > 0 ? seconds * 1e3 : API_RETRY_FALLBACK * attempt;
+}
 async function callApi(token, method, payload) {
-  const res = await fetch(`${API}/bot${token}/${method}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-    signal: AbortSignal.timeout(1e4)
-  });
-  if (!res.ok) {
-    console.error(`Telegram API ${method}: HTTP ${res.status}`);
-    return null;
+  let budget = API_RETRY_BUDGET;
+  for (let attempt = 1; ; attempt++) {
+    const res = await fetch(`${API}/bot${token}/${method}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(1e4)
+    });
+    const body = await res.json().catch(() => null);
+    const retriable = API_RETRY_STATUS.has(res.status) && budget > 0;
+    if (retriable && attempt < API_RETRY_ATTEMPTS) {
+      const wait = Math.min(retryAfterMs(res, body, attempt), budget);
+      budget -= wait;
+      console.error(`Telegram API ${method}: HTTP ${res.status}, повтор через ${wait}мс (${attempt})`);
+      await new Promise((resolve) => setTimeout(resolve, wait));
+      continue;
+    }
+    if (!res.ok) {
+      console.error(`Telegram API ${method}: HTTP ${res.status}${body ? ` ${JSON.stringify(body)}` : ""}`);
+      return null;
+    }
+    if (!body?.ok) {
+      console.error(`Telegram API ${method}: ${JSON.stringify(body)}`);
+      return null;
+    }
+    return body.result;
   }
-  const body = await res.json();
-  if (!body.ok) {
-    console.error(`Telegram API ${method}: ${JSON.stringify(body)}`);
-    return null;
-  }
-  return body.result;
 }
 async function sendMessage(token, chatId, text, keyboard) {
   const payload = {
@@ -1434,6 +1453,7 @@ var worker_default = {
 export {
   COMMANDS,
   LANG,
+  LANG_CACHE_LIMIT,
   worker_default as default,
   projectCard,
   projectDetailKeyboard,

@@ -146,6 +146,24 @@ https://<worker-host>/setup?key=<SETUP_KEY>
 `/setup` calls `setWebhook` with the secret header and uploads the command list for both language scopes.
 `GET /health` returns `OK`; `GET /` returns the catalogue size as JSON.
 
+A reply is not dropped because Telegram was busy: a `429` or a `502`/`503`/`504` is repeated up to three
+times, waiting the `parameters.retry_after` the API asks for, with the whole pause capped at three seconds —
+a webhook handler that hangs costs more than a lost message. A `500` is never repeated: the send may already
+have happened, and a retry would put a duplicate in the chat.
+
+## Live smoke
+
+```bash
+npm run smoke     # WORKER_URL overrides the deployed worker it asks
+```
+
+Three questions to the production worker: `GET /health` answers `OK`, `GET /` reports the same `projects`,
+`sites` and `bots` counts as `projects.json`, and `POST /webhook` without the secret header answers `403`.
+A transport error or a 5xx is retried three times, because a new version can still be spreading across the
+edge; any other status is an answer, so it is not retried. Every check reports what it saw and any red one
+exits non-zero — `.github/workflows/bot-prod-smoke.yml` runs it hourly and on demand. The checks are unit
+tested against a mocked worker, including the three ways they are supposed to fail.
+
 ## Structure
 
 Paths relative to the repository root:
@@ -156,10 +174,13 @@ bot/projects.json                 project, site, bot and link data
 bot/cloudflare-worker/worker.js   built bundle (committed, deployed as is)
 bot/cloudflare-worker/wrangler.toml
 bot/scripts/check-bundle.mjs      data and bundle checks
+bot/scripts/smoke-prod.mjs        live checks against the deployed worker
 bot/tests/worker.test.mjs         node:test suite
+bot/tests/smoke.test.mjs          node:test suite for the smoke checks
 ```
 
-CI for the bot is `.github/workflows/bot-ci.yml` (build, bundle diff, check, test), scoped to `bot/`.
+CI for the bot is `.github/workflows/bot-ci.yml` (build, bundle diff, check, test), scoped to `bot/`, and
+`.github/workflows/bot-prod-smoke.yml` (the live smoke above, hourly and on demand).
 CodeQL runs through GitHub's default setup for the repository, so there is no committed CodeQL workflow.
 The hub's own live-status workflow is separate.
 
@@ -189,6 +210,17 @@ Deep-ссылки: `https://t.me/ssrjkk_bot?start=p_<name>` сразу откр�
 Секреты (`BOT_TOKEN`, `OWNER_ID`, `SETUP_KEY`, `WEBHOOK_SECRET`) задаются через `wrangler secret put` и в
 репозиторий не попадают. Деплой: `cd bot && npm run build`, затем `npx wrangler deploy` из
 `bot/cloudflare-worker`.
+
+Ответ бота не теряется из-за лимита Telegram: `429` и `502`/`503`/`504` повторяются до трёх раз с паузой из
+`parameters.retry_after`, суммарно не дольше трёх секунд — висящий вебхук дороже потерянного сообщения. `500`
+не повторяем: под ним сообщение могло уже уйти, а повтор — это дубликат в чате.
+
+Смоук по проду: `npm run smoke` (`WORKER_URL` меняет адрес) задаёт живому воркеру три вопроса — `/health`
+отвечает `OK`, `GET /` отдаёт те же счётчики, что и `projects.json`, `POST /webhook` без секрета отвечает
+`403`. Сетевой сбой и 5xx повторяются трижды (версия могла ещё не разъехаться по edge), другой статус — это
+ответ, его не повторяют. Любая красная проверка выходит кодом 1;
+`.github/workflows/bot-prod-smoke.yml` гоняет смоук раз в час и по кнопке, а сами проверки покрыты тестами,
+включая три способа, которыми они должны падать.
 
 ## Author
 

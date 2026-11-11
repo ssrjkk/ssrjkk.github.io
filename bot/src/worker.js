@@ -15,6 +15,16 @@ const NEWS_STALE_TTL = 86400;
 const STACK_FACETS = 6;
 const PAGE_SIZE = 3;
 
+// Повторяем только то, что Telegram заведомо не исполнил: 429 (лимит сообщений) и
+// 502/503/504 (его фронтворк не дошёл до приложения). 500 и сетевые сбои не трогаем —
+// под ними сообщение могло уйти, а повтор означает дубликат в чате.
+const API_RETRY_STATUS = new Set([429, 502, 503, 504]);
+const API_RETRY_ATTEMPTS = 3;
+// Потолок намеренно небольшой: вебхук ждёт ответа бота, висящая пауза дороже
+// потерянного сообщения.
+const API_RETRY_BUDGET = 3000;
+const API_RETRY_FALLBACK = 400;
+
 // Экспортируется только для тестов: пакеты ru/en должны покрывать друг друга.
 export const LANG = {
   ru: {
@@ -244,8 +254,10 @@ export const COMMANDS = {
   ]
 };
 
+// Язык читается на каждое сообщение и кеш живёт в модуле воркера, поэтому у кеша есть
+// потолок: иначе в одной изоляции осела бы запись на каждого когда-либо написавшего.
 const langCache = new Map();
-const LANG_CACHE_LIMIT = 2000;
+export const LANG_CACHE_LIMIT = 2000;
 let starsCache = null;
 let starsFetchedAt = 0;
 
@@ -257,23 +269,42 @@ function esc(value) {
     .replace(/"/g, "&quot;");
 }
 
+// 429 приходит с parameters.retry_after в теле, 503 — с заголовком Retry-After.
+// Без подсказки растём от попытки к попытке, чтобы не долбить лимит впритык.
+function retryAfterMs(res, body, attempt) {
+  const seconds = Number(body?.parameters?.retry_after ?? res.headers.get("retry-after"));
+  return Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : API_RETRY_FALLBACK * attempt;
+}
+
 async function callApi(token, method, payload) {
-  const res = await fetch(`${API}/bot${token}/${method}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-    signal: AbortSignal.timeout(10000)
-  });
-  if (!res.ok) {
-    console.error(`Telegram API ${method}: HTTP ${res.status}`);
-    return null;
+  let budget = API_RETRY_BUDGET;
+  for (let attempt = 1; ; attempt++) {
+    const res = await fetch(`${API}/bot${token}/${method}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(10000)
+    });
+    // У 502/503 тело пустое, а решение о повторе зависит именно от статуса.
+    const body = await res.json().catch(() => null);
+    const retriable = API_RETRY_STATUS.has(res.status) && budget > 0;
+    if (retriable && attempt < API_RETRY_ATTEMPTS) {
+      const wait = Math.min(retryAfterMs(res, body, attempt), budget);
+      budget -= wait;
+      console.error(`Telegram API ${method}: HTTP ${res.status}, повтор через ${wait}мс (${attempt})`);
+      await new Promise((resolve) => setTimeout(resolve, wait));
+      continue;
+    }
+    if (!res.ok) {
+      console.error(`Telegram API ${method}: HTTP ${res.status}${body ? ` ${JSON.stringify(body)}` : ""}`);
+      return null;
+    }
+    if (!body?.ok) {
+      console.error(`Telegram API ${method}: ${JSON.stringify(body)}`);
+      return null;
+    }
+    return body.result;
   }
-  const body = await res.json();
-  if (!body.ok) {
-    console.error(`Telegram API ${method}: ${JSON.stringify(body)}`);
-    return null;
-  }
-  return body.result;
 }
 
 async function sendMessage(token, chatId, text, keyboard) {

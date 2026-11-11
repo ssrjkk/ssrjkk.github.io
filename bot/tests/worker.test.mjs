@@ -18,6 +18,7 @@ import { spawnSync } from "node:child_process";
 import worker, {
   LANG,
   COMMANDS,
+  LANG_CACHE_LIMIT,
   projectCard,
   projectDetailKeyboard,
   shareProjectUrl
@@ -120,7 +121,7 @@ function makeCtx() {
   };
 }
 
-function installFetch({ photoFails = false, events = [], eventsStatus = 200 } = {}) {
+function installFetch({ photoFails = false, events = [], eventsStatus = 200, telegram = null } = {}) {
   const calls = [];
   globalThis.fetch = async (input, init = {}) => {
     const url = String(input);
@@ -135,6 +136,12 @@ function installFetch({ photoFails = false, events = [], eventsStatus = 200 } = 
       const method = url.split("/").pop();
       const body = init.body ? JSON.parse(init.body) : {};
       calls.push({ method, body });
+      // Ответ Telegram можно подменить по номеру попытки — так проверяют бэкофф,
+      // где важен не только статус, но и порядок ответов на один и тот же метод.
+      if (telegram) {
+        const scripted = telegram({ method, body, attempt: callsOf(calls, method).length });
+        if (scripted) return scripted;
+      }
       if (method === "sendPhoto" && photoFails) {
         return jsonResponse({ ok: false, description: "wrong file identifier" });
       }
@@ -1031,5 +1038,128 @@ test("a project card shares a deep link with the project description", () => {
   const share = buttons.find((button) => (button.url || "").startsWith("https://t.me/share"));
   assert.equal(share.text, LANG.ru.shareProject);
   assert.equal(share.url, shareProjectUrl("ru", project));
+});
+
+// Бэкофф проверяют на /help: команда даёт ровно один sendMessage и не трогает GitHub,
+// поэтому число обращений к Telegram — это число попыток, а не побочных запросов.
+function telegramStatuses(method, status, body, until = 1) {
+  let attempts = 0;
+  return (call) => {
+    if (call.method !== method) return null;
+    attempts += 1;
+    return attempts <= until ? jsonResponse(body, status) : null;
+  };
+}
+
+test("callApi repeats a 429 instead of dropping the answer", async () => {
+  const calls = installFetch({
+    telegram: telegramStatuses("sendMessage", 429, {
+      ok: false,
+      error_code: 429,
+      description: "Too Many Requests",
+      parameters: { retry_after: 0 }
+    })
+  });
+  const response = await sendWebhook(makeEnv(), makeCtx(), messageUpdate("/help", { chatId: 160 }));
+
+  const messages = callsOf(calls, "sendMessage");
+  assert.equal(messages.length, 2, "первый ответ 429, второй — обычный");
+  assert.equal(response.status, 200);
+  assert.equal(messages[0].body.text, messages[1].body.text, "повтор отправляет то же сообщение");
+});
+
+test("callApi waits the seconds Telegram asks for", async () => {
+  const calls = installFetch({
+    telegram: telegramStatuses("sendMessage", 429, {
+      ok: false,
+      error_code: 429,
+      parameters: { retry_after: 1 }
+    })
+  });
+  const startedAt = Date.now();
+  await sendWebhook(makeEnv(), makeCtx(), messageUpdate("/help", { chatId: 161 }));
+  const waited = Date.now() - startedAt;
+
+  assert.equal(callsOf(calls, "sendMessage").length, 2);
+  assert.ok(waited >= 1000, `retry_after=1s, подождали ${waited}мс`);
+});
+
+test("callApi keeps the wait inside its own budget", async () => {
+  // Telegram может попросить паузу на десятки секунд. Вебхук ждёт ответ бота,
+  // поэтому платим потолок и останавливаемся, а не висим половину лимита воркера.
+  const calls = installFetch({
+    telegram: telegramStatuses(
+      "sendMessage",
+      429,
+      { ok: false, error_code: 429, parameters: { retry_after: 40 } },
+      Infinity
+    )
+  });
+  const startedAt = Date.now();
+  await sendWebhook(makeEnv(), makeCtx(), messageUpdate("/help", { chatId: 162 }));
+  const waited = Date.now() - startedAt;
+
+  assert.equal(callsOf(calls, "sendMessage").length, 2, "бюджет на паузы кончился — третьего раза нет");
+  assert.ok(waited >= 3000 && waited < 4000, `ждали ${waited}мс вместо запрошенных 40000`);
+});
+
+test("callApi stops after three attempts of the same 429", async () => {
+  const calls = installFetch({
+    telegram: () =>
+      jsonResponse({ ok: false, error_code: 429, parameters: { retry_after: 0 } }, 429)
+  });
+  const response = await sendWebhook(makeEnv(), makeCtx(), messageUpdate("/help", { chatId: 163 }));
+
+  assert.equal(callsOf(calls, "sendMessage").length, 3);
+  assert.equal(response.status, 200, "исчерпанный лимит не должен злить Telegram ределивером");
+});
+
+test("callApi does not repeat a 500", async () => {
+  const calls = installFetch({
+    telegram: telegramStatuses("sendMessage", 500, {
+      ok: false,
+      error_code: 500,
+      description: "Internal Server Error"
+    })
+  });
+  await sendWebhook(makeEnv(), makeCtx(), messageUpdate("/help", { chatId: 164 }));
+  assert.equal(callsOf(calls, "sendMessage").length, 1, "под 500 send мог состояться — повтор это дубликат");
+});
+
+test("callApi repeats a 503 that answers with an empty body", async () => {
+  // 502/503 приходят с фронта Telegram без JSON-тела: парсер не должен на них падать.
+  let attempts = 0;
+  const calls = installFetch({
+    telegram: ({ method }) => {
+      if (method !== "editMessageText") return null;
+      attempts += 1;
+      return attempts === 1 ? new Response("", { status: 503 }) : null;
+    }
+  });
+  await sendWebhook(makeEnv(), makeCtx(), callbackUpdate("show:menu", { chatId: 165 }));
+  assert.equal(callsOf(calls, "editMessageText").length, 2);
+});
+
+test("the language cache drops the oldest chat instead of growing forever", async () => {
+  // Кеш языка живёт в модуле воркера и переживает запросы, поэтому у него есть потолок.
+  // Проверяем без доступа к Map: вытесненный чат обязан снова перечитать KV, а живой —
+  // нет, иначе потолок есть, а вытеснение не то.
+  const env = makeEnv();
+  const first = 900_001;
+  installFetch();
+  for (let offset = 0; offset <= LANG_CACHE_LIMIT; offset++) {
+    await sendWebhook(env, makeCtx(), messageUpdate("/help", { chatId: first + offset }));
+  }
+
+  await env.BOT_KV.put(`lang:${first}`, "en");
+  const evicted = installFetch();
+  await sendWebhook(env, makeCtx(), messageUpdate("/help", { chatId: first }));
+  assert.equal(lastText(evicted), LANG.en.help, "вытесненный чат перечитал язык из KV");
+
+  const last = first + LANG_CACHE_LIMIT;
+  await env.BOT_KV.put(`lang:${last}`, "en");
+  const cached = installFetch();
+  await sendWebhook(env, makeCtx(), messageUpdate("/help", { chatId: last }));
+  assert.equal(lastText(cached), LANG.ru.help, "язык из кеша в KV не перечитывается");
 });
 
