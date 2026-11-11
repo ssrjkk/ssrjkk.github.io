@@ -246,7 +246,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
   *{scroll-behavior:auto!important;transition:none!important;animation:none!important}
   .card:hover,.btn:hover{transform:none}
 }
-/* --- live status bar (status.json генерируется Actions каждые 15 минут) --- */
+/* --- live status bar (status/worker.js, Cloudflare cron каждые 15 минут) --- */
 .statusbar{border-bottom:1px solid var(--line);background:var(--card)}
 .statusbar .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:13px 0}
 .sb-label{font:600 11px/1 var(--mono);letter-spacing:.11em;text-transform:uppercase;color:#6B6B62;margin-right:8px;display:inline-flex;align-items:center;gap:7px}
@@ -260,6 +260,8 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
 .chip.down .cdot{background:#D64545;box-shadow:0 0 0 3px rgba(214,69,69,.14)}
 .chip .cms{font:500 11px/1 var(--mono);color:#6B6B62}
 .sb-updated{margin-left:auto;font:500 11.5px/1 var(--mono);color:#6B6B62}
+/* 7.0:1 на белом фоне строки — устаревшие данные видно, а не угадывается. */
+.sb-updated.stale{color:#A62B22}
 .badge.down::before{content:"";width:6px;height:6px;border-radius:50%;background:#F87171}
 </style>
 </head>
@@ -720,13 +722,14 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
 </footer>
 
 <script>
-/* Живой статус: данные готовит scripts/generate_status.py (Actions, каждые 15 минут). */
+/* Живой статус: status/worker.js на Cloudflare Cron Triggers, раз в 15 минут. */
 (function () {
   "use strict";
+  var STATUS_URL = "https://ssrjkk-status.ray013lefe.workers.dev/";
   var box = document.getElementById("live-status");
   var updated = document.getElementById("sb-updated");
   if (!box) return;
-  fetch("status.json", { cache: "no-store" })
+  fetch(STATUS_URL, { cache: "no-store" })
     .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
     .then(function (data) {
       box.querySelectorAll(".chip").forEach(function (n) { n.remove(); });
@@ -751,8 +754,17 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
         box.appendChild(chip);
       });
       var mins = Math.max(0, Math.round((Date.now() - new Date(data.generated_at).getTime()) / 60000));
-      if (updated) updated.textContent = "обновлено " + (mins === 0 ? "только что" : mins + " мин назад")
-        + " · " + data.summary.up + "/" + data.summary.total + " в строю";
+      if (updated) {
+        updated.textContent = "обновлено " + (mins === 0 ? "только что" : mins + " мин назад")
+          + " · " + data.summary.up + "/" + data.summary.total + " в строю";
+        /* Промежуток больше двух расписаний — врёт уже не витрина, а сам опрос. */
+        if (mins > 30) {
+          updated.classList.add("stale");
+          updated.textContent += " · данные устарели";
+        } else {
+          updated.classList.remove("stale");
+        }
+      }
       /* Синхронизируем бейджи на карточках с живыми данными */
       data.targets.forEach(function (t) {
         document.querySelectorAll('a[href^="' + t.url + '"]').forEach(function (a) {
