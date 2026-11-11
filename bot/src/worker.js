@@ -11,6 +11,7 @@ const GH_API = "https://api.github.com/repos";
 const GH_USERS_API = "https://api.github.com/users";
 const STARS_TTL = 3600;
 const NEWS_TTL = 900;
+const NEWS_STALE_TTL = 86400;
 const STACK_FACETS = 6;
 const PAGE_SIZE = 3;
 
@@ -54,9 +55,10 @@ export const LANG = {
     newsBtn: "📰 Обновления",
     newsTitle: "<b>📰 Что произошло на GitHub:</b>",
     newsEmpty: "Свежих событий нет: публичный API GitHub не ответил или репозитории молчат.",
-    newsPush: (branch, count) => `${count} коммит(ов) в ${branch}`,
+    newsPush: (branch) => `push в ${branch}`,
     newsRelease: (tag) => `релиз ${tag}`,
     newsCreate: (type, ref) => `создан ${type} ${ref}`,
+    newsDelete: (type, ref) => `удалён ${type} ${ref}`,
     newsPull: (action, title) => `pull request ${action}: ${title}`,
     feedbackNote: (note, id) => `💬 <b>Обратная связь</b>\n\n${note}\n\nот <code>${id}</code>`,
     stackTitle: (token) => `<b>Мои проекты — ${token}:</b>`,
@@ -147,9 +149,10 @@ ${s.refList}`,
     newsBtn: "📰 Updates",
     newsTitle: "<b>📰 What happened on GitHub:</b>",
     newsEmpty: "No fresh events: the public GitHub API did not answer or the repositories are quiet.",
-    newsPush: (branch, count) => `${count} commit(s) to ${branch}`,
+    newsPush: (branch) => `pushed to ${branch}`,
     newsRelease: (tag) => `release ${tag}`,
     newsCreate: (type, ref) => `created ${type} ${ref}`,
+    newsDelete: (type, ref) => `deleted ${type} ${ref}`,
     newsPull: (action, title) => `pull request ${action}: ${title}`,
     feedbackNote: (note, id) => `💬 <b>Feedback</b>\n\n${note}\n\nfrom <code>${id}</code>`,
     stackTitle: (token) => `<b>My projects — ${token}:</b>`,
@@ -315,16 +318,41 @@ async function getLang(env, chatId) {
   return lang;
 }
 
+// Публичный GitHub отвечает 403, когда бюджет (60 запросов в час) на IP исчерпан, а
+// на события — 202, пока лента генерируется (тело при этом пустое). Ни то, ни другое
+// нельзя отличить от «репозитории молчат», поэтому это ошибка, а не пустой ответ.
+async function fetchGithub(url, label) {
+  try {
+    const res = await fetch(url, {
+      headers: { "User-Agent": "ssrjkk-bot", Accept: "application/vnd.github+json" },
+      signal: AbortSignal.timeout(8000)
+    });
+    if (res.status === 202 || !res.ok) {
+      console.error(`GitHub ${label}: HTTP ${res.status}`);
+      return null;
+    }
+    return await res.json();
+  } catch (error) {
+    console.error(`GitHub ${label}:`, error);
+    return null;
+  }
+}
+
+async function kvJson(env, key) {
+  try {
+    const raw = await env.BOT_KV.get(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch (error) {
+    console.error(`KV ${key}:`, error);
+    return null;
+  }
+}
+
 async function getStars(env, ctx) {
   const now = Date.now();
   if (starsCache && now - starsFetchedAt < STARS_TTL * 1000) return starsCache;
 
-  let cached = null;
-  try {
-    cached = JSON.parse(await env.BOT_KV.get("stars"));
-  } catch (error) {
-    console.error("getStars KV error:", error);
-  }
+  const cached = await kvJson(env, "stars");
   if (cached && now - cached.ts < STARS_TTL * 1000) {
     starsCache = cached.data;
     starsFetchedAt = cached.ts;
@@ -334,18 +362,8 @@ async function getStars(env, ctx) {
   const result = {};
   await Promise.allSettled(
     PROJECTS.filter((project) => !project.private).map(async (project) => {
-      try {
-        const res = await fetch(`${GH_API}/${GITHUB_USERNAME}/${project.name}`, {
-          headers: { "User-Agent": "ssrjkk-bot", Accept: "application/vnd.github+json" },
-          signal: AbortSignal.timeout(8000)
-        });
-        if (res.ok) {
-          const body = await res.json();
-          result[project.name] = { stars: body.stargazers_count ?? 0 };
-        }
-      } catch (error) {
-        console.error(`GitHub fetch ${project.name}:`, error);
-      }
+      const body = await fetchGithub(`${GH_API}/${GITHUB_USERNAME}/${project.name}`, project.name);
+      if (body) result[project.name] = { stars: body.stargazers_count ?? 0 };
     })
   );
 
@@ -362,38 +380,41 @@ async function getStars(env, ctx) {
 }
 
 // Публичные события профиля тратят тот же бюджет GitHub (60 запросов в час на IP),
-// что и звёзды, поэтому живут в KV 15 минут, а не обновляются на каждый /news.
+// что и звёзды, поэтому живут в KV: свежие 15 минут, потом ещё сутки как отставшая копия.
 async function getNews(env, ctx) {
   const now = Date.now();
 
   // Кеш только в KV: в памяти воркера он пережил бы смену изоляции и рассинхронизировался
   // с TTL, а тесты на «свежий KV → нет запроса» и «пустой KV → запрос» стали бы порядкозависимыми.
-  let cached = null;
-  try {
-    cached = JSON.parse(await env.BOT_KV.get("news"));
-  } catch (error) {
-    console.error("getNews KV error:", error);
-  }
-  // Запись в KV могла остаться от другой версии воркера: без проверки на массив
-  // одна такая строка ломала бы /news до истечения TTL.
-  if (cached && now - cached.ts < NEWS_TTL * 1000 && Array.isArray(cached.data)) return cached.data;
+  // Запись могла остаться от другой версии воркера: без проверки на массив одна
+  // такая строка ломала бы /news до истечения TTL.
+  const cached = await kvJson(env, "news");
+  const stored = cached && Array.isArray(cached.data) ? cached.data : null;
+  if (stored && now - cached.ts < NEWS_TTL * 1000) return stored;
 
-  let events = [];
-  try {
-    const res = await fetch(`${GH_USERS_API}/${GITHUB_USERNAME}/events/public?per_page=30`, {
-      headers: { "User-Agent": "ssrjkk-bot", Accept: "application/vnd.github+json" },
-      signal: AbortSignal.timeout(8000)
-    });
-    if (res.ok) events = (await res.json()).slice(0, 30);
-  } catch (error) {
-    console.error("GitHub events fetch:", error);
-  }
-  const result = events.map(describeEvent).filter(Boolean).slice(0, 10);
+  const body = await fetchGithub(`${GH_USERS_API}/${GITHUB_USERNAME}/events/public?per_page=30`, "events");
+  const seen = new Set();
+  const result = (Array.isArray(body) ? body : [])
+    .map(describeEvent)
+    .filter(Boolean)
+    // Ветка, которую гонит автостатус, даёт десяток одинаковых push-строк:
+    // каждую уникальную пару «репозиторий — что случилось» показываем один раз.
+    .filter((item) => {
+      const key = `${item.repo}|${item.what.join("|")}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, 10);
+
+  // GitHub может ответить 403 на исчерпанном лимите: пустой ответ не должен стирать
+  // то, что уже показали пользователям сутки назад.
+  if (!result.length && stored) return stored;
 
   if (ctx && typeof ctx.waitUntil === "function") {
     ctx.waitUntil(
       env.BOT_KV
-        .put("news", JSON.stringify({ ts: now, data: result }), { expirationTtl: NEWS_TTL })
+        .put("news", JSON.stringify({ ts: now, data: result }), { expirationTtl: NEWS_STALE_TTL })
         .catch((error) => console.error("news KV put:", error))
     );
   }
@@ -401,6 +422,8 @@ async function getNews(env, ctx) {
 }
 
 // Дескриптор события хранится без привязки к языку: одна запись в KV даёт подписи и для ru, и для en.
+// Неаутентифицированный events/public отдаёт в PushEvent только ref/head/before — ни списка коммитов,
+// ни размера, поэтому подпись строится по ветке, а пустой push (head == before) не показывается.
 function describeEvent(event) {
   const repo = event.repo && event.repo.name;
   if (!repo) return null;
@@ -408,8 +431,9 @@ function describeEvent(event) {
   const base = { repo: repo.split("/")[1] || repo, url: `https://github.com/${repo}` };
 
   if (event.type === "PushEvent") {
-    const count = (payload.commits || []).length;
-    return count ? { ...base, what: ["push", (payload.ref || "").split("/").pop(), count] } : null;
+    const branch = (payload.ref || "").split("/").pop();
+    if (!branch || payload.head === payload.before) return null;
+    return { ...base, what: ["push", branch] };
   }
   if (event.type === "ReleaseEvent") {
     const tag = (payload.release || {}).tag_name;
@@ -417,6 +441,9 @@ function describeEvent(event) {
   }
   if (event.type === "CreateEvent") {
     return { ...base, what: ["create", payload.ref_type || "", payload.ref || ""] };
+  }
+  if (event.type === "DeleteEvent") {
+    return { ...base, what: ["delete", payload.ref_type || "", payload.ref || ""] };
   }
   if (event.type === "PullRequestEvent") {
     return { ...base, what: ["pull", payload.action || "", (payload.pull_request || {}).title || ""] };
@@ -428,12 +455,14 @@ function newsLine(item, lang) {
   const [kind, first, second] = item.what;
   const what =
     kind === "push"
-      ? LANG[lang].newsPush(first, second)
+      ? LANG[lang].newsPush(first)
       : kind === "release"
         ? LANG[lang].newsRelease(first)
         : kind === "create"
           ? LANG[lang].newsCreate(first, second)
-          : LANG[lang].newsPull(first, second);
+          : kind === "delete"
+            ? LANG[lang].newsDelete(first, second)
+            : LANG[lang].newsPull(first, second);
   return `• <b>${esc(item.repo)}</b> — ${esc(what)}`;
 }
 

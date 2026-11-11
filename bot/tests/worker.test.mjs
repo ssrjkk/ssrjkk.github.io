@@ -65,8 +65,10 @@ function jsonResponse(body, status = 200) {
 function makeEnv(overrides = {}) {
   const kv = new Map();
   const inserts = [];
+  const puts = [];
   return {
     inserts,
+    puts,
     BOT_TOKEN: "test-token",
     OWNER_ID: "42",
     SETUP_KEY: "setup-key",
@@ -75,8 +77,9 @@ function makeEnv(overrides = {}) {
       async get(key) {
         return kv.has(key) ? kv.get(key) : null;
       },
-      async put(key, value) {
+      async put(key, value, options) {
         kv.set(key, value);
+        puts.push({ key, options });
       }
     },
     BOT_DB: {
@@ -117,7 +120,7 @@ function makeCtx() {
   };
 }
 
-function installFetch({ photoFails = false, events = [] } = {}) {
+function installFetch({ photoFails = false, events = [], eventsStatus = 200 } = {}) {
   const calls = [];
   globalThis.fetch = async (input, init = {}) => {
     const url = String(input);
@@ -125,7 +128,7 @@ function installFetch({ photoFails = false, events = [] } = {}) {
       // Запросы к GitHub пишутся в тот же журнал: `/news` должен подтверждать,
       // что свежий кеш в KV экономит бюджет (60 запросов в час на IP).
       calls.push({ method: "github", body: { url } });
-      if (url.includes("/events/public")) return jsonResponse(events);
+      if (url.includes("/events/public")) return jsonResponse(events, eventsStatus);
       return jsonResponse({ stargazers_count: 7 });
     }
     if (url.startsWith("https://api.telegram.org/")) {
@@ -741,34 +744,67 @@ test("every command the Telegram menu advertises is handled", () => {
   }
 });
 
+// Формат payload — из живого ответа /users/ssrjkk/events/public: в PushEvent без
+// авторизации нет ни commits, ни size, только ref/head/before/push_id.
+function pushEvent(repo, branch, head = "ea098cd3", before = "56d36f22") {
+  return {
+    type: "PushEvent",
+    repo: { name: `ssrjkk/${repo}` },
+    payload: { ref: `refs/heads/${branch}`, head, before, push_id: 49597532153, repository_id: 1414676630 }
+  };
+}
+
 test("/news describes public events, escapes them and caches the set in KV", async () => {
   const calls = installFetch({
     events: [
-      { type: "PushEvent", repo: { name: "ssrjkk/raven" }, payload: { ref: "refs/heads/main", commits: [{}, {}] } },
-      { type: "ReleaseEvent", repo: { name: "ssrjkk/wake" }, payload: { release: { tag_name: "v1.2.0" } } },
+      pushEvent("raven", "main", "aa11"),
+      pushEvent("raven", "main", "bb22"),
+      pushEvent("wake", "master", "cc33"),
+      pushEvent("verso", "main", "56d36f22", "56d36f22"),
+      { type: "ReleaseEvent", repo: { name: "ssrjkk/harvest" }, payload: { release: { tag_name: "v1.2.0" } } },
       {
         type: "PullRequestEvent",
-        repo: { name: "ssrjkk/harvest" },
+        repo: { name: "ssrjkk/mobius" },
         payload: { action: "opened", pull_request: { title: "<b>hot</b> fix" } }
       },
-      { type: "WatchEvent", repo: { name: "ssrjkk/mobius" }, payload: {} }
+      { type: "CreateEvent", repo: { name: "ssrjkk/volley" }, payload: { ref_type: "branch", ref: "gh-pages" } },
+      { type: "DeleteEvent", repo: { name: "ssrjkk/qa-arsenal" }, payload: { ref_type: "branch", ref: "tmp" } },
+      { type: "WatchEvent", repo: { name: "ssrjkk/qualix" }, payload: {} }
     ]
   });
   const env = makeEnv();
   await sendWebhook(env, makeCtx(), messageUpdate("/news", { chatId: 140 }));
 
   const sent = callsOf(calls, "sendMessage").at(-1);
-  assert.match(sent.body.text, /raven<\/b> — 2 коммит\(ов\) в main/);
-  assert.match(sent.body.text, /wake<\/b> — релиз v1\.2\.0/);
-  assert.match(sent.body.text, /&lt;b&gt;hot&lt;\/b&gt; fix/, "заголовок чужого pull request экранируется");
-  assert.ok(!sent.body.text.includes("mobius"), "неописанный тип события не попадает в выдачу");
+  assert.match(sent.body.text, /raven<\/b> — push в main/);
+  assert.equal(
+    (sent.body.text.match(/raven<\/b> — push в main/g) || []).length,
+    1,
+    "одинаковые пуши одной ветки не превращают список в простыню"
+  );
+  assert.match(sent.body.text, /wake<\/b> — push в master/);
+  assert.match(sent.body.text, /harvest<\/b> — релиз v1\.2\.0/);
+  assert.match(sent.body.text, /volley<\/b> — создан branch gh-pages/);
+  assert.match(sent.body.text, /qa-arsenal<\/b> — удалён branch tmp/);
+  assert.match(
+    sent.body.text,
+    /mobius<\/b> — pull request opened: &lt;b&gt;hot&lt;\/b&gt; fix/,
+    "заголовок чужого pull request экранируется"
+  );
+  assert.ok(!sent.body.text.includes("qualix"), "неописанный тип события не попадает в выдачу");
+  assert.ok(!sent.body.text.includes("verso"), "пустой push (head == before) не событие");
   assert.deepEqual(
     keyboardData(sent).filter((value) => value.startsWith("https://github.com/")),
-    ["https://github.com/ssrjkk/raven", "https://github.com/ssrjkk/wake", "https://github.com/ssrjkk/harvest"]
+    [
+      "https://github.com/ssrjkk/raven",
+      "https://github.com/ssrjkk/wake",
+      "https://github.com/ssrjkk/harvest",
+      "https://github.com/ssrjkk/mobius"
+    ]
   );
 
   const cached = JSON.parse(await env.BOT_KV.get("news"));
-  assert.equal(cached.data.length, 3, "в кеш ложится тот же набор, что показан");
+  assert.equal(cached.data.length, 6, "в кеш ложится тот же набор, что показан");
   assert.ok(cached.ts > 0 && cached.ts <= Date.now(), "кеш помечен временем сборки");
 });
 
@@ -797,9 +833,48 @@ test("/news ignores a KV entry that is not a list", async () => {
   assert.match(lastText(calls), /Свежих событий нет/);
 });
 
+// 403 — лимит на IP, 202 — лента ещё генерируется; оба приходят с пустым телом и
+// оба не означают, что репозитории молчали сутки.
+for (const [status, body] of [
+  [403, { message: "API rate limit exceeded" }],
+  [202, []]
+]) {
+  test(`/news keeps the last set when GitHub answers ${status}`, async () => {
+    const calls = installFetch({ events: body, eventsStatus: status });
+    const env = makeEnv();
+    const staleAt = Date.now() - 20 * 60 * 1000;
+    await env.BOT_KV.put(
+      "news",
+      JSON.stringify({
+        ts: staleAt,
+        data: [{ repo: "raven", url: "https://github.com/ssrjkk/raven", what: ["push", "main"] }]
+      })
+    );
+    await sendWebhook(env, makeCtx(), messageUpdate("/news", { chatId: 151 }));
+
+    assert.equal(callsOf(calls, "github").length, 1, "устаревший кеш всё равно пытается обновиться");
+    assert.match(lastText(calls), /raven<\/b> — push в main/, `${status} не должен стирать показанное`);
+    assert.equal(
+      JSON.parse(await env.BOT_KV.get("news")).ts,
+      staleAt,
+      "пустой ответ GitHub не перезаписывает кеш"
+    );
+  });
+}
+
+test("a news entry lives a day so a rate limit cannot blank the section", async () => {
+  installFetch({
+    events: [{ type: "ReleaseEvent", repo: { name: "ssrjkk/raven" }, payload: { release: { tag_name: "v1" } } }]
+  });
+  const env = makeEnv();
+  await sendWebhook(env, makeCtx(), messageUpdate("/news", { chatId: 152 }));
+  const put = env.puts.find((row) => row.key === "news");
+  assert.equal(put.options.expirationTtl, 86400, "свежесть держится по ts, а не по TTL ключа");
+});
+
 test("/news says so when GitHub has nothing to show", async () => {
   const calls = installFetch();
-  await sendWebhook(makeEnv(), makeCtx(), messageUpdate("/news", { chatId: 142 }));
+  await sendWebhook(makeEnv(), makeCtx(), messageUpdate("/news", { chatId: 153 }));
   assert.match(lastText(calls), /Свежих событий нет/);
   assert.deepEqual(keyboardData(callsOf(calls, "sendMessage").at(-1)), ["show:menu"]);
 });

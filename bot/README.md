@@ -22,8 +22,8 @@ Commands:
 | Command | What it does |
 | --- | --- |
 | `/start` | Menu with projects, sites, bots, links and language switch |
-| `/projects` | Three project cards per page, each opens a detail view |
-| `/news` | Recent public GitHub events for the profile, cached for 15 minutes |
+| `/projects` | Three project cards per page plus stack facets, each card opens a detail view |
+| `/news` | Pushes, releases and pull requests from the public profile feed |
 | `/sites` | URL buttons for all project sites |
 | `/bots` | URL buttons for all Telegram bots |
 | `/search <query>` | Search by name, stack or description, RU and EN |
@@ -42,12 +42,16 @@ articles with site, repository and bot buttons.
 
 `/projects` ends with a facet row built from the `lang` field of the catalogue — the six most common stacks,
 each filter paging inside itself — so a new technology shows up in the filter without a code change. `/news`
-renders the public profile events and keeps them in KV for 15 minutes: events draw from the same 60 requests
-per hour GitHub budget as the star counts, so the rendered descriptors, not raw events, are what is cached.
-Every detail card has a share button opening `t.me/share/url` with that project's own `?start=p_` link.
-`/setup` registers the command menu once per language scope, so Telegram autocompletes `/news` in Russian or
-English according to the client language. `/feedback <text>` delivers the note to the owner chat with the
-author's ID, HTML-escaped and cut to 900 characters; without `OWNER_ID` it says it did not send anything.
+renders pushes, releases, branch and tag creation and deletion, and pull requests from the public profile
+event feed, one line per repository and action, and caches the rendered descriptors — not the raw events —
+in KV. Events draw from the same 60 requests per hour GitHub budget as the star counts, so an entry stays
+readable for a day after its 15 minutes of freshness: a rate limit or a `202` from a feed that is still being
+generated cannot blank the section. Unauthenticated event payloads carry no commit list, so a push line names
+the branch rather than a commit count. Every detail card has a share button opening `t.me/share/url` with
+that project's own `?start=p_` link. `/setup` registers the command menu once per language scope, so Telegram
+autocompletes `/news` in Russian or English according to the client language. `/feedback <text>` delivers the
+note to the owner chat with the author's ID, HTML-escaped and cut to 900 characters; without `OWNER_ID` it
+says it did not send anything.
 
 ## Deep links
 
@@ -166,8 +170,10 @@ Cloudflare Workers лежит в этом репозитории в `bot/`, ря
 сборка esbuild, состояние в KV и D1.
 
 Команды: `/projects` — карточки проектов со скриншотами и ссылками, внизу строка фасетов по стеку (шесть
-самых частых технологий из `projects.lang`, пагинация остаётся внутри фильтра), `/news` — свежие публичные
-события профиля на GitHub, кеш в KV 15 минут, `/sites` — все сайты, `/bots` — все боты, `/search` — поиск по
+самых частых технологий из `projects.lang`, пагинация остаётся внутри фильтра), `/news` — пуши, релизы и
+pull request из публичной ленты профиля, по строке на пару «репозиторий — событие»; запись свежа 15 минут
+и живёт в KV сутки, поэтому лимит GitHub не обнуляет раздел, `/sites` — все сайты, `/bots` — все боты,
+`/search` — поиск по
 названию, стеку и описанию, `/top` — топ по звёздам, `/links` и `/channels` — ссылки и каналы,
 `/feedback <текст>` — сообщение владельцу (экранируется и режется до 900 символов), `/stats` — статистика для
 владельца: пользователи, сообщения, открытия карточек, выборы из inline, отзывы, неделя по дням, топ

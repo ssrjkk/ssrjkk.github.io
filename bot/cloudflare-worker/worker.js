@@ -284,6 +284,7 @@ var GH_API = "https://api.github.com/repos";
 var GH_USERS_API = "https://api.github.com/users";
 var STARS_TTL = 3600;
 var NEWS_TTL = 900;
+var NEWS_STALE_TTL = 86400;
 var STACK_FACETS = 6;
 var PAGE_SIZE = 3;
 var LANG = {
@@ -325,9 +326,10 @@ var LANG = {
     newsBtn: "📰 Обновления",
     newsTitle: "<b>📰 Что произошло на GitHub:</b>",
     newsEmpty: "Свежих событий нет: публичный API GitHub не ответил или репозитории молчат.",
-    newsPush: (branch, count) => `${count} коммит(ов) в ${branch}`,
+    newsPush: (branch) => `push в ${branch}`,
     newsRelease: (tag) => `релиз ${tag}`,
     newsCreate: (type, ref) => `создан ${type} ${ref}`,
+    newsDelete: (type, ref) => `удалён ${type} ${ref}`,
     newsPull: (action, title) => `pull request ${action}: ${title}`,
     feedbackNote: (note, id) => `💬 <b>Обратная связь</b>
 
@@ -432,9 +434,10 @@ ${s.refList}`,
     newsBtn: "📰 Updates",
     newsTitle: "<b>📰 What happened on GitHub:</b>",
     newsEmpty: "No fresh events: the public GitHub API did not answer or the repositories are quiet.",
-    newsPush: (branch, count) => `${count} commit(s) to ${branch}`,
+    newsPush: (branch) => `pushed to ${branch}`,
     newsRelease: (tag) => `release ${tag}`,
     newsCreate: (type, ref) => `created ${type} ${ref}`,
+    newsDelete: (type, ref) => `deleted ${type} ${ref}`,
     newsPull: (action, title) => `pull request ${action}: ${title}`,
     feedbackNote: (note, id) => `💬 <b>Feedback</b>
 
@@ -599,15 +602,35 @@ async function getLang(env, chatId) {
   langCacheSet(chatId, lang);
   return lang;
 }
+async function fetchGithub(url, label) {
+  try {
+    const res = await fetch(url, {
+      headers: { "User-Agent": "ssrjkk-bot", Accept: "application/vnd.github+json" },
+      signal: AbortSignal.timeout(8e3)
+    });
+    if (res.status === 202 || !res.ok) {
+      console.error(`GitHub ${label}: HTTP ${res.status}`);
+      return null;
+    }
+    return await res.json();
+  } catch (error) {
+    console.error(`GitHub ${label}:`, error);
+    return null;
+  }
+}
+async function kvJson(env, key) {
+  try {
+    const raw = await env.BOT_KV.get(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch (error) {
+    console.error(`KV ${key}:`, error);
+    return null;
+  }
+}
 async function getStars(env, ctx) {
   const now = Date.now();
   if (starsCache && now - starsFetchedAt < STARS_TTL * 1e3) return starsCache;
-  let cached = null;
-  try {
-    cached = JSON.parse(await env.BOT_KV.get("stars"));
-  } catch (error) {
-    console.error("getStars KV error:", error);
-  }
+  const cached = await kvJson(env, "stars");
   if (cached && now - cached.ts < STARS_TTL * 1e3) {
     starsCache = cached.data;
     starsFetchedAt = cached.ts;
@@ -616,18 +639,8 @@ async function getStars(env, ctx) {
   const result = {};
   await Promise.allSettled(
     PROJECTS.filter((project) => !project.private).map(async (project) => {
-      try {
-        const res = await fetch(`${GH_API}/${GITHUB_USERNAME}/${project.name}`, {
-          headers: { "User-Agent": "ssrjkk-bot", Accept: "application/vnd.github+json" },
-          signal: AbortSignal.timeout(8e3)
-        });
-        if (res.ok) {
-          const body = await res.json();
-          result[project.name] = { stars: body.stargazers_count ?? 0 };
-        }
-      } catch (error) {
-        console.error(`GitHub fetch ${project.name}:`, error);
-      }
+      const body = await fetchGithub(`${GH_API}/${GITHUB_USERNAME}/${project.name}`, project.name);
+      if (body) result[project.name] = { stars: body.stargazers_count ?? 0 };
     })
   );
   starsCache = result;
@@ -643,27 +656,21 @@ async function getStars(env, ctx) {
 }
 async function getNews(env, ctx) {
   const now = Date.now();
-  let cached = null;
-  try {
-    cached = JSON.parse(await env.BOT_KV.get("news"));
-  } catch (error) {
-    console.error("getNews KV error:", error);
-  }
-  if (cached && now - cached.ts < NEWS_TTL * 1e3 && Array.isArray(cached.data)) return cached.data;
-  let events = [];
-  try {
-    const res = await fetch(`${GH_USERS_API}/${GITHUB_USERNAME}/events/public?per_page=30`, {
-      headers: { "User-Agent": "ssrjkk-bot", Accept: "application/vnd.github+json" },
-      signal: AbortSignal.timeout(8e3)
-    });
-    if (res.ok) events = (await res.json()).slice(0, 30);
-  } catch (error) {
-    console.error("GitHub events fetch:", error);
-  }
-  const result = events.map(describeEvent).filter(Boolean).slice(0, 10);
+  const cached = await kvJson(env, "news");
+  const stored = cached && Array.isArray(cached.data) ? cached.data : null;
+  if (stored && now - cached.ts < NEWS_TTL * 1e3) return stored;
+  const body = await fetchGithub(`${GH_USERS_API}/${GITHUB_USERNAME}/events/public?per_page=30`, "events");
+  const seen = /* @__PURE__ */ new Set();
+  const result = (Array.isArray(body) ? body : []).map(describeEvent).filter(Boolean).filter((item) => {
+    const key = `${item.repo}|${item.what.join("|")}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).slice(0, 10);
+  if (!result.length && stored) return stored;
   if (ctx && typeof ctx.waitUntil === "function") {
     ctx.waitUntil(
-      env.BOT_KV.put("news", JSON.stringify({ ts: now, data: result }), { expirationTtl: NEWS_TTL }).catch((error) => console.error("news KV put:", error))
+      env.BOT_KV.put("news", JSON.stringify({ ts: now, data: result }), { expirationTtl: NEWS_STALE_TTL }).catch((error) => console.error("news KV put:", error))
     );
   }
   return result;
@@ -674,8 +681,9 @@ function describeEvent(event) {
   const payload = event.payload || {};
   const base = { repo: repo.split("/")[1] || repo, url: `https://github.com/${repo}` };
   if (event.type === "PushEvent") {
-    const count = (payload.commits || []).length;
-    return count ? { ...base, what: ["push", (payload.ref || "").split("/").pop(), count] } : null;
+    const branch = (payload.ref || "").split("/").pop();
+    if (!branch || payload.head === payload.before) return null;
+    return { ...base, what: ["push", branch] };
   }
   if (event.type === "ReleaseEvent") {
     const tag = (payload.release || {}).tag_name;
@@ -684,6 +692,9 @@ function describeEvent(event) {
   if (event.type === "CreateEvent") {
     return { ...base, what: ["create", payload.ref_type || "", payload.ref || ""] };
   }
+  if (event.type === "DeleteEvent") {
+    return { ...base, what: ["delete", payload.ref_type || "", payload.ref || ""] };
+  }
   if (event.type === "PullRequestEvent") {
     return { ...base, what: ["pull", payload.action || "", (payload.pull_request || {}).title || ""] };
   }
@@ -691,7 +702,7 @@ function describeEvent(event) {
 }
 function newsLine(item, lang) {
   const [kind, first, second] = item.what;
-  const what = kind === "push" ? LANG[lang].newsPush(first, second) : kind === "release" ? LANG[lang].newsRelease(first) : kind === "create" ? LANG[lang].newsCreate(first, second) : LANG[lang].newsPull(first, second);
+  const what = kind === "push" ? LANG[lang].newsPush(first) : kind === "release" ? LANG[lang].newsRelease(first) : kind === "create" ? LANG[lang].newsCreate(first, second) : kind === "delete" ? LANG[lang].newsDelete(first, second) : LANG[lang].newsPull(first, second);
   return `• <b>${esc(item.repo)}</b> — ${esc(what)}`;
 }
 function stackFacets(limit = STACK_FACETS) {
