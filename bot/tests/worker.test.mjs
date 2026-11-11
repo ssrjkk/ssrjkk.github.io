@@ -1163,3 +1163,48 @@ test("the language cache drops the oldest chat instead of growing forever", asyn
   assert.equal(lastText(cached), LANG.ru.help, "язык из кеша в KV не перечитывается");
 });
 
+test("every channel handle the bot prints has a button behind it", () => {
+  // Канал может стать приватным — тогда он остаётся только кнопкой со ссылкой-инвайтом,
+  // а хендл в тексте превращается в мёртвую ссылку для читателя.
+  const catalogue = JSON.parse(readFileSync(new URL("../projects.json", import.meta.url), "utf8"));
+  const urls = [
+    ...(catalogue.channels || []),
+    ...(catalogue.links || []),
+    { url: catalogue.bot },
+    ...catalogue.projects.flatMap((project) => [project.site, project.bot].filter(Boolean).map((url) => ({ url })))
+  ];
+  const linked = new Set(
+    urls
+      .map((item) => item.url)
+      .filter((url) => url.startsWith("https://t.me/") && !url.includes("+"))
+      .map((url) => `@${new URL(url).pathname.slice(1)}`)
+  );
+
+  let mentions = 0;
+  for (const pack of Object.values(LANG)) {
+    for (const value of Object.values(pack)) {
+      const text = typeof value === "function" ? value(1, 1) : String(value);
+      for (const handle of text.match(/@[A-Za-z][A-Za-z0-9_]+/g) ?? []) {
+        mentions += 1;
+        assert.ok(linked.has(handle), `${handle} упоминается в тексте, но кнопки со ссылкой нет`);
+      }
+    }
+  }
+  assert.ok(mentions > 0, "иначе проверка ничего не проверяет");
+});
+
+test("/channels offers every catalogue channel by its own url", async () => {
+  const catalogue = JSON.parse(readFileSync(new URL("../projects.json", import.meta.url), "utf8"));
+  const calls = installFetch();
+  await sendWebhook(makeEnv(), makeCtx(), messageUpdate("/channels", { chatId: 167 }));
+
+  const buttons = callsOf(calls, "sendMessage").at(-1).body.reply_markup.inline_keyboard
+    .flat()
+    .filter((button) => button.url);
+  assert.deepEqual(
+    buttons.map((button) => button.url),
+    catalogue.channels.map((channel) => channel.url),
+    "кнопки повторяют каталог каналов: приватный канал доступен только своей ссылкой"
+  );
+});
+

@@ -250,7 +250,7 @@ var projects_default = {
     },
     {
       name: "B2W Shitpost",
-      url: "https://t.me/b2wshitpost"
+      url: "https://t.me/+zxyfRXblOINkNjNi"
     }
   ],
   links: [
@@ -393,7 +393,7 @@ ${s.refList}`,
 
 🛠 Стек: Python, TypeScript, Go, Rust, C++, Solidity
 📦 Проектов: ${projects} — сайты, боты и инженерные инструменты
-📢 Каналы: @b2wmain, @b2wshitpost
+📢 Канал: @b2wmain
 
 Кнопки ниже — мои ссылки 👇`,
     broadcastPrompt: "Формат: /broadcast <текст>",
@@ -501,7 +501,7 @@ All projects are open source on GitHub.
 
 🛠 Stack: Python, TypeScript, Go, Rust, C++, Solidity
 📦 Projects: ${projects} — sites, bots and engineering tools
-📢 Channels: @b2wmain, @b2wshitpost
+📢 Channel: @b2wmain
 
 Buttons below are my links 👇`,
     broadcastPrompt: "Format: /broadcast <text>",
