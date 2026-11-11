@@ -2,6 +2,7 @@
 var projects_default = {
   github: "ssrjkk",
   hub: "https://ssrjkk.github.io/",
+  bot: "https://t.me/ssrjkk_bot",
   projects: [
     {
       name: "bothive",
@@ -274,6 +275,7 @@ var projects_default = {
 
 // src/worker.js
 var GITHUB_USERNAME = projects_default.github;
+var BOT_URL = projects_default.bot;
 var PROJECTS = projects_default.projects;
 var CHANNELS = projects_default.channels;
 var LINKS = projects_default.links;
@@ -312,6 +314,12 @@ var LANG = {
     botLabel: "Бот",
     shotLabel: "Скриншот",
     privateLabel: "исходники закрыты",
+    invite: "👥 Пригласить",
+    share: "📣 Поделиться",
+    shareText: (title) => `Мои проекты у ${GITHUB_USERNAME}: ${title}`,
+    inviteLink: (url) => `Твоя ссылка: <code>${url}</code>
+
+Первый <code>/start</code> по ней попадёт в раздел «Рефералы» в /stats.`,
     notFound: "Проект не найден.",
     notOwner: "Команда доступна только владельцу.",
     notConfigured: "Владелец не настроен (OWNER_ID).",
@@ -322,9 +330,22 @@ var LANG = {
 Сообщений: <b>${s.msgs}</b>
 Сегодня: <b>${s.today}</b>
 Команд: <b>${s.cmds}</b>
+Открытий карточек: <b>${s.opens}</b>
+Выборов из inline: <b>${s.inlinePicks}</b>
+
+7 дней: ${s.week}
 
 По командам:
 ${s.cmdList}
+
+По разделам меню:
+${s.navList}
+
+Какие проекты открывали:
+${s.topProjects}
+
+Поиск:
+${s.searchList}
 
 Топ пользователей:
 ${s.topUsers}
@@ -379,6 +400,12 @@ ${s.refList}`,
     botLabel: "Bot",
     shotLabel: "Screenshot",
     privateLabel: "source private",
+    invite: "👥 Invite",
+    share: "📣 Share",
+    shareText: (title) => `${GITHUB_USERNAME}'s projects: ${title}`,
+    inviteLink: (url) => `Your link: <code>${url}</code>
+
+The first <code>/start</code> through it appears under Referrals in /stats.`,
     notFound: "Project not found.",
     notOwner: "Only the owner can use this command.",
     notConfigured: "Owner is not configured (OWNER_ID).",
@@ -389,9 +416,22 @@ Users: <b>${s.users}</b>
 Messages: <b>${s.msgs}</b>
 Today: <b>${s.today}</b>
 Commands: <b>${s.cmds}</b>
+Cards opened: <b>${s.opens}</b>
+Inline picks: <b>${s.inlinePicks}</b>
+
+7 days: ${s.week}
 
 By command:
 ${s.cmdList}
+
+By menu section:
+${s.navList}
+
+Projects opened:
+${s.topProjects}
+
+Search:
+${s.searchList}
 
 Top users:
 ${s.topUsers}
@@ -559,7 +599,24 @@ ${links.join(" · ")}`;
 function sortByStars(projects, stars) {
   return [...projects].sort((a, b) => starCountFor(b, stars) - starCountFor(a, stars));
 }
-function projectDetailKeyboard(lang, project) {
+var BARS = ["▁", "▂", "▄", "▆", "█"];
+function weekBars(rows) {
+  const byDay = new Map(rows.map((row) => [row.d, row.c]));
+  const days = [];
+  for (let offset = 6; offset >= 0; offset -= 1) {
+    days.push(new Date(Date.now() - offset * 864e5).toISOString().slice(0, 10));
+  }
+  const counts = days.map((day) => byDay.get(day) || 0);
+  const max = Math.max(...counts, 1);
+  return days.map(
+    (day, index) => `${day.slice(8, 10)}.${day.slice(5, 7)} ${BARS[Math.min(BARS.length - 1, Math.floor(counts[index] / max * BARS.length))]} ${counts[index]}`
+  ).join(" · ");
+}
+function titleOf(name) {
+  const project = PROJECTS.find((item) => item.name === name);
+  return project ? project.title || project.name : name;
+}
+function projectDetailKeyboard(lang, project, userId = null) {
   const row = [];
   if (project.site) row.push({ text: `🌐 ${LANG[lang].siteLabel}`, url: project.site });
   if (project.repo && !project.private) row.push({ text: "GitHub", url: project.repo });
@@ -567,13 +624,14 @@ function projectDetailKeyboard(lang, project) {
   const rows = [];
   if (row.length) rows.push(row);
   if (project.links?.length) rows.push(project.links.map((link) => ({ text: link.name, url: link.url })));
+  if (userId !== null) rows.push([{ text: LANG[lang].invite, callback_data: `ref:${project.name}` }]);
   rows.push([
     { text: LANG[lang].toProjects, callback_data: "page:0" },
     { text: LANG[lang].toMenu, callback_data: "show:menu" }
   ]);
   return rows;
 }
-async function sendProjectDetail(env, ctx, chatId, name, lang) {
+async function sendProjectDetail(env, ctx, chatId, name, lang, userId = null) {
   const project = PROJECTS.find((item) => item.name === name);
   if (!project) {
     await sendMessage(env.BOT_TOKEN, chatId, LANG[lang].notFound);
@@ -581,7 +639,7 @@ async function sendProjectDetail(env, ctx, chatId, name, lang) {
   }
   const stars = await getStars(env, ctx);
   const caption = projectCard(project, stars, lang);
-  const keyboard = projectDetailKeyboard(lang, project);
+  const keyboard = projectDetailKeyboard(lang, project, userId);
   if (project.shot) {
     const sent = await sendPhoto(env.BOT_TOKEN, chatId, project.shot, caption, keyboard);
     if (sent) return;
@@ -716,10 +774,18 @@ async function handleMessage(env, ctx, msg) {
   const [head, ...rest] = raw.split(/\s+/);
   const cmd = (head || "").split("@")[0].toLowerCase();
   if (cmd === "/start") {
-    const payload = rest[0];
-    const ref = payload ? payload.replace(/^ref=/, "").slice(0, 64) : null;
-    if (ref) track(env, ctx, userId, "ref", ref);
     const lang2 = await getLang(env, chatId);
+    const payload = rest[0] || "";
+    if (payload.startsWith("p_")) {
+      const name = payload.slice(2, 64);
+      if (PROJECTS.some((project) => project.name === name)) {
+        track(env, ctx, userId, "open", name);
+        await sendProjectDetail(env, ctx, chatId, name, lang2, userId);
+        return;
+      }
+    }
+    const ref = /^ref[_=]?(\d{1,20})$/.exec(payload);
+    if (ref && ref[1] !== String(userId)) track(env, ctx, userId, "ref", ref[1]);
     await sendMessage(token, chatId, await startText(env, ctx, lang2), mainMenu(lang2));
     return;
   }
@@ -752,6 +818,7 @@ async function handleMessage(env, ctx, msg) {
       await sendMessage(token, chatId, LANG[lang].searchPrompt);
       return;
     }
+    track(env, ctx, userId, "search", query.slice(0, 64));
     const needle = query.toLowerCase();
     const stars = await getStars(env, ctx);
     const found = sortByStars(
@@ -853,38 +920,44 @@ async function showStats(env, ctx, chatId, lang) {
     await sendMessage(token, chatId, LANG[lang].notOwner);
     return;
   }
-  const users = await env.BOT_DB.prepare(
-    "SELECT COUNT(DISTINCT user_id) c FROM events WHERE kind = 'msg'"
-  ).first();
-  const msgs = await env.BOT_DB.prepare(
-    "SELECT COUNT(*) c FROM events WHERE kind = 'msg'"
-  ).first();
-  const today = await env.BOT_DB.prepare(
-    "SELECT COUNT(*) c FROM events WHERE kind = 'msg' AND ts >= date('now', 'start of day')"
-  ).first();
-  const cmdRows = await env.BOT_DB.prepare(
-    "SELECT value, COUNT(*) c FROM events WHERE kind = 'cmd' GROUP BY value ORDER BY c DESC"
-  ).all();
-  const userRows = await env.BOT_DB.prepare(
-    "SELECT user_id, COUNT(*) c FROM events WHERE kind = 'msg' GROUP BY user_id ORDER BY c DESC LIMIT 5"
-  ).all();
-  const refRows = await env.BOT_DB.prepare(
-    "SELECT value, COUNT(*) c FROM events WHERE kind = 'ref' GROUP BY value ORDER BY c DESC"
-  ).all();
-  const cmdList = cmdRows.results.length ? cmdRows.results.map((row) => `  /${esc(row.value)} — ${row.c}`).join("\n") : LANG[lang].statsEmpty;
-  const topUsers = userRows.results.length ? userRows.results.map((row) => `  <code>${esc(row.user_id)}</code> — ${row.c}`).join("\n") : LANG[lang].statsEmpty;
-  const refList = refRows.results.length ? refRows.results.map((row) => `  ${esc(row.value)} — ${row.c}`).join("\n") : LANG[lang].statsEmpty;
+  const db = env.BOT_DB;
+  const totals = await db.prepare(
+    "SELECT COUNT(DISTINCT user_id) users, SUM(kind = 'msg') msgs, SUM(kind = 'cmd') cmds, SUM(kind = 'open') opens, SUM(kind = 'inline') inline_picks, SUM(kind IN ('msg','cmd') AND ts >= date('now','start of day')) today FROM events WHERE user_id IS NOT NULL"
+  ).first() || {};
+  const grouped = async (kind, limit) => {
+    const statement = limit ? db.prepare("SELECT value, COUNT(*) c FROM events WHERE kind = ? GROUP BY value ORDER BY c DESC LIMIT ?").bind(kind, limit) : db.prepare("SELECT value, COUNT(*) c FROM events WHERE kind = ? GROUP BY value ORDER BY c DESC").bind(kind);
+    const rows = await statement.all();
+    return rows.results || [];
+  };
+  const cmdRows = await grouped("cmd");
+  const navRows = await grouped("nav");
+  const openRows = await grouped("open", 5);
+  const searchRows = await grouped("search", 5);
+  const refRows = await grouped("ref", 5);
+  const userRows = (await db.prepare(
+    "SELECT user_id, COUNT(*) c FROM events WHERE user_id IS NOT NULL GROUP BY user_id ORDER BY c DESC LIMIT 5"
+  ).all()).results || [];
+  const weekRows = (await db.prepare(
+    "SELECT date(ts) d, COUNT(*) c FROM events WHERE kind IN ('msg','cmd') AND ts >= date('now','-6 days') GROUP BY d ORDER BY d"
+  ).all()).results || [];
+  const list = (rows, format) => rows.length ? rows.map(format).join("\n") : LANG[lang].statsEmpty;
   await sendMessage(
     token,
     chatId,
     LANG[lang].stats({
-      users: users ? users.c : 0,
-      msgs: msgs ? msgs.c : 0,
-      today: today ? today.c : 0,
-      cmds: cmdRows.results.reduce((sum, row) => sum + row.c, 0),
-      cmdList,
-      topUsers,
-      refList
+      users: totals.users || 0,
+      msgs: totals.msgs || 0,
+      today: totals.today || 0,
+      cmds: totals.cmds || 0,
+      opens: totals.opens || 0,
+      inlinePicks: totals.inline_picks || 0,
+      week: weekBars(weekRows),
+      cmdList: list(cmdRows, (row) => `  /${esc(row.value)} — ${row.c}`),
+      navList: list(navRows, (row) => `  ${esc(row.value)} — ${row.c}`),
+      topProjects: list(openRows, (row) => `  ${esc(titleOf(row.value))} — ${row.c}`),
+      searchList: list(searchRows, (row) => `  ${esc(row.value)} — ${row.c}`),
+      topUsers: list(userRows, (row) => `  <code>${esc(row.user_id)}</code> — ${row.c}`),
+      refList: list(refRows, (row) => `  <code>${esc(row.value)}</code> → ${row.c}`)
     })
   );
 }
@@ -892,6 +965,7 @@ async function handleCallback(env, ctx, callback) {
   const token = env.BOT_TOKEN;
   const chatId = callback.message.chat.id;
   const messageId = callback.message.message_id;
+  const userId = callback.from ? callback.from.id : null;
   const payload = callback.data || "";
   const lang = await getLang(env, chatId);
   if (payload === "noop") {
@@ -911,12 +985,28 @@ async function handleCallback(env, ctx, callback) {
   }
   if (payload.startsWith("p:") || payload.startsWith("shot:")) {
     const name = payload.slice(payload.indexOf(":") + 1);
-    await sendProjectDetail(env, ctx, chatId, name, lang);
+    track(env, ctx, userId, "open", name);
+    await sendProjectDetail(env, ctx, chatId, name, lang, userId);
+    await callApi(token, "answerCallbackQuery", { callback_query_id: callback.id });
+    return;
+  }
+  if (payload.startsWith("ref:")) {
+    const link = `${BOT_URL}?start=ref_${userId}`;
+    const share = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(
+      LANG[lang].shareText(titleOf(payload.slice(4)))
+    )}`;
+    await sendMessage(
+      token,
+      chatId,
+      LANG[lang].inviteLink(link),
+      [[{ text: LANG[lang].share, url: share }], [{ text: LANG[lang].toMenu, callback_data: "show:menu" }]]
+    );
     await callApi(token, "answerCallbackQuery", { callback_query_id: callback.id });
     return;
   }
   if (payload.startsWith("show:")) {
     const what = payload.split(":")[1];
+    track(env, ctx, userId, "nav", what);
     let text;
     let keyboard;
     if (what === "menu") {
@@ -968,6 +1058,7 @@ async function handleCallback(env, ctx, callback) {
   }
   if (payload.startsWith("lang:")) {
     const next = payload.split(":")[1] === "en" ? "en" : "ru";
+    track(env, ctx, userId, "lang", next);
     langCache.set(chatId, next);
     if (ctx && typeof ctx.waitUntil === "function") {
       ctx.waitUntil(
@@ -985,7 +1076,7 @@ async function handleInline(env, query) {
   const stars = await getStars(env, null);
   const results = PROJECTS.filter(
     (project) => !needle || project.name.toLowerCase().includes(needle) || (project.title || "").toLowerCase().includes(needle) || (project.lang || "").toLowerCase().includes(needle) || (project.desc || "").toLowerCase().includes(needle) || (project.desc_en || "").toLowerCase().includes(needle)
-  ).slice(0, 30).map((project, index) => {
+  ).slice(0, 30).map((project) => {
     const buttons = [];
     if (project.site) buttons.push({ text: `🌐 ${LANG[lang].siteLabel}`, url: project.site });
     if (project.repo && !project.private) buttons.push({ text: "GitHub", url: project.repo });
@@ -998,7 +1089,7 @@ async function handleInline(env, query) {
     if (project.shot) {
       return {
         type: "photo",
-        id: String(index),
+        id: project.name,
         photo_url: project.shot,
         thumbnail_url: project.shot,
         title: project.title || project.name,
@@ -1010,7 +1101,7 @@ async function handleInline(env, query) {
     }
     return {
       type: "article",
-      id: String(index),
+      id: project.name,
       title: project.title || project.name,
       description: desc(project, lang).slice(0, 100),
       ...markup ? { reply_markup: markup } : {},
@@ -1032,7 +1123,7 @@ async function setupWebhook(env, origin) {
   const webhook = await callApi(env.BOT_TOKEN, "setWebhook", {
     url: `${origin}/webhook`,
     drop_pending_updates: true,
-    allowed_updates: ["message", "callback_query", "inline_query"],
+    allowed_updates: ["message", "callback_query", "inline_query", "chosen_inline_result"],
     ...env.WEBHOOK_SECRET ? { secret_token: env.WEBHOOK_SECRET } : {}
   });
   const commands = await callApi(env.BOT_TOKEN, "setMyCommands", { commands: COMMANDS });
@@ -1048,7 +1139,7 @@ var worker_default = {
       return new Response(
         JSON.stringify({
           name: "ssrjkk-bot",
-          bot: "https://t.me/ssrjkk_bot",
+          bot: BOT_URL,
           github: `https://github.com/${GITHUB_USERNAME}`,
           hub: projects_default.hub,
           projects: PROJECTS.length,
@@ -1088,6 +1179,9 @@ var worker_default = {
         await handleCallback(env, ctx, update.callback_query);
       } else if (update.inline_query) {
         await handleInline(env, update.inline_query);
+      } else if (update.chosen_inline_result) {
+        const chosen = update.chosen_inline_result;
+        track(env, ctx, chosen.from ? chosen.from.id : null, "inline", chosen.result_id);
       }
     } catch (error) {
       console.error("Webhook error:", error);
@@ -1097,6 +1191,7 @@ var worker_default = {
   }
 };
 export {
+  LANG,
   worker_default as default,
   projectCard,
   projectDetailKeyboard

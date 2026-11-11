@@ -30,7 +30,7 @@ Commands:
 | `/links` | GitHub, Telegram, hub and bot catalogue |
 | `/channels` | Telegram channels |
 | `/about` | Short profile |
-| `/stats` | Owner only: users, messages, commands, referrals |
+| `/stats` | Owner only: users, messages, opens, inline picks, week bars, top projects, referrers |
 | `/broadcast <text>` | Owner only: send text to every user the bot has seen |
 | `/myid` | Chat ID |
 | `/help` | Command list |
@@ -38,9 +38,18 @@ Commands:
 The bot also answers inline queries: projects with screenshots come back as photo results, the rest as
 articles with site, repository and bot buttons.
 
+## Deep links
+
+`https://t.me/ssrjkk_bot?start=p_<name>` opens that project's card directly, and
+`?start=ref_<user id>` credits the inviter in `/stats` once and never the invitee. Every card on the
+[hub](https://ssrjkk.github.io/) carries a `?start=p_` link, and each detail card in the bot has an invite
+button that builds a personal `?start=ref_` link for the reader. `npm run check` fails if a hub link points
+at a project the catalogue does not have.
+
 ## Data
 
-[`projects.json`](projects.json) is the only place to edit content. Each entry:
+[`projects.json`](projects.json) is the only place to edit content: `github`, `hub`, `bot` (the catalogue
+bot itself, used to build invite links), `projects`, `channels` and `links`. Each project entry:
 
 ```json
 {
@@ -59,8 +68,9 @@ articles with site, repository and bot buttons.
 
 `site`, `bot` and `shot` are optional. Screenshots are served from the profile repository on `main`, which
 is reachable by Telegram without a token. `stars` is the fallback value — the worker refreshes real counts
-from the GitHub API and caches them for an hour. `"private": true` keeps the repository link out of public
-cards while the entry stays in the catalogue. A project's `repo` must equal
+from the GitHub API and caches them for an hour; when the API answers nothing for a project (rate limit on
+an unauthenticated IP) the card keeps `stars` instead of showing 0. `"private": true` keeps the repository
+link out of public cards while the entry stays in the catalogue. A project's `repo` must equal
 `https://github.com/ssrjkk/<name>` — the bundle check enforces it.
 
 After editing, rebuild and run the checks from `bot/`:
@@ -73,7 +83,9 @@ npm test
 ```
 
 `npm run check` verifies the data shape, every URL, the screenshot host, unique project names, that the
-bundle contains the current data, the wrangler bindings and secrets, and that no token was committed.
+bundle contains the current data, the wrangler bindings and secrets, that no token was committed, that the
+README only documents commands and workflows that exist, and that every `?start=p_` link on the hub opens a
+project the catalogue has.
 
 ## Local development
 
@@ -95,7 +107,9 @@ The worker expects four secrets, set with `wrangler secret put` and never commit
 Bindings in [`cloudflare-worker/wrangler.toml`](cloudflare-worker/wrangler.toml):
 
 - KV `BOT_KV` — language preferences, star cache
-- D1 `BOT_DB` — `events (user_id, kind, value, ts)` for stats, top users and referrals
+- D1 `BOT_DB` — `events (user_id, kind, value, ts)`, where `kind` is `msg`, `cmd`, `search`, `open`
+  (a project card), `nav` (a menu section), `lang`, `inline` (an inline result picked in another chat)
+  and `ref` (who invited this user)
 
 ## Deploy
 
@@ -142,7 +156,13 @@ Cloudflare Workers лежит в этом репозитории в `bot/`, ря
 
 Команды: `/projects` — карточки проектов со скриншотами и ссылками, `/sites` — все сайты, `/bots` — все
 боты, `/search` — поиск по названию, стеку и описанию, `/top` — топ по звёздам, `/links` и `/channels` —
-ссылки и каналы, `/stats` — статистика для владельца.
+ссылки и каналы, `/stats` — статистика для владельца: пользователи, сообщения, открытия карточек, выборы
+из inline, неделя по дням, топ проектов и кто кого пригласил.
+
+Deep-ссылки: `https://t.me/ssrjkk_bot?start=p_<name>` сразу открывает карточку проекта,
+`?start=ref_<user id>` один раз засчитывает пригласившего. С карточек хаба ведут ссылки `?start=p_`,
+а в карточке бота есть кнопка «Пригласить» с личной ссылкой `?start=ref_`. `npm run check` ловит
+расхождение: имя проекта в ссылке хаба должно быть в каталоге.
 
 Правка контента: изменить `projects.json`, затем из `bot/`: `npm run build && npm run check && npm test`.
 Секреты (`BOT_TOKEN`, `OWNER_ID`, `SETUP_KEY`, `WEBHOOK_SECRET`) задаются через `wrangler secret put` и в

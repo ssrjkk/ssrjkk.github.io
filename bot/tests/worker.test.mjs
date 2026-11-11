@@ -15,14 +15,15 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
-import worker, { projectCard, projectDetailKeyboard } from "../cloudflare-worker/worker.js";
+import worker, { LANG, projectCard, projectDetailKeyboard } from "../cloudflare-worker/worker.js";
 
 const BASE = "https://bot.example";
 const SECRET = "hook-secret";
 
-function checkBundleData(mutate = () => {}, editReadme = (text) => text) {
-  // Проверка читает README и соседний .github/workflows, поэтому фикстура —
-  // копия раскладки репозитория: <tmp>/bot рядом с <tmp>/.github.
+function checkBundleData(mutate = () => {}, editReadme = (text) => text, editHub = (text) => text) {
+  // Проверка читает README, соседний .github/workflows и карточки хаба,
+  // поэтому фикстура — копия раскладки репозитория: <tmp>/bot рядом с
+  // <tmp>/.github и <tmp>/index.html.
   const base = mkdtempSync(join(tmpdir(), "port-bundle-"));
   const root = join(base, "bot");
   try {
@@ -35,6 +36,8 @@ function checkBundleData(mutate = () => {}, editReadme = (text) => text) {
     const workflows = existsSync(workflowsDir) ? readdirSync(workflowsDir) : [];
     mkdirSync(join(base, ".github", "workflows"), { recursive: true });
     for (const file of workflows) writeFileSync(join(base, ".github", "workflows", file), "");
+    const hubPath = fileURLToPath(new URL("../../index.html", import.meta.url));
+    if (existsSync(hubPath)) writeFileSync(join(base, "index.html"), editHub(readFileSync(hubPath, "utf8")));
     const readmePath = join(root, "README.md");
     writeFileSync(readmePath, editReadme(readFileSync(readmePath, "utf8")));
     const data = JSON.parse(readFileSync(new URL("../projects.json", import.meta.url), "utf8"));
@@ -55,7 +58,9 @@ function jsonResponse(body, status = 200) {
 
 function makeEnv(overrides = {}) {
   const kv = new Map();
+  const inserts = [];
   return {
+    inserts,
     BOT_TOKEN: "test-token",
     OWNER_ID: "42",
     SETUP_KEY: "setup-key",
@@ -69,12 +74,14 @@ function makeEnv(overrides = {}) {
       }
     },
     BOT_DB: {
-      prepare() {
+      prepare(sql) {
         return {
-          bind() {
+          bind(...args) {
+            this.args = args;
             return this;
           },
           async run() {
+            inserts.push({ sql, args: this.args || [] });
             return { success: true };
           },
           async all() {
@@ -88,6 +95,10 @@ function makeEnv(overrides = {}) {
     },
     ...overrides
   };
+}
+
+function trackedInserts(env, kind) {
+  return env.inserts.filter((row) => row.sql.includes("INSERT INTO events") && row.args[1] === kind);
 }
 
 function makeCtx() {
@@ -203,6 +214,18 @@ for (const [name, mutate] of [
   test(`bundle validation rejects ${name}`, () => {
     const result = checkBundleData(mutate);
     assert.equal(result.status, 1, result.stdout);
+  });
+}
+
+for (const [name, editHub] of [
+  ["a hub card opening a project the catalogue has not", (text) => text.replace("?start=p_raven", "?start=p_raven-v2")],
+  ["a hub card opening another bot", (text) => text.replace("t.me/ssrjkk_bot?start=p_raven", "t.me/other_bot?start=p_raven")],
+  ["a hub without a single link into the bot", (text) => text.replace(/\r?\n\s*<a class="card-link" href="https:\/\/t\.me\/ssrjkk_bot\?start=p_[^\n]*\n/g, "\n")]
+]) {
+  test(`bundle validation rejects ${name}`, () => {
+    const result = checkBundleData(() => {}, (text) => text, editHub);
+    assert.equal(result.status, 1, result.stdout);
+    assert.match(result.stderr, /index\.html|deep-/);
   });
 }
 
@@ -537,4 +560,148 @@ test("/setup requires the setup key and registers commands", async () => {
     "myid",
     "help"
   ]);
+});
+
+test("/start p_<project> opens that card directly", async () => {
+  const calls = installFetch();
+  const env = makeEnv();
+  await sendWebhook(env, makeCtx(), messageUpdate("/start p_raven"));
+  const photo = callsOf(calls, "sendPhoto").at(-1);
+  assert.match(photo.body.caption, /Raven/);
+  assert.equal(trackedInserts(env, "open").at(-1).args[2], "raven");
+});
+
+test("a referral link credits the inviter and never the invitee", async () => {
+  installFetch();
+  const env = makeEnv();
+  await sendWebhook(env, makeCtx(), messageUpdate("/start ref_42", { userId: 100 }));
+  const refs = trackedInserts(env, "ref");
+  assert.equal(refs.length, 1);
+  assert.equal(refs[0].args[2], "42");
+
+  await sendWebhook(env, makeCtx(), messageUpdate("/start ref_100", { userId: 100 }));
+  assert.equal(trackedInserts(env, "ref").length, 1, "приглашение самому себе не пишется");
+
+  for (const payload of ["/start ref_42x", "/start promo_autumn", "/start ref_"]) {
+    await sendWebhook(env, makeCtx(), messageUpdate(payload, { userId: 101 }));
+  }
+  assert.equal(trackedInserts(env, "ref").length, 1, "в рефералы пишутся только числовые id");
+});
+
+test("opening a card and walking the menu are counted", async () => {
+  installFetch();
+  const env = makeEnv();
+  await sendWebhook(env, makeCtx(), callbackUpdate("p:wake"));
+  assert.equal(trackedInserts(env, "open").at(-1).args[2], "wake");
+
+  await sendWebhook(env, makeCtx(), callbackUpdate("show:sites"));
+  assert.equal(trackedInserts(env, "nav").at(-1).args[2], "sites");
+
+  await sendWebhook(env, makeCtx(), callbackUpdate("lang:en"));
+  assert.equal(trackedInserts(env, "lang").at(-1).args[2], "en");
+});
+
+test("the detail card offers an invite button only when the user is known", () => {
+  const project = { name: "raven", title: "Raven", site: "https://raven.example/" };
+  const anonymous = projectDetailKeyboard("ru", project).flat();
+  const personal = projectDetailKeyboard("ru", project, 42).flat();
+  assert.ok(!anonymous.some((button) => button.callback_data === "ref:raven"));
+  assert.ok(personal.some((button) => button.callback_data === "ref:raven"));
+});
+
+test("the invite button returns a personal link and a share link", async () => {
+  const calls = installFetch();
+  const env = makeEnv();
+  // Отдельный chat: langCache живёт в модуле, и в чужом чате язык уже мог
+  // переключиться на EN.
+  const shareButton = () => {
+    const buttons = callsOf(calls, "sendMessage").at(-1).body.reply_markup.inline_keyboard.flat();
+    const button = buttons.find((item) => typeof item.url === "string" && item.url.startsWith("https://t.me/share"));
+    assert.ok(button, "рядом с личной ссылкой должна быть кнопка «Поделиться»");
+    return new URL(button.url);
+  };
+  await sendWebhook(env, makeCtx(), callbackUpdate("ref:raven", { chatId: 130 }));
+  assert.match(lastText(calls), /t\.me\/ssrjkk_bot\?start=ref_130/);
+
+  const share = shareButton();
+  assert.equal(share.searchParams.get("url"), "https://t.me/ssrjkk_bot?start=ref_130");
+  assert.equal(share.searchParams.get("text"), "Мои проекты у ssrjkk: Raven");
+
+  await sendWebhook(env, makeCtx(), callbackUpdate("lang:en", { chatId: 130 }));
+  await sendWebhook(env, makeCtx(), callbackUpdate("ref:raven", { chatId: 130 }));
+  assert.equal(shareButton().searchParams.get("text"), "ssrjkk's projects: Raven");
+});
+
+test("inline results are addressed by project name", async () => {
+  const calls = installFetch();
+  const request = new Request(`${BASE}/webhook`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Telegram-Bot-Api-Secret-Token": SECRET },
+    body: JSON.stringify({ update_id: 7, inline_query: { id: "q1", from: { id: 5 }, query: "raven" } })
+  });
+  await worker.fetch(request, makeEnv(), makeCtx());
+  const results = callsOf(calls, "answerInlineQuery").at(-1).body.results;
+  assert.ok(results.length > 0);
+  assert.deepEqual(results.map((result) => result.id), ["raven"]);
+});
+
+test("a chosen inline result is counted for that project", async () => {
+  installFetch();
+  const env = makeEnv();
+  const response = await sendWebhook(env, makeCtx(), {
+    update_id: 8,
+    chosen_inline_result: { from: { id: 77 }, result_id: "mobius" }
+  });
+  assert.equal(response.status, 200);
+  const picks = trackedInserts(env, "inline");
+  assert.equal(picks.length, 1);
+  assert.equal(picks[0].args[2], "mobius");
+});
+
+test("/stats reports opens, inline picks, the week and referrers", async () => {
+  const calls = installFetch();
+  const counts = { cmd: [{ value: "projects", c: 4 }], nav: [{ value: "sites", c: 2 }], open: [{ value: "raven", c: 3 }], search: [{ value: "python", c: 2 }], ref: [{ value: "42", c: 1 }] };
+  const today = new Date().toISOString().slice(0, 10);
+  const env = makeEnv({
+    BOT_DB: {
+      prepare(sql) {
+        return {
+          bind(kind) {
+            this.kind = kind;
+            return this;
+          },
+          async all() {
+            if (sql.includes("kind = ?")) return { results: counts[this.kind] || [] };
+            if (sql.includes("date(ts) d")) return { results: [{ d: today, c: 5 }] };
+            if (sql.includes("GROUP BY user_id")) return { results: [{ user_id: 7, c: 9 }] };
+            return { results: [] };
+          },
+          async run() {
+            return { success: true };
+          },
+          async first() {
+            return { users: 12, msgs: 40, cmds: 9, opens: 3, inline_picks: 2, today: 5 };
+          }
+        };
+      }
+    }
+  });
+  await sendWebhook(env, makeCtx(), messageUpdate("/stats", { chatId: 42, userId: 42 }));
+  const text = lastText(calls);
+  assert.match(text, /Пользователей: <b>12<\/b>/);
+  assert.match(text, /Открытий карточек: <b>3<\/b>/);
+  assert.match(text, /Выборов из inline: <b>2<\/b>/);
+  assert.match(text, /Raven — 3/, "топ открытых проектов по названиям, а не по id");
+  assert.match(text, /python — 2/);
+  assert.match(text, /<code>42<\/code> → 1/);
+  assert.match(text, /\d\d\.\d\d █ 5/, "день недели с максимумом получает полную клетку");
+});
+
+test("both language packs cover every string the worker uses", () => {
+  const source = readFileSync(new URL("../src/worker.js", import.meta.url), "utf8");
+  const used = new Set([...source.matchAll(/LANG\[(?:lang|next)\]\.(\w+)/g)].map((match) => match[1]));
+  const ru = Object.keys(LANG.ru).sort();
+  const en = Object.keys(LANG.en).sort();
+  assert.deepEqual(ru, en, "ru и en должны нести одни и те же ключи");
+  for (const key of used) assert.ok(ru.includes(key), `LANG[lang].${key} есть в коде, но не в словарях`);
 });

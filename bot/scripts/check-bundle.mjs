@@ -27,6 +27,8 @@
  *   8. Бандл остаётся модулем воркера и не ссылается на отсутствующий source map.
  *   9. README ссылается только на существующие workflow, а таблица команд
  *      совпадает с обработками в src/worker.js — в обе стороны.
+ *  10. Deep-ссылки карточек хаба (index.html) ведут на существующих проектов
+ *      каталога и на бота из projects.json.
  *
  * Запуск: node scripts/check-bundle.mjs
  * Выход: 0 — всё в порядке, 1 — есть замечания (они печатаются в stderr).
@@ -62,13 +64,16 @@ try {
   process.exit(1);
 }
 
-for (const key of ["github", "hub", "projects", "channels", "links"]) {
+for (const key of ["github", "hub", "bot", "projects", "channels", "links"]) {
   if (!(key in data)) fail(`в projects.json нет ключа «${key}»`);
 }
 if (!Array.isArray(data.projects) || data.projects.length === 0) {
   fail("projects.json: projects должен быть непустым списком");
 }
 if (!isUrl(data.hub)) fail(`hub не является URL: ${data.hub}`);
+if (!isUrl(data.bot) || new URL(data.bot).hostname !== "t.me") {
+  fail(`bot должен вести на t.me — по нему строятся реферальные ссылки, а там ${data.bot}`);
+}
 
 // --- 2. Поля проектов ----------------------------------------------------
 const REQUIRED = ["name", "title", "lang", "desc", "desc_en"];
@@ -225,6 +230,30 @@ if (!existsSync(README)) {
   }
   for (const cmd of implemented) {
     if (!documented.has(cmd)) fail(`воркер обрабатывает ${cmd}, но её нет в таблице команд README`);
+  }
+}
+
+// --- 10. Deep-линки хаба в бота ------------------------------------------
+// Карточки хаба ведут в бота по ?start=p_<name>. Ссылка живёт в index.html,
+// а имя проекта — в projects.json, поэтому разъезжаются они молча: бот
+// покажет меню вместо карточки.
+const HUB = resolve(ROOT, "..", "index.html");
+if (existsSync(HUB)) {
+  const hubHtml = readFileSync(HUB, "utf8");
+  const prefix = `${data.bot}?start=p_`;
+  const deepLinks = [...hubHtml.matchAll(/href="([^"]*[?&]start=p_[^"]*)"/g)].map((m) => m[1]);
+  if (deepLinks.length === 0) {
+    fail("в index.html нет ни одной deep-ссылки в бота — карточки хаба не ведут в каталог");
+  }
+  for (const href of deepLinks) {
+    if (!href.startsWith(prefix)) {
+      fail(`deep-ссылка «${href}» ведёт не на ${prefix} — имя бота разошлось с projects.json`);
+      continue;
+    }
+    const name = href.slice(prefix.length);
+    if (!(data.projects || []).some((p) => p.name === name)) {
+      fail(`deep-ссылка «${href}» ведёт на проект «${name}», которого нет в projects.json`);
+    }
   }
 }
 

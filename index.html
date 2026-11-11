@@ -102,7 +102,8 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
 .badge{position:absolute;left:14px;top:14px;display:inline-flex;align-items:center;gap:6px;background:#141412;color:#F5F4EF;border-radius:999px;padding:6px 10px;font:600 10px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase}
 .badge.live::before{content:"";width:6px;height:6px;border-radius:50%;background:#4ADE80}
 .card-body{padding:22px;flex:1;display:flex;flex-direction:column}
-.card-body .card-link{margin-top:auto}
+.card-body .card-link:first-of-type{margin-top:auto}
+.card-body .card-link+.card-link{margin-top:9px}
 .card-body .tags{margin-bottom:18px}
 .card--featured .card-body{padding:38px;display:flex;flex-direction:column;justify-content:center}
 .card-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -342,6 +343,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
             <p>Платформа оркестрации ботов: 8 платформ, BullMQ, песочница скриптов, circuit breaker, DLQ и Prometheus.</p>
             <ul class="tags"><li>TypeScript</li><li>Fastify</li><li>React</li><li>Redis</li></ul>
             <a class="card-link" href="/bothive/">Лендинг проекта <span aria-hidden="true">→</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_bothive" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
           </div>
         </article>
 
@@ -355,6 +357,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
             <p>Self-hosted MCP-сервер: 66 инструментов поверх stdio и HTTP, изоляция workspace и ключевая авторизация.</p>
             <ul class="tags"><li>Python</li><li>FastAPI</li><li>MCP</li><li>Rust / Go</li></ul>
             <a class="card-link" href="https://ssrjkk.github.io/raven/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_raven" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
           </div>
         </article>
 
@@ -368,6 +371,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
             <p>Терминал по перп-рынкам Lighter + Telegram-бот с теми же рыночными данными: объёмы, funding, портфель.</p>
             <ul class="tags"><li>React</li><li>FastAPI</li><li>PostgreSQL</li><li>Mini App</li></ul>
             <a class="card-link" href="https://t.me/waketrade_bot" target="_blank" rel="noopener">Открыть бота <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_wake" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
           </div>
         </article>
 
@@ -381,6 +385,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
             <p>USDC-экономика в Telegram: чаевые, донат-страницы, рынки предсказаний на LMSR и кабинет в Mini App.</p>
             <ul class="tags"><li>Python</li><li>aiogram</li><li>Base / USDC</li><li>Mini App</li></ul>
             <a class="card-link" href="https://t.me/tippy_on_base_bot" target="_blank" rel="noopener">Открыть бота <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_tippy-on-base" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
           </div>
         </article>
 
@@ -394,6 +399,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
             <p>Браузерный QA-ассистент: тест-планы, кейсы, код автотестов и баг-репорты из описания задачи. Девять провайдеров, свой ключ.</p>
             <ul class="tags"><li>TypeScript</li><li>9 providers</li><li>607 tests</li></ul>
             <a class="card-link" href="https://ssrjkk.github.io/drafter/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_drafter" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
           </div>
         </article>
 
@@ -407,6 +413,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
             <p>Автоклик по hh.ru: резюме, подбор вакансий из 13 источников и до 250 откликов в сутки на старшем тарифе, каждый с письмом.</p>
             <ul class="tags"><li>TypeScript</li><li>Next.js</li><li>hh.ru</li></ul>
             <a class="card-link" href="https://ssrjkk.github.io/ezzoffer/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_ezzoffer" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
           </div>
         </article>
 
@@ -420,6 +427,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
             <p>QA-стенд для чужих EVM-тестнетов: флот кошельков, сценарии, здоровье сети и отчёт. Только тестовые сети, плюс Telegram-бот.</p>
             <ul class="tags"><li>Python</li><li>EVM testnets</li><li>Telegram bot</li></ul>
             <a class="card-link" href="https://ssrjkk.github.io/harvest/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_harvest" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
           </div>
         </article>
 
@@ -433,6 +441,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
             <p>Исследовательский прототип: обучение ML на шифрованных данных, escrow-задачи и STARK-прототип проверки вычислений. Не аудировано.</p>
             <ul class="tags"><li>Solidity</li><li>TypeScript</li><li>Rust</li></ul>
             <a class="card-link" href="https://ssrjkk.github.io/shroud/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_shroud" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
           </div>
         </article>
 
@@ -446,6 +455,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
             <p>120 навыков на EN и RU, 20 IT-роадмапов и 25 гайдов. Публичный registry, поиск через CLI --remote и Python SDK.</p>
             <ul class="tags"><li>Python</li><li>CLI / SDK</li><li>EN + RU</li><li><a href="https://ssrjkk.github.io/agent-skills/skills_catalog.json">Registry JSON</a></li><li><a href="https://ssrjkk.github.io/agent-skills/roadmaps.html">Роадмапы</a></li><li><a href="https://ssrjkk.github.io/agent-skills/guides.html">Гайды</a></li></ul>
             <a class="card-link" href="https://ssrjkk.github.io/agent-skills/" target="_blank" rel="noopener">Открыть каталог <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_agent-skills" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
           </div>
         </article>
 
@@ -467,6 +477,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
             <ul class="tags"><li>pytest</li><li>Playwright</li><li>Allure</li><li>CI/CD</li></ul>
             <a class="card-link" href="https://ssrjkk.github.io/qualix/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
             <a class="card-link" href="https://github.com/ssrjkk/qualix" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_qualix" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
           </div>
         </article>
       </div>
