@@ -441,6 +441,9 @@ const STATUS_URL = "https://ssrjkk-status.ray013lefe.workers.dev/";
 test("the hub reads the live endpoint instead of a committed snapshot", () => {
   assert.ok(hubHtml.includes(`var STATUS_URL = "${STATUS_URL}"`), "хаб обязан брать статус с воркера");
   assert.ok(!hubHtml.includes("status.json"), "закоммиченный status.json как источник статуса вернуться не должен");
+  const timeout = hubHtml.match(/AbortSignal\.timeout\((\d+)\)/);
+  assert.ok(timeout, "междоменный fetch без таймаута оставляет строку статуса пустой на полминуты");
+  assert.ok(Number(timeout[1]) <= 10_000, `ожидание ответа ${timeout[1]} мс — дольше, чем пустая строка стоит терпеть`);
   const wrangler = readFileSync(new URL("../wrangler.toml", import.meta.url), "utf8");
   assert.match(wrangler, /crons = \["\*\/15 \* \* \* \*"\]/, "обещание на странице стоит ровно до тех пор, пока работает расписание");
 });

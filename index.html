@@ -729,7 +729,8 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
   var box = document.getElementById("live-status");
   var updated = document.getElementById("sb-updated");
   if (!box) return;
-  fetch(STATUS_URL, { cache: "no-store" })
+  /* Без таймаута зависший запрос к чужому домену оставляет строку пустой на полминуты. */
+  fetch(STATUS_URL, { cache: "no-store", signal: AbortSignal.timeout(6000) })
     .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
     .then(function (data) {
       box.querySelectorAll(".chip").forEach(function (n) { n.remove(); });
