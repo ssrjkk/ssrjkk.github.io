@@ -1741,15 +1741,23 @@ test("inline results follow the data: no screenshot means an article, private me
   assert.equal(closed.type, "article", "без скриншота Telegram не принимает photo-результат");
   assert.equal(closed.input_message_content.parse_mode, "HTML");
   assert.match(closed.input_message_content.message_text, /исходники закрыты/);
+  // Хосты разбираются из URL, а не ищутся подстрокой: «github.com» как подстрока
+  // живёт и в https://github.com.evil/, так что проверка пропускала бы подделку.
+  const isGithub = (url) => {
+    const hostname = new URL(url).hostname;
+    return hostname === "github.com" || hostname.endsWith(".github.com");
+  };
+  const urlsInText = (text) => [...text.matchAll(/https?:\/\/[^\s"<)]+/g)].map((match) => match[0]);
+  const urlsInMarkup = (markup) => (markup?.inline_keyboard ?? []).flat().map((button) => button.url).filter(Boolean);
   assert.ok(
-    !closed.input_message_content.message_text.includes("github.com"),
+    !urlsInText(closed.input_message_content.message_text).some(isGithub),
     "приватный репозиторий не должен получать кнопку GitHub"
   );
-  assert.ok(
-    !(closed.reply_markup?.inline_keyboard ?? []).flat().some((button) => (button.url || "").includes("github.com")),
-    "и кнопок под карточкой тоже"
-  );
+  assert.ok(!urlsInMarkup(closed.reply_markup).some(isGithub), "и кнопок под карточкой тоже");
   assert.equal(next.type, "photo", "остальные проекты с картинками остаются картинками");
+  // та же проверка на проекте с открытым кодом обязана найти GitHub — иначе две
+  // ассертации выше ничего не утверждают
+  assert.ok(urlsInMarkup(next.reply_markup).some(isGithub), "публичный проект остаётся с кнопкой GitHub");
 });
 
 test("/setup refuses to half-configure a worker without BOT_TOKEN", async () => {

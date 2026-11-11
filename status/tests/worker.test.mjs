@@ -388,6 +388,10 @@ test("a scheduled event without a timestamp stamps the run with the current time
 // Гейт расхождения: список целей и витрина не должны разъезжаться. Пока опрос жил в
 // Actions, ссылка без проверки молча оставалась на странице.
 const strip = (url) => url.replace(/\/+$/, "");
+const HUB_HOST = "ssrjkk.github.io";
+// Хост берём из разобранного URL: подстрока домена проходит и внутри
+// https://ssrjkk.github.io.evil/, и после решётки в чужом адресе.
+const hostOf = (url) => new URL(url).hostname;
 const hubHtml = readFileSync(new URL("../../index.html", import.meta.url), "utf8");
 // Только страницы: карточки хаба всегда кончаются слэшем, а ссылки на данные
 // (skills_catalog.json) — это файл, а не сервис, который можно опросить.
@@ -407,13 +411,13 @@ test("every page the hub links is probed", () => {
 test("every probed github.io page is really on the hub", () => {
   const linked = new Set(hubPages);
   for (const item of TARGETS) {
-    if (!strip(item.url).startsWith("https://ssrjkk.github.io")) continue;
+    if (hostOf(item.url) !== HUB_HOST) continue;
     assert.ok(linked.has(strip(item.url)), `${item.id} опрашивается, но на хабе такой ссылки нет`);
   }
 });
 
 test("external targets are pinned to the deployments the hub advertises", () => {
-  const external = TARGETS.filter((item) => !item.url.startsWith("https://ssrjkk.github.io"));
+  const external = TARGETS.filter((item) => hostOf(item.url) !== HUB_HOST);
   assert.deepEqual(
     external.map((item) => item.id),
     ["wake", "wake-api", "tippy"],
