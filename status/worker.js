@@ -21,6 +21,7 @@ const MAX_BODY_BYTES = 2_000_000;
 export const TARGETS = [
   { id: "hub", name: "Хаб", url: "https://ssrjkk.github.io/" },
   { id: "bothive", name: "Bothive", url: "https://ssrjkk.github.io/bothive/" },
+  { id: "fruktovy", name: "Фруктовый", url: "https://ssrjkk.github.io/fruktovy/" },
   { id: "raven", name: "Raven", url: "https://ssrjkk.github.io/raven/" },
   { id: "agent-skills", name: "Agent Skills", url: "https://ssrjkk.github.io/agent-skills/" },
   { id: "drafter", name: "Drafter", url: "https://ssrjkk.github.io/drafter/" },

@@ -9,15 +9,15 @@ Telegram bots and channels, the services with prices, and contacts.
 
 ## Sections
 
-- **Projects** — bothive, raven, wake, tippy, drafter, ezzoffer, harvest, shroud, agent-skills, QA frameworks
+- **Projects** — bothive, fruktovy, raven, wake, tippy, drafter, ezzoffer, harvest, shroud, agent-skills, QA frameworks
 - **Bots** — [@ssrjkk_bot](https://t.me/ssrjkk_bot), [@waketrade_bot](https://t.me/waketrade_bot), [@tippy_on_base_bot](https://t.me/tippy_on_base_bot), [@harvest_testnet_bot](https://t.me/harvest_testnet_bot)
-- **Sites** — twenty site addresses, including this hub; availability requires a complete HTTP response, and Wake API readiness is shown separately
+- **Sites** — twenty-one site addresses, including this hub; availability requires a complete HTTP response, and Wake API readiness is shown separately
 - **Services** — Telegram bots, stores with TG/MAX bots, Mini Apps, full-stack web apps and automation
 - **Contacts** — Telegram, GitHub, channels, email
 
 ## Live status
 
-`status/worker.js` polls the twenty-two services listed on the hub every 15 minutes on Cloudflare Cron
+`status/worker.js` polls the twenty-three services listed on the hub every 15 minutes on Cloudflare Cron
 Triggers and keeps the last 60 checks per service in Workers KV. The page reads the worker directly, so
 a status update no longer needs a commit or a Pages rebuild.
 

@@ -438,7 +438,7 @@ test("the README count of gate mutations is the count the suite really runs", ()
 test("bundle validation reports the catalogue it accepted", () => {
   const result = checkBundleData();
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /Воркер в порядке: 20 проектов, 20 сайтов, 4 ботов, 2 привязок/);
+  assert.match(result.stdout, /Воркер в порядке: 21 проектов, 21 сайтов, 4 ботов, 2 привязок/);
 });
 
 test("health endpoint answers OK", async () => {
@@ -452,8 +452,8 @@ test("root endpoint reports the catalogue size", async () => {
   assert.equal(response.status, 200);
   const body = await response.json();
   assert.equal(body.name, "ssrjkk-bot");
-  assert.equal(body.projects, 20);
-  assert.equal(body.sites, 20);
+  assert.equal(body.projects, 21);
+  assert.equal(body.sites, 21);
   assert.equal(body.bots, 4);
   assert.equal(body.github, "https://github.com/ssrjkk");
 });
@@ -481,8 +481,8 @@ test("/start shows the menu with sites and bots", async () => {
   assert.equal(response.status, 200);
 
   const text = lastText(calls);
-  assert.match(text, /Проектов: 20/);
-  assert.match(text, /Сайтов: 20/);
+  assert.match(text, /Проектов: 21/);
+  assert.match(text, /Сайтов: 21/);
   assert.match(text, /Ботов: 4/);
 
   const button = callsOf(calls, "sendMessage").at(-1);
@@ -517,8 +517,9 @@ test("/sites lists every project site as a URL button", async () => {
   const sent = callsOf(calls, "sendMessage").at(-1);
   assert.match(sent.body.text, /Сайты проектов/);
   const urls = keyboardData(sent).filter((value) => value.startsWith("https://"));
-  assert.equal(urls.length, 20);
+  assert.equal(urls.length, 21);
   assert.ok(new Set(urls).has("https://ssrjkk.github.io/bothive/"));
+  assert.ok(new Set(urls).has("https://ssrjkk.github.io/fruktovy/"));
   assert.ok(new Set(urls).has("https://wake-7k6.pages.dev"));
   assert.ok(new Set(urls).has("https://ssrjkk.github.io/noema/"));
   assert.ok(new Set(urls).has("https://ssrjkk.github.io/twinby-swipe-bot/"));
@@ -727,10 +728,10 @@ test("inline query returns photos for projects with screenshots", async () => {
 
   const answer = callsOf(calls, "answerInlineQuery").at(-1);
   assert.ok(answer, "expected answerInlineQuery");
-  assert.equal(answer.body.results.length, 20);
+  assert.equal(answer.body.results.length, 21);
   const photos = answer.body.results.filter((result) => result.type === "photo");
   const articles = answer.body.results.filter((result) => result.type === "article");
-  assert.equal(photos.length, 20);
+  assert.equal(photos.length, 21);
   assert.equal(articles.length, 0);
   assert.ok(photos.every((result) => result.photo_url.startsWith("https://raw.githubusercontent.com/")));
   const skillPhoto = photos.find((result) => result.title === "Agent Skills");

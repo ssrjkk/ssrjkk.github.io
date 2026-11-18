@@ -15,6 +15,17 @@
       "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/bothive.jpg"
     },
     {
+      "name": "fruktovy",
+      "title": "Фруктовый",
+      "lang": "HTML, CSS, JavaScript",
+      "stars": 0,
+      "desc": "Сайт магазина фруктов: каталог с поиском и фильтрами, корзина с повтором заказа, конструктор наборов, сезонный календарь и заказ в WhatsApp. Две темы на одной разметке, офлайн-кэш, self-hosted ассеты и ноль трекеров.\nСтек: HTML, CSS, JavaScript, Python (сборка и гейт качества)",
+      "desc_en": "Fruit shop storefront: searchable and filterable catalogue, cart with reorder, set builder, seasonal calendar and WhatsApp checkout. Two themes on one markup, offline cache, self-hosted assets and zero trackers.\nStack: HTML, CSS, JavaScript, Python (build and quality gate)",
+      "repo": "https://github.com/ssrjkk/fruktovy",
+      "site": "https://ssrjkk.github.io/fruktovy/",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/fruktovy.jpg"
+    },
+    {
       "name": "raven",
       "title": "Raven",
       "lang": "Python, TS, Go, Rust",
