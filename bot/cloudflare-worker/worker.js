@@ -1,4 +1,4 @@
-// projects.json
+// ../Dev/Temp/hub-heart3-display/bot/projects.json
 var projects_default = {
   github: "ssrjkk",
   hub: "https://ssrjkk.github.io/",
@@ -210,11 +210,11 @@ var projects_default = {
     },
     {
       name: "twinby-swipe-bot",
-      title: "Twinby",
+      title: "<3 (Heart3)",
       lang: "Python",
       stars: 0,
-      desc: "Telegram-бот со свайпами для поиска контента и автоматизацией Android/iOS/macOS.\nСтек: Python, Telegram",
-      desc_en: "Telegram swipe bot for content discovery with Android/iOS/macOS automation.\nStack: Python, Telegram",
+      desc: "Автоматизация анкет Twinby на Android/iPhone/Mac и экспериментальное API-ядро. 28 спецификаций платформ, не 28 готовых интеграций; AI-модули пока отдельно. 302 теста.\nСтек: Python, Appium, uiautomator2, FastAPI",
+      desc_en: "Twinby profile automation on Android/iPhone/Mac with an experimental API core. 28 platform specifications, not 28 verified integrations; AI modules remain standalone. 302 tests.\nStack: Python, Appium, uiautomator2, FastAPI",
       repo: "https://github.com/ssrjkk/twinby-swipe-bot",
       site: "https://ssrjkk.github.io/twinby-swipe-bot/",
       shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/twinby-swipe-bot.jpg"
@@ -284,7 +284,7 @@ var projects_default = {
   ]
 };
 
-// src/worker.js
+// ../Dev/Temp/hub-heart3-display/bot/src/worker.js
 var GITHUB_USERNAME = projects_default.github;
 var BOT_URL = projects_default.bot;
 var PROJECTS = projects_default.projects;
