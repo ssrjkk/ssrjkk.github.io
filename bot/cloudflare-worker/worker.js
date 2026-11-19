@@ -158,8 +158,8 @@ var projects_default = {
       title: "Mobius",
       lang: "Python",
       stars: 0,
-      desc: "Мобильная автоматизация Android и iOS: Appium 2.x + pytest, screen objects, пул устройств, параллельный запуск. 947 тестов, 99% покрытия.\nСтек: Python, Appium 2.x, pytest",
-      desc_en: "Mobile automation for Android and iOS: Appium 2.x + pytest, screen objects, device pooling, parallel runs. 947 tests, 99% coverage.\nStack: Python, Appium 2.x, pytest",
+      desc: "Мобильная автоматизация Android и iOS: Appium 2.x + pytest, screen objects, пул устройств, параллельный запуск. 950 тестов, 99% покрытия кода.\nСтек: Python, Appium 2.x, pytest",
+      desc_en: "Mobile automation for Android and iOS: Appium 2.x + pytest, screen objects, device pooling, parallel runs. 950 tests, 99% code coverage.\nStack: Python, Appium 2.x, pytest",
       repo: "https://github.com/ssrjkk/mobius",
       site: "https://ssrjkk.github.io/mobius/",
       shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/mobius.jpg"
