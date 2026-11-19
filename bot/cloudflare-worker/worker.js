@@ -1,4 +1,4 @@
-// ../Dev/Temp/hub-heart3-display/bot/projects.json
+// projects.json
 var projects_default = {
   github: "ssrjkk",
   hub: "https://ssrjkk.github.io/",
@@ -284,7 +284,7 @@ var projects_default = {
   ]
 };
 
-// ../Dev/Temp/hub-heart3-display/bot/src/worker.js
+// src/worker.js
 var GITHUB_USERNAME = projects_default.github;
 var BOT_URL = projects_default.bot;
 var PROJECTS = projects_default.projects;
