@@ -168,10 +168,24 @@
       "title": "Noema",
       "lang": "Python",
       "stars": 0,
-      "desc": "Нейро-символический инженерный движок: LLM предлагает решения, Z3 проверяет по контрактам, инциденты чинятся через pull-реквесты.\nСтек: Python, Z3, gRPC",
-      "desc_en": "Neuro-symbolic engineering engine: an LLM proposes solutions, Z3 verifies them against contracts, incidents are fixed through pull requests.\nStack: Python, Z3, gRPC",
+      "desc": "Нейросимвольный движок: LLM предлагает решение, Z3 доказывает его по формальным контрактам, кандидат исполняется в изолированной песочнице, каждый шаг остаётся в аудируемом следе. Инциденты превращаются в проверенные pull request.\nСтек: Python, Z3, FastAPI, gRPC",
+      "desc_en": "Neuro-symbolic engine: an LLM proposes a solution, Z3 proves it against formal contracts, the candidate runs in an isolated sandbox, and every step stays in an auditable trace. Incidents become verified pull requests.\nStack: Python, Z3, FastAPI, gRPC",
       "repo": "https://github.com/ssrjkk/noema",
       "site": "https://ssrjkk.github.io/noema/",
+      "links": [
+        {
+          "name": "Showcase",
+          "url": "https://ssrjkk.github.io/noema/showcase/"
+        },
+        {
+          "name": "Usage guide",
+          "url": "https://github.com/ssrjkk/noema/blob/main/docs/usage-guide.md"
+        },
+        {
+          "name": "Whitepaper",
+          "url": "https://github.com/ssrjkk/noema/blob/main/docs/WHITEPAPER.md"
+        }
+      ],
       "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/noema.jpg"
     },
     {
