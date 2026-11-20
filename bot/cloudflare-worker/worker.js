@@ -169,8 +169,8 @@ var projects_default = {
       title: "Noema",
       lang: "Python",
       stars: 0,
-      desc: "Нейросимвольный движок: LLM предлагает решение, Z3 доказывает его по формальным контрактам, кандидат исполняется в изолированной песочнице, каждый шаг остаётся в аудируемом следе. Инциденты превращаются в проверенные pull request.\nСтек: Python, Z3, FastAPI, gRPC",
-      desc_en: "Neuro-symbolic engine: an LLM proposes a solution, Z3 proves it against formal contracts, the candidate runs in an isolated sandbox, and every step stays in an auditable trace. Incidents become verified pull requests.\nStack: Python, Z3, FastAPI, gRPC",
+      desc: "Нейросимвольный движок: LLM предлагает решение, Z3 доказывает его по формальным контрактам, кандидат исполняется в изолированной песочнице, каждый шаг остаётся в аудируемом следе. Инциденты превращаются в проверенные pull request. В v2: CEGIS-петля с контрпримерами и unsat_core, гибридная память поверх dense-эмбеддингов, opt-in маршрутизация LinUCB с fail-closed бюджетом и CLI noema train для DPO/GRPO-датасетов.\nСтек: Python, Z3, FastAPI, gRPC",
+      desc_en: "Neuro-symbolic engine: an LLM proposes a solution, Z3 proves it against formal contracts, the candidate runs in an isolated sandbox, and every step stays in an auditable trace. Incidents become verified pull requests. In v2: a CEGIS loop with counterexamples and unsat cores, hybrid memory over dense embeddings, opt-in LinUCB model routing with a fail-closed budget, and the noema train CLI for DPO/GRPO datasets.\nStack: Python, Z3, FastAPI, gRPC",
       repo: "https://github.com/ssrjkk/noema",
       site: "https://ssrjkk.github.io/noema/",
       links: [
