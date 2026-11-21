@@ -20,8 +20,8 @@ var projects_default = {
       title: "Фруктовый дворец",
       lang: "HTML, CSS, JavaScript",
       stars: 0,
-      desc: "Витрина магазина фруктов и овощей: 25 позиций в шести рядах, поиск, пакет с повтором заказа, конструктор 3D-ящика, сезонный календарь и подсказки прилавка. Цен нет — итог продавец называет в ответ на заявку в WhatsApp. Пять палитр на одной разметке, офлайн-кэш, self-hosted ассеты и ноль трекеров.\nСтек: HTML, CSS, JavaScript, Python (сборка и гейт качества)",
-      desc_en: "Fruit and vegetable shop storefront: 25 items in six aisles, search, an order basket with reorder, a 3D crate builder, a seasonal calendar and counter hints. No prices — the seller names the total in WhatsApp after the request. Five themes on one markup, offline cache, self-hosted assets and zero trackers.\nStack: HTML, CSS, JavaScript, Python (build and quality gate)",
+      desc: "Витрина магазина фруктов и овощей: 25 позиций в шести рядах, поиск, пакет с повтором заказа, конструктор 3D-ящика, сезонный календарь и подсказки прилавка. Цен нет — итог продавец называет в ответ на заявку в Telegram. Пять палитр на одной разметке, QR на адрес витрины, офлайн-кэш, self-hosted ассеты и ноль трекеров.\nСтек: HTML, CSS, JavaScript, Python (сборка и гейт качества)",
+      desc_en: "Fruit and vegetable shop storefront: 25 items in six aisles, search, an order basket with reorder, a 3D crate builder, a seasonal calendar and counter hints. No prices — the seller names the total in Telegram after the request. Five themes on one markup, a QR code to the storefront, offline cache, self-hosted assets and zero trackers.\nStack: HTML, CSS, JavaScript, Python (build and quality gate)",
       repo: "https://github.com/ssrjkk/fruktovy",
       site: "https://ssrjkk.github.io/fruktovy/",
       shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/fruktovy.jpg"
