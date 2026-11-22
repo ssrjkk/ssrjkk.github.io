@@ -29,6 +29,8 @@
  *      совпадает с обработками в src/worker.js — в обе стороны.
  *  10. Deep-ссылки карточек хаба (index.html) ведут на существующих проектов
  *      каталога и на бота из projects.json.
+ *  11. Блок «Все сайты» на витрине перечисляет ровно те же сайты, что несёт
+ *      каталог, — в обе стороны.
  *
  * Запуск: node scripts/check-bundle.mjs
  * Выход: 0 — всё в порядке, 1 — есть замечания (они печатаются в stderr).
@@ -253,6 +255,29 @@ if (existsSync(HUB)) {
     const name = href.slice(prefix.length);
     if (!(data.projects || []).some((p) => p.name === name)) {
       fail(`deep-ссылка «${href}» ведёт на проект «${name}», которого нет в projects.json`);
+    }
+  }
+
+  // --- 11. Блок «Все сайты» покрывает каталог -----------------------------
+  // Строки этого блока — единственный путь с витрины на сайт проекта. Правило
+  // выше сверяет ссылки карточек в каталог, но обратное молчит: удалённая строка
+  // оставляет проект без ссылки, а счётчик «живых сайтов» на витрине продолжает
+  // обещать прошлое число. Сверяются именно URL, а не подписи: карточка heart3
+  // ссылается на twinby-swipe-bot.
+  const sitesBox = hubHtml.match(/<div class="link-box">\s*<h3>\s*Все сайты\s*<\/h3>[\s\S]*?<\/ul>/);
+  if (!sitesBox) {
+    fail("в index.html не найден блок «Все сайты» — покрытие каталога проверять нечем");
+  } else {
+    const rows = [...sitesBox[0].matchAll(/<li><a href="([^"]+)">/g)].map((m) => m[1]);
+    for (const url of rows) {
+      if (!(data.projects || []).some((p) => p.site === url)) {
+        fail(`строка блока «Все сайты» в index.html ведёт на ${url}, которого нет среди site в projects.json`);
+      }
+    }
+    for (const p of data.projects || []) {
+      if (p.site && !rows.includes(p.site)) {
+        fail(`сайт ${p.site} проекта «${p.name}» потерян из блока «Все сайты» в index.html`);
+      }
     }
   }
 }

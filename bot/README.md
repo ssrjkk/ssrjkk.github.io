@@ -126,11 +126,11 @@ One gate reads the interface instead of the code: `src/worker.js`, the built bun
 language packs must be free of emoji. The menu is spelled in words, and a pictograph in a button label or a
 heading fails the suite with the file, the key and the code point it found.
 
-`npm run check` is held to the same standard: 48 mutations of the data, the bundle, the configuration, the
+`npm run check` is held to the same standard: 50 mutations of the data, the bundle, the configuration, the
 README and the hub cards prove the gate rejects a blank title, a missing `lang`, a repeated name, a screenshot
 outside the profile repository, a stale bundle, an unused wrangler binding, a planted Telegram or GitHub
-token, a bundle that is not a worker module, and a README or hub card promising something the repository does
-not have.
+token, a bundle that is not a worker module, a README or hub card promising something the repository does
+not have, and a catalogue site the storefront stopped linking.
 
 What no test reaches is what the data gate forbids: every project carries a title, a `lang` and a screenshot,
 so `displayName`, `stackTokens` and the inline article branch keep their fallbacks. They are proven on the
@@ -260,10 +260,11 @@ D1 замоканы, а `fetch` до первой проверки подмен�
 языковых пакетов не должно остаться эмодзи. Меню набирается словами, и картинка в подписи кнопки или в
 заголовке роняет прогон с указанием файла, ключа и найденного code point.
 
-`npm run check` проверяется так же: 48 мутаций данных, бандла, конфигурации, README и карточек хаба
+`npm run check` проверяется так же: 50 мутаций данных, бандла, конфигурации, README и карточек хаба
 доказывают, что гейт отклоняет пустой title, отсутствующий lang, повтор имени, скриншот не из профильного
 репозитория, устаревший бандл, неиспользуемую привязку wrangler, подложенный токен Telegram или GitHub,
-бандл без обработчика по умолчанию и документ или карточку, обещающие то, чего в репозитории нет.
+бандл без обработчика по умолчанию, документ или карточку, обещающие то, чего в репозитории нет, и сайт
+каталога, который блок «Все сайты» на витрине потерял.
 
 До чего не доводит живой каталог — то, что запрещает гейт данных: у каждого проекта есть title, lang и
 скриншот, поэтому `displayName`, `stackTokens` и article-ветка inline-ответов сохраняют свои фолбэки. Они
