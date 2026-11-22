@@ -29,7 +29,7 @@
  *      совпадает с обработками в src/worker.js — в обе стороны.
  *  10. Deep-ссылки карточек хаба (index.html) ведут на существующих проектов
  *      каталога и на бота из projects.json.
- *  11. Блок «Все сайты» на витрине перечисляет ровно те же сайты, что несёт
+ *  11. Блок «Все сайты» и счётчики на витрине перечисляют ровно то, что несёт
  *      каталог, — в обе стороны.
  *
  * Запуск: node scripts/check-bundle.mjs
@@ -278,6 +278,22 @@ if (existsSync(HUB)) {
       if (p.site && !rows.includes(p.site)) {
         fail(`сайт ${p.site} проекта «${p.name}» потерян из блока «Все сайты» в index.html`);
       }
+    }
+  }
+
+  // Счётчики рядом с блоком — то, что человек читает вместо списка. Сверяется
+  // и число, а не только строки: блок мог потерять ссылку, а «живых сайтов»
+  // продолжает обещать прошлое значение.
+  const stats = [...hubHtml.matchAll(/<div class="stat"><b>(\d+)<\/b><span>([^<]*)/g)];
+  for (const [label, want] of [
+    ["живых сайтов", (data.projects || []).filter((p) => p.site).length],
+    ["Telegram-ботов", (data.projects || []).filter((p) => p.bot).length]
+  ]) {
+    const stat = stats.find((s) => s[2].includes(label));
+    if (!stat) {
+      fail(`в index.html не найден счётчик «${label}» — сверять витрину с каталогом нечем`);
+    } else if (Number(stat[1]) !== want) {
+      fail(`счётчик «${label}» в index.html показывает ${stat[1]}, а каталог несёт ${want}`);
     }
   }
 }
