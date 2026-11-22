@@ -46,7 +46,7 @@ test("Heart3 title is escaped while existing project links stay stable", () => {
     const card = projectCard(project, {}, lang);
     assert.ok(card.startsWith("<b>&lt;3 (Heart3)</b>"));
     assert.ok(!card.includes("<b><3"));
-    assert.ok(card.includes("302"));
+    assert.ok(card.includes("92"));
     assert.equal(new URL(shareProjectUrl(lang, project)).searchParams.get("url"),
       "https://t.me/ssrjkk_bot?start=p_twinby-swipe-bot");
   }

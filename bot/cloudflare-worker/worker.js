@@ -227,8 +227,8 @@ var projects_default = {
       title: "<3 (Heart3)",
       lang: "Python",
       stars: 0,
-      desc: "Автоматизация анкет Twinby на Android/iPhone/Mac и экспериментальное API-ядро. 28 спецификаций платформ, не 28 готовых интеграций; AI-модули пока отдельно. 302 теста.\nСтек: Python, Appium, uiautomator2, FastAPI",
-      desc_en: "Twinby profile automation on Android/iPhone/Mac with an experimental API core. 28 platform specifications, not 28 verified integrations; AI modules remain standalone. 302 tests.\nStack: Python, Appium, uiautomator2, FastAPI",
+      desc: "Дейтинг-агент <3: три контура ui_vision / web_vision / api, реестр 28 платформ (спецификации, не 28 проверенных интеграций), переписка через LangGraph и Control Panel на FastAPI. 92 теста, 45 из них — на чистой stdlib.\nСтек: Python, Appium, uiautomator2, FastAPI",
+      desc_en: "Dating agent <3: three loops ui_vision / web_vision / api, a registry of 28 platforms (specifications, not 28 verified integrations), LangGraph conversations and a FastAPI Control Panel. 92 tests, 45 of them dependency-free.\nStack: Python, Appium, uiautomator2, FastAPI",
       repo: "https://github.com/ssrjkk/twinby-swipe-bot",
       site: "https://ssrjkk.github.io/twinby-swipe-bot/",
       shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/twinby-swipe-bot.jpg"
