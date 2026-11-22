@@ -67,7 +67,7 @@
       "desc": "USDC-экономика в Telegram: чаевые, донат-страницы, рынки предсказаний на LMSR и Mini App на Base. Нулевой газ для пользователей.\nСтек: Python, aiogram, Base/USDC, Mini App",
       "desc_en": "USDC economy in Telegram: tips, donation pages, LMSR prediction markets and a Mini App on Base. Zero gas for users.\nStack: Python, aiogram, Base/USDC, Mini App",
       "repo": "https://github.com/ssrjkk/tippy-on-base",
-      "site": "https://ssrjkk.github.io/tippy-on-base/",
+      "site": "https://tippy-egi.pages.dev/",
       "bot": "https://t.me/tippy_on_base_bot",
       "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/tippy-on-base.jpg"
     },
