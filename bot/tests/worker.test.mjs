@@ -368,7 +368,9 @@ for (const [name, mutate, expected] of [
 for (const [name, editHub] of [
   ["a hub card opening a project the catalogue has not", (text) => text.replace("?start=p_raven", "?start=p_raven-v2")],
   ["a hub card opening another bot", (text) => text.replace("t.me/ssrjkk_bot?start=p_raven", "t.me/other_bot?start=p_raven")],
-  ["a hub without a single link into the bot", (text) => text.replace(/\r?\n\s*<a class="card-link" href="https:\/\/t\.me\/ssrjkk_bot\?start=p_[^\n]*\n/g, "\n")]
+  ["a hub without a single link into the bot", (text) => text.replace(/\r?\n\s*<a class="card-link" href="https:\/\/t\.me\/ssrjkk_bot\?start=p_[^\n]*\n/g, "\n")],
+  ["a catalogue site missing from the hub sites box", (text) => text.replace(/\s*<li><a href="https:\/\/ssrjkk\.github\.io\/raven\/">raven<\/a><span>[^<]*<\/span><\/li>/, "")],
+  ["a hub sites-box row the catalogue does not list", (text) => text.replace('<li><a href="https://ssrjkk.github.io/raven/">', '<li><a href="https://example.test/ghost-site/">ghost</a><span>призрак</span></li>\n            <li><a href="https://ssrjkk.github.io/raven/">')]
 ]) {
   test(`bundle validation rejects ${name}`, () => {
     const result = checkBundleData(() => {}, (text) => text, editHub);
