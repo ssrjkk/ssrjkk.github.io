@@ -179,6 +179,10 @@ var projects_default = {
           url: "https://ssrjkk.github.io/noema/showcase/"
         },
         {
+          name: "Atlas",
+          url: "https://ssrjkk.github.io/noema/atlas.html"
+        },
+        {
           name: "Usage guide",
           url: "https://github.com/ssrjkk/noema/blob/main/docs/usage-guide.md"
         },
