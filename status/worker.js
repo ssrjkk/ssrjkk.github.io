@@ -36,7 +36,6 @@ export const TARGETS = [
     expect: "ready"
   },
   { id: "tippy", name: "Tippy on Base", url: "https://tippy-egi.pages.dev/" },
-  { id: "tippy-pages", name: "Tippy on Base · Pages", url: "https://ssrjkk.github.io/tippy-on-base/" },
   { id: "corvid", name: "Corvid CRM", url: "https://ssrjkk.github.io/corvid_crm/" },
   { id: "verso", name: "Verso", url: "https://ssrjkk.github.io/verso/" },
   { id: "volley", name: "Volley", url: "https://ssrjkk.github.io/volley/" },
