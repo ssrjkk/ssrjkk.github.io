@@ -115,7 +115,7 @@ npm run coverage  # same suite, plus the numeric coverage gate CI fails on
 ```
 
 `npm run coverage` measures the shipped bundle and `scripts/smoke-prod.mjs` and exits non-zero below 99.5%
-lines, 96.5% branches and 97% functions; the suite currently reports 99.69 / 97.15 / 97.44. It runs against
+lines, 96.5% branches and 97% functions; the suite currently reports 99.70 / 97.15 / 97.44. It runs against
 the bundle that is deployed: Telegram, GitHub, KV and D1 are mocked, and `fetch` is replaced before the first
 test with a stub that throws, so a case that forgets its mock fails loudly instead of reaching the network
 from CI. The language and star caches are reset between the cases that care about them, and a catalogue built
@@ -250,7 +250,7 @@ Deep-ссылки: `https://t.me/ssrjkk_bot?start=p_<name>` сразу откр�
 
 Покрытие — числовой порог, а не «посмотрели и согласились»: `npm run coverage` меряет задеплоенный бандл и
 `scripts/smoke-prod.mjs` и выходит кодом 1 ниже 99.5% строк, 96.5% веток и 97% функций; сейчас прогон даёт
-99.69 / 97.15 / 97.44. Тесты гоняют против того же бандла, что уезжает на Cloudflare: Telegram, GitHub, KV и
+99.70 / 97.15 / 97.44. Тесты гоняют против того же бандла, что уезжает на Cloudflare: Telegram, GitHub, KV и
 D1 замоканы, а `fetch` до первой проверки подменён заглушкой, которая бросает ошибку, — тест, забывший
 двойника, падает сразу и с адресом запроса, а не уходит в сеть из CI. Кеш языка и кеш звёзд сбрасываются
 между проверками, которым важно начало TTL, а ветки, которых в текущем каталоге нет (проект без скриншота,
