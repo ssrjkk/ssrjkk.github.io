@@ -771,9 +771,15 @@ test("/setup requires the setup key and registers commands", async () => {
   assert.equal(webhook.body.secret_token, SECRET);
 
   // Меню команд регистрируется отдельно на каждый язык, иначе Telegram покажет
-  // русские подсказки англоязычным пользователям.
+  // русские подсказки англоязычным пользователям. Третьим вызовом идёт default-скоуп
+  // (без language_code) — его получают клиенты с языком интерфейса вне ru/en.
   const registrations = callsOf(calls, "setMyCommands");
-  assert.deepEqual(registrations.map((call) => call.body.language_code), ["ru", "en"]);
+  assert.deepEqual(registrations.map((call) => call.body.language_code), ["ru", "en", undefined]);
+  assert.equal(
+    Object.hasOwn(registrations[2].body, "language_code"),
+    false,
+    "default-скоуп регистрируется без language_code"
+  );
   const names = registrations.map((call) => call.body.commands.map((command) => command.command));
   assert.deepEqual(names[0], [
     "start",
@@ -792,6 +798,15 @@ test("/setup requires the setup key and registers commands", async () => {
     "help"
   ]);
   assert.deepEqual(names[1], names[0], "наборы команд ru и en совпадают");
+  assert.deepEqual(names[2], names[0], "в default-скоупе не теряются команды");
+  // Пустой язык у воркера отвечает по-русски (см. lang = "ru"), значит и подсказки
+  // по умолчанию должны быть русскими.
+  assert.deepEqual(registrations[2].body.commands, COMMANDS.ru, "default-скоуп = русское меню");
+  // Ответ /setup — сводка по каждой регистрации: по ней человек и понимает, что меню встало.
+  const summary = await response.json();
+  assert.deepEqual(Object.keys(summary).sort(), ["commands", "webhook"]);
+  assert.deepEqual(Object.keys(summary.commands).sort(), ["default", "en", "ru"],
+    "/setup отдаёт исход по каждому скоупу меню, включая default");
   assert.notDeepEqual(
     registrations[0].body.commands.map((command) => command.description),
     registrations[1].body.commands.map((command) => command.description),

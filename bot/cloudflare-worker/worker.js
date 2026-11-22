@@ -1429,6 +1429,9 @@ async function setupWebhook(env, origin) {
       language_code: language
     });
   }
+  commands.default = await callApi(env.BOT_TOKEN, "setMyCommands", {
+    commands: COMMANDS.ru
+  });
   return { webhook, commands };
 }
 var worker_default = {

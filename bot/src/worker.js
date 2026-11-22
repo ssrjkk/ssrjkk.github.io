@@ -217,8 +217,10 @@ ${s.refList}`,
   }
 };
 
-// Подсказки в меню команд Telegram задаются отдельно на каждый язык:
-// language_code в setMyCommands покрывает всех пользователей сразу.
+// Меню команд задаётся на каждый язык, но language_code покрывает только тех
+// клиентов, у которых язык интерфейса именно этот. Остальным Telegram показывает
+// default-скоуп, поэтому его тоже регистрируем — русским, как и ответы воркера
+// (lang = "ru", пока значение не "en").
 export const COMMANDS = {
   ru: [
     { command: "start", description: "Запуск" },
@@ -1294,6 +1296,9 @@ async function setupWebhook(env, origin) {
       language_code: language
     });
   }
+  commands.default = await callApi(env.BOT_TOKEN, "setMyCommands", {
+    commands: COMMANDS.ru
+  });
   return { webhook, commands };
 }
 
