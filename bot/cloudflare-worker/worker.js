@@ -231,8 +231,8 @@ var projects_default = {
       title: "TT Bot",
       lang: "Python",
       stars: 0,
-      desc: "Telegram-бот задач и мониторинга сервисов: задачи с адресом эндпоинта, пул асинхронных воркеров, статусы, аналитика и выгрузка в CSV.\nСтек: Python, aiogram",
-      desc_en: "Telegram task and service-monitoring bot: tasks bound to an endpoint, an asyncio worker pool, statuses, analytics and CSV export.\nStack: Python, aiogram",
+      desc: "Мониторинг HTTP/HTTPS, SSL-сертификатов и TCP-сервисов прямо из чата: anti-rebinding SSRF guard, границы доступа по user_id, троттлинг, расписание и алерты по порогу, SLA и P50/P95 на каждый монитор, история в SQLite WAL и CSV с санитайзером формул. Один Docker-контейнер на read-only ФС, 35 офлайн-тестов, покрытие 93%.\nСтек: Python, aiogram 3, aiosqlite",
+      desc_en: "Service monitoring straight from the chat: HTTP/HTTPS, SSL certificate and TCP probes behind an anti-rebinding SSRF guard, per-user access boundaries, throttling, schedules and threshold alerts, SLA with P50/P95 per monitor, SQLite WAL history and formula-sanitized CSV export. Ships as one read-only Docker container; 35 offline tests, 93% coverage.\nStack: Python, aiogram 3, aiosqlite",
       repo: "https://github.com/ssrjkk/tt_bot",
       site: "https://ssrjkk.github.io/tt_bot/",
       shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/tt_bot.jpg"
