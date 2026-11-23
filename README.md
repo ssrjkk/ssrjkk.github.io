@@ -9,7 +9,7 @@ Telegram bots and channels, the services with prices, and contacts.
 
 ## Sections
 
-- **Projects** — twenty-one cards, one per catalogue project: bothive, fruktovy, our-jamon, raven, twinby-swipe-bot, wake, tippy-on-base, drafter, ezzoffer, harvest, shroud, agent-skills, qualix, qa-arsenal, mobius, noema, volley, b2w-crypto-tg-bot, tt_bot, corvid_crm, verso. Each card links the site, the repository, the bot where one exists and the `?start=p_<name>` deep link into [@ssrjkk_bot](https://t.me/ssrjkk_bot)
+- **Projects** — twenty-one cards, one per catalogue project: bothive, fruktovy, our-jamon, raven, twinby-swipe-bot, wake, tippy-on-base, drafter, ezzoffer, harvest, shroud, agent-skills, qualix, qa-arsenal, mobius, noema, volley, b2w-crypto-tg-bot, tt_bot, corvid_crm, verso. Each card links the site, the documentation the catalogue record carries, the repository, the bot where one exists and the `?start=p_<name>` deep link into [@ssrjkk_bot](https://t.me/ssrjkk_bot)
 - **Bots** — [@ssrjkk_bot](https://t.me/ssrjkk_bot), [@waketrade_bot](https://t.me/waketrade_bot), [@tippy_on_base_bot](https://t.me/tippy_on_base_bot), [@harvest_testnet_bot](https://t.me/harvest_testnet_bot), [@ezzoffer_bot](https://t.me/ezzoffer_bot)
 - **Sites** — twenty-two site addresses, including this hub; availability requires a complete HTTP response, and Wake API readiness is shown separately
 - **Services** — Telegram bots, stores with TG/MAX bots, Mini Apps, full-stack web apps and automation
@@ -17,7 +17,7 @@ Telegram bots and channels, the services with prices, and contacts.
 
 ## Live status
 
-`status/worker.js` polls the twenty-five services listed on the hub every 15 minutes on Cloudflare Cron
+`status/worker.js` polls the twenty-nine services listed on the hub every 15 minutes on Cloudflare Cron
 Triggers and keeps the last 60 checks per service in Workers KV. The page reads the worker directly, so
 a status update no longer needs a commit or a Pages rebuild.
 

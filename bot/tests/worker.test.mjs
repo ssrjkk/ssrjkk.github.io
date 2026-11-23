@@ -24,6 +24,7 @@ import worker, {
   displayName,
   projectCard,
   projectDetailKeyboard,
+  docLinks,
   shareProjectUrl
 } from "../cloudflare-worker/worker.js";
 
@@ -692,7 +693,7 @@ test("the live catalogue publishes a repository link for every project", () => {
 test("project cards and keyboards include documentation links", () => {
   const catalogue = JSON.parse(readFileSync(new URL("../projects.json", import.meta.url), "utf8"));
   const project = catalogue.projects.find((entry) => entry.name === "agent-skills");
-  assert.equal(project.links.length, 3);
+  assert.equal(project.links.length, 4);
   for (const lang of ["ru", "en"]) {
     const card = projectCard(project, {}, lang);
     for (const link of project.links) {
@@ -735,6 +736,27 @@ test("documentation link labels and attributes are HTML escaped", () => {
     links: [{ name: "<Registry>", url: 'https://example.test/?a="value"&b=1' }]
   }, {}, "en");
   assert.ok(card.includes('<a href="https://example.test/?a=&quot;value&quot;&amp;b=1">&lt;Registry&gt;</a>'));
+});
+
+test("documentation links of a private project stay off GitHub", () => {
+  const links = [
+    { name: "Docs", url: "https://ssrjkk.github.io/raven/docs/" },
+    { name: "Changelog", url: "https://github.com/ssrjkk/raven/blob/main/CHANGELOG.md" },
+    { name: "Gist", url: "https://gist.github.com/ssrjkk/x" },
+    { name: "Spoof", url: "https://github.com.evil/raven" },
+    { name: "Broken", url: "не url" }
+  ];
+  assert.equal(docLinks({ links }).length, links.length, "публичный проект показывает всю документацию");
+  assert.deepEqual(
+    docLinks({ private: true, links }).map((link) => link.name),
+    ["Docs", "Spoof", "Broken"],
+    "закрытый репозиторий теряет github.com и его поддомены, а подделка github.com.evil остаётся"
+  );
+  assert.deepEqual(docLinks({ private: true }), [], "проект без документации не ломает фильтр");
+  const card = projectCard(
+    { name: "x", lang: "Python", desc: "d", desc_en: "d", private: true, links }, {}, "en"
+  );
+  assert.ok(!card.includes('href="https://github.com/'), "в тексте закрытой карточки GitHub не светится");
 });
 
 test("/search escapes HTML in the query and finds projects by stack", async () => {
@@ -813,7 +835,8 @@ test("inline query returns photos for projects with screenshots", async () => {
   assert.deepEqual(skillPhoto.reply_markup.inline_keyboard[1].map((button) => button.url), [
     "https://ssrjkk.github.io/agent-skills/skills_catalog.json",
     "https://ssrjkk.github.io/agent-skills/roadmaps.html",
-    "https://ssrjkk.github.io/agent-skills/guides.html"
+    "https://ssrjkk.github.io/agent-skills/guides.html",
+    "https://github.com/ssrjkk/agent-skills/blob/main/docs/ARCHITECTURE.md"
   ]);
 });
 
