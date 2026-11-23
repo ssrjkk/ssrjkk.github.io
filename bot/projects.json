@@ -1,0 +1,332 @@
+{
+  "github": "ssrjkk",
+  "hub": "https://ssrjkk.github.io/",
+  "bot": "https://t.me/ssrjkk_bot",
+  "projects": [
+    {
+      "name": "bothive",
+      "title": "Bothive",
+      "lang": "TypeScript",
+      "stars": 0,
+      "desc": "Self-hosted оркестрация ботов на восемь платформ: очереди BullMQ, движок скриптов в песочнице, webhooks и метрики Prometheus.\nСтек: TypeScript, Fastify, React, Redis, PostgreSQL",
+      "desc_en": "Self-hosted bot orchestration for eight platforms: BullMQ queues, sandboxed script engine, webhooks and Prometheus metrics.\nStack: TypeScript, Fastify, React, Redis, PostgreSQL",
+      "repo": "https://github.com/ssrjkk/bothive",
+      "site": "https://ssrjkk.github.io/bothive/",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/bothive.jpg"
+    },
+    {
+      "name": "fruktovy",
+      "title": "Фруктовый дворец",
+      "lang": "HTML, CSS, JavaScript",
+      "stars": 0,
+      "desc": "Витрина магазина фруктов и овощей на Сытнинской ул., 12 в Санкт-Петербурге: 25 позиций в шести рядах, цена за единицу (кг, 100 г, шт) от 95 до 1250 ₽, поиск, пакет с повтором заказа, конструктор 3D-ящика, сезонный календарь и подсказки прилавка. Оплату страница не принимает: заявка уходит продавцу в Telegram, оттуда приходит счёт СБП или на карту, либо расчёт при получении. Пять палитр на одной разметке, промокоды, QR на адрес витрины, self-hosted ассеты, CSP и ноль трекеров; Яндекс Карта грузится только по клику. Адрес, часы, телефоны +7 (951) 645-03-30 и +7 (905) 267-67-74 и плашка «4,7 · 39 оценок · 22 отзыва» взяты из карточки организации на Яндекс Картах. Архив проекта выгружается прямо из браузера.\nСтек: HTML, CSS, JavaScript, Node (гейт качества), GitHub Actions (Pages)",
+      "desc_en": "Storefront for a fruit and vegetable shop at Sytninskaya ul. 12 in Saint Petersburg: 25 items in six aisles, per-unit prices (kg, 100 g, piece) from 95 to 1250 ₽, search, an order basket with reorder, a 3D crate builder, a seasonal calendar and counter hints. The page takes no payment — the request goes to the seller in Telegram, where an SBP or card invoice arrives, or you pay on pickup. Five themes on one markup, promo codes, a QR code to the storefront, self-hosted assets, CSP and zero trackers; the Yandex map loads only on click. Address, opening hours, the numbers +7 (951) 645-03-30 and +7 (905) 267-67-74 and the «4.7 · 39 ratings · 22 reviews» pill come from the shop's Yandex Maps organisation card. The project archive exports straight from the browser.\nStack: HTML, CSS, JavaScript, Node (quality gate), GitHub Actions (Pages)",
+      "repo": "https://github.com/ssrjkk/fruktovy",
+      "site": "https://ssrjkk.github.io/fruktovy/",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/fruktovy.jpg"
+    },
+    {
+      "name": "our-jamon",
+      "title": "Наш Хамон",
+      "lang": "TypeScript, Next.js, JavaScript",
+      "stars": 0,
+      "desc": "Витрина лавки деликатесов на Сытном рынке: 12 отделов, 210 позиций — 183 с ценой и 27 уточняются. Поиск, корзина с отменой действия, подбор по выдержке, вес считается после резки. Публичная страница статичная, на GitHub Pages: ассеты, шрифты и скрипты лежат в репозитории, внешних запросов ноль. Next.js-движок за ней ведёт заказы, доставку, оплату через Т-Банк и выгрузку в 1С; к боевым реквизитам то и другое пока не подключено, поэтому витрина работает в демо-режиме — баннер сверху и страница закрыта от индексирования, пока продавец не подтвердит цены. В CI 200 unit-тестов и 97 браузерных сценариев на 1440, 768 и 360 px, четыре обязательные проверки и защищённый main.\nСтек: TypeScript, Next.js, JavaScript, Playwright, GitHub Actions",
+      "desc_en": "Storefront for a deli counter at the Sytny market in Saint Petersburg: 12 departments, 210 items — 183 priced and 27 awaiting confirmation. Search, a cart with undo, selection by curing months, weight priced after the slice. The public page is a static storefront on GitHub Pages: assets, fonts and scripts live in the repo, zero external requests. Behind it a Next.js engine handles orders, delivery, T-Bank payments and the 1C export; neither is wired to live credentials yet, so the storefront runs in demo mode — a banner on top and noindex until the seller confirms the prices. CI runs 200 unit tests and 97 browser scenarios at 1440, 768 and 360 px, with four required checks and a protected main.\nStack: TypeScript, Next.js, JavaScript, Playwright, GitHub Actions",
+      "repo": "https://github.com/ssrjkk/our-jamon",
+      "site": "https://ssrjkk.github.io/our-jamon/",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/our-jamon.jpg"
+    },
+    {
+      "name": "raven",
+      "title": "Raven",
+      "lang": "Python, TS, Go, Rust",
+      "stars": 3,
+      "desc": "Self-hosted MCP-сервер: 66 инструментов поверх stdio и HTTP, изоляция воркспейса, авторизация по ключам, MIT.\nСтек: Python, FastAPI, MCP, Rust/Go",
+      "desc_en": "Self-hosted MCP server: 66 tools over stdio and HTTP, workspace confinement, keyed auth, MIT licensed.\nStack: Python, FastAPI, MCP, Rust/Go",
+      "repo": "https://github.com/ssrjkk/raven",
+      "site": "https://ssrjkk.github.io/raven/",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/raven.jpg",
+      "links": [
+        {
+          "name": "Docs",
+          "url": "https://ssrjkk.github.io/raven/docs/"
+        }
+      ]
+    },
+    {
+      "name": "wake",
+      "title": "Wake",
+      "lang": "Python, TS",
+      "stars": 0,
+      "desc": "Мультивендорный торговый терминал: перп-рынки Lighter и Arcus, funding, copy trading, Predict и AI-агент. Фронтенд React, бэкенд FastAPI.\nСтек: React, FastAPI, PostgreSQL, Telegram bot",
+      "desc_en": "Multi-venue trading terminal: Lighter and Arcus perp markets, funding, copy trading, Predict and an AI agent. React frontend, FastAPI backend.\nStack: React, FastAPI, PostgreSQL, Telegram bot",
+      "repo": "https://github.com/ssrjkk/wake",
+      "site": "https://wake-7k6.pages.dev",
+      "bot": "https://t.me/waketrade_bot",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/wake.jpg"
+    },
+    {
+      "name": "tippy-on-base",
+      "title": "Tippy",
+      "lang": "Python",
+      "stars": 0,
+      "desc": "USDC-экономика в Telegram: чаевые, донат-страницы, рынки предсказаний на LMSR и Mini App на Base. Нулевой газ для пользователей.\nСтек: Python, aiogram, Base/USDC, Mini App",
+      "desc_en": "USDC economy in Telegram: tips, donation pages, LMSR prediction markets and a Mini App on Base. Zero gas for users.\nStack: Python, aiogram, Base/USDC, Mini App",
+      "repo": "https://github.com/ssrjkk/tippy-on-base",
+      "site": "https://tippy-egi.pages.dev/",
+      "bot": "https://t.me/tippy_on_base_bot",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/tippy-on-base.jpg"
+    },
+    {
+      "name": "drafter",
+      "title": "Drafter",
+      "lang": "TypeScript",
+      "stars": 1,
+      "desc": "Браузерный AI QA-ассистент: тест-планы, кейсы, код автотестов и баг-репорты из описания задачи. Девять провайдеров, свой ключ.\nСтек: TypeScript, React, LLM providers",
+      "desc_en": "Browser-based AI QA assistant: test plans, cases, automation code and bug reports from a task description. Nine providers, bring your own key.\nStack: TypeScript, React, LLM providers",
+      "repo": "https://github.com/ssrjkk/drafter",
+      "site": "https://ssrjkk.github.io/drafter/",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/drafter.jpg"
+    },
+    {
+      "name": "ezzoffer",
+      "title": "EZOffer",
+      "lang": "TypeScript",
+      "stars": 0,
+      "desc": "Автоматизация поиска работы на hh.ru: подбор вакансий, сопроводительные письма, управление резюме и уведомления в Telegram.\nСтек: TypeScript, Next.js, hh.ru API",
+      "desc_en": "Job search automation for hh.ru: vacancy matching, cover letters, resume management and Telegram notifications.\nStack: TypeScript, Next.js, hh.ru API",
+      "repo": "https://github.com/ssrjkk/ezzoffer",
+      "site": "https://ssrjkk.github.io/ezzoffer/",
+      "bot": "https://t.me/ezzoffer_bot",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/ezzoffer.jpg"
+    },
+    {
+      "name": "harvest",
+      "title": "Harvest",
+      "lang": "Python",
+      "stars": 0,
+      "desc": "QA-стенд для EVM-тестнетов: флот кошельков, сценарии, здоровье сети и отчёты прогонов. Только тестовые сети, плюс Telegram-бот оператора.\nСтек: Python, EVM testnets, Telegram bot",
+      "desc_en": "QA stand for EVM testnets: wallet fleet, scenarios, network health and run reports. Testnets only, plus an operator Telegram bot.\nStack: Python, EVM testnets, Telegram bot",
+      "repo": "https://github.com/ssrjkk/harvest",
+      "site": "https://ssrjkk.github.io/harvest/",
+      "bot": "https://t.me/harvest_testnet_bot",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/harvest.jpg"
+    },
+    {
+      "name": "shroud",
+      "title": "Shroud",
+      "lang": "Rust, Solidity, TS",
+      "stars": 0,
+      "desc": "Исследовательский прототип обучения ML на шифрованных данных: fhEVM-контракты, STARK-доказательство вычислений, стриминговые выплаты. Не аудирован.\nСтек: Solidity, TypeScript, Rust, fhEVM",
+      "desc_en": "Research prototype for ML training over encrypted data: fhEVM contracts, STARK proof of compute, streaming payouts. Not audited.\nStack: Solidity, TypeScript, Rust, fhEVM",
+      "repo": "https://github.com/ssrjkk/shroud",
+      "site": "https://ssrjkk.github.io/shroud/",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/shroud.jpg"
+    },
+    {
+      "name": "agent-skills",
+      "title": "Agent Skills",
+      "lang": "Python",
+      "stars": 2,
+      "desc": "120 двуязычных навыков (EN/RU), 20 IT-роадмапов и 25 гайдов. Публичный registry, поиск через CLI --remote, Python SDK и проверяемая CI-сборка сайта.\nСтек: Python, Agent Skills, SDK/CLI",
+      "desc_en": "120 bilingual skills (EN/RU), 20 IT roadmaps and 25 guides. Public registry, CLI --remote search, Python SDK and a validated CI site build.\nStack: Python, Agent Skills, SDK/CLI",
+      "repo": "https://github.com/ssrjkk/agent-skills",
+      "site": "https://ssrjkk.github.io/agent-skills/",
+      "links": [
+        {
+          "name": "Registry JSON",
+          "url": "https://ssrjkk.github.io/agent-skills/skills_catalog.json"
+        },
+        {
+          "name": "Roadmaps",
+          "url": "https://ssrjkk.github.io/agent-skills/roadmaps.html"
+        },
+        {
+          "name": "Guides",
+          "url": "https://ssrjkk.github.io/agent-skills/guides.html"
+        }
+      ],
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/agent-skills.jpg"
+    },
+    {
+      "name": "qualix",
+      "title": "Qualix",
+      "lang": "Python",
+      "stars": 0,
+      "desc": "QA-платформа автоматизации: 317 тестов на шести уровнях, покрытие 85%+, security hardening, готовность к k8s.\nСтек: Python, FastAPI, pytest, Playwright, Locust",
+      "desc_en": "QA automation platform: 317 tests across six layers, 85%+ coverage, security hardening, k8s-ready.\nStack: Python, FastAPI, pytest, Playwright, Locust",
+      "repo": "https://github.com/ssrjkk/qualix",
+      "site": "https://ssrjkk.github.io/qualix/",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/qualix.jpg"
+    },
+    {
+      "name": "qa-arsenal",
+      "title": "QA Arsenal",
+      "lang": "Python",
+      "stars": 0,
+      "desc": "QA-монорепозиторий: hh.ru API/UI, guap.ru Python/Go и amoCRM. API, UI, нагрузочные, БД- и Kafka-наборы в одном пайплайне.\nСтек: Python, pytest, Playwright, Go, Kafka",
+      "desc_en": "QA monorepo: hh.ru API/UI, guap.ru Python/Go and amoCRM. API, UI, load, DB and Kafka suites in one pipeline.\nStack: Python, pytest, Playwright, Go, Kafka",
+      "repo": "https://github.com/ssrjkk/qa-arsenal",
+      "site": "https://ssrjkk.github.io/qa-arsenal/",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/qa-arsenal.jpg"
+    },
+    {
+      "name": "mobius",
+      "title": "Mobius",
+      "lang": "Python",
+      "stars": 0,
+      "desc": "Мобильная автоматизация Android и iOS: Appium 2.x + pytest, screen objects, пул устройств, параллельный запуск. 950 тестов, 99% покрытия кода.\nСтек: Python, Appium 2.x, pytest",
+      "desc_en": "Mobile automation for Android and iOS: Appium 2.x + pytest, screen objects, device pooling, parallel runs. 950 tests, 99% code coverage.\nStack: Python, Appium 2.x, pytest",
+      "repo": "https://github.com/ssrjkk/mobius",
+      "site": "https://ssrjkk.github.io/mobius/",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/mobius.jpg"
+    },
+    {
+      "name": "noema",
+      "title": "Noema",
+      "lang": "Python",
+      "stars": 0,
+      "desc": "Нейросимвольный движок: LLM предлагает решение, Z3 доказывает его по формальным контрактам, кандидат исполняется в изолированной песочнице, каждый шаг остаётся в аудируемом следе. Инциденты превращаются в проверенные pull request. В v2: CEGIS-петля с контрпримерами и unsat_core, гибридная память поверх dense-эмбеддингов, opt-in маршрутизация LinUCB с fail-closed бюджетом и CLI noema train для DPO/GRPO-датасетов.\nСтек: Python, Z3, FastAPI, gRPC",
+      "desc_en": "Neuro-symbolic engine: an LLM proposes a solution, Z3 proves it against formal contracts, the candidate runs in an isolated sandbox, and every step stays in an auditable trace. Incidents become verified pull requests. In v2: a CEGIS loop with counterexamples and unsat cores, hybrid memory over dense embeddings, opt-in LinUCB model routing with a fail-closed budget, and the noema train CLI for DPO/GRPO datasets.\nStack: Python, Z3, FastAPI, gRPC",
+      "repo": "https://github.com/ssrjkk/noema",
+      "site": "https://ssrjkk.github.io/noema/",
+      "links": [
+        {
+          "name": "Showcase",
+          "url": "https://ssrjkk.github.io/noema/showcase/"
+        },
+        {
+          "name": "Atlas",
+          "url": "https://ssrjkk.github.io/noema/atlas.html"
+        },
+        {
+          "name": "Usage guide",
+          "url": "https://github.com/ssrjkk/noema/blob/main/docs/usage-guide.md"
+        },
+        {
+          "name": "Whitepaper",
+          "url": "https://github.com/ssrjkk/noema/blob/main/docs/WHITEPAPER.md"
+        }
+      ],
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/noema.jpg"
+    },
+    {
+      "name": "volley",
+      "title": "Volley",
+      "lang": "C++",
+      "stars": 0,
+      "desc": "Платформа нагрузочного тестирования HTTP: асинхронное ядро C++20, YAML-сценарии, OAuth2/mTLS/Vault, OTLP и Prometheus, Python SDK.\nСтек: C++20, Boost.Beast, gRPC",
+      "desc_en": "HTTP load-testing platform: C++20 async core, YAML scenarios, OAuth2/mTLS/Vault, OTLP and Prometheus, Python SDK.\nStack: C++20, Boost.Beast, gRPC",
+      "repo": "https://github.com/ssrjkk/volley",
+      "site": "https://ssrjkk.github.io/volley/",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/volley.jpg"
+    },
+    {
+      "name": "b2w-crypto-tg-bot",
+      "title": "B2W Crypto",
+      "lang": "Python",
+      "stars": 0,
+      "desc": "Telegram-платформа для криптопортфеля: отслеживание цен, мониторинг рынка и алерты.\nСтек: Python, aiogram, PostgreSQL",
+      "desc_en": "Telegram crypto platform: portfolio tracking, price monitoring and market alerts.\nStack: Python, aiogram, PostgreSQL",
+      "repo": "https://github.com/ssrjkk/b2w-crypto-tg-bot",
+      "site": "https://ssrjkk.github.io/b2w-crypto-tg-bot/",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/b2w-crypto-tg-bot.jpg"
+    },
+    {
+      "name": "tt_bot",
+      "title": "TT Bot",
+      "lang": "Python",
+      "stars": 0,
+      "desc": "Мониторинг HTTP/HTTPS, SSL-сертификатов и TCP-сервисов прямо из чата: anti-rebinding SSRF guard, границы доступа по user_id, троттлинг, расписание и алерты по порогу, SLA и P50/P95 на каждый монитор, история в SQLite WAL и CSV с санитайзером формул. Один Docker-контейнер на read-only ФС, 35 офлайн-тестов, покрытие 93%.\nСтек: Python, aiogram 3, aiosqlite",
+      "desc_en": "Service monitoring straight from the chat: HTTP/HTTPS, SSL certificate and TCP probes behind an anti-rebinding SSRF guard, per-user access boundaries, throttling, schedules and threshold alerts, SLA with P50/P95 per monitor, SQLite WAL history and formula-sanitized CSV export. Ships as one read-only Docker container; 35 offline tests, 93% coverage.\nStack: Python, aiogram 3, aiosqlite",
+      "repo": "https://github.com/ssrjkk/tt_bot",
+      "site": "https://ssrjkk.github.io/tt_bot/",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/tt_bot.jpg",
+      "links": [
+        {
+          "name": "Showcase",
+          "url": "https://ssrjkk.github.io/tt_bot/showcase/"
+        }
+      ]
+    },
+    {
+      "name": "twinby-swipe-bot",
+      "title": "<3 (Heart3)",
+      "lang": "Python",
+      "stars": 0,
+      "desc": "Дейтинг-агент <3: три контура ui_vision / web_vision / api, реестр 28 платформ (спецификации, не 28 проверенных интеграций), переписка через LangGraph и Control Panel на FastAPI. 102 теста, 46 из них — на чистой stdlib.\nСтек: Python, Appium, uiautomator2, FastAPI",
+      "desc_en": "Dating agent <3: three loops ui_vision / web_vision / api, a registry of 28 platforms (specifications, not 28 verified integrations), LangGraph conversations and a FastAPI Control Panel. 102 tests, 46 of them dependency-free.\nStack: Python, Appium, uiautomator2, FastAPI",
+      "repo": "https://github.com/ssrjkk/twinby-swipe-bot",
+      "site": "https://ssrjkk.github.io/twinby-swipe-bot/",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/twinby-swipe-bot.jpg",
+      "links": [
+        {
+          "name": "Integration guide",
+          "url": "https://github.com/ssrjkk/twinby-swipe-bot/blob/main/AGENT_INTEGRATION_GUIDE.md"
+        }
+      ]
+    },
+    {
+      "name": "corvid_crm",
+      "title": "Corvid CRM",
+      "lang": "TypeScript",
+      "stars": 0,
+      "desc": "CRM для фриланса: сделки, счета, клиенты, задачи и аналитика в одном интерфейсе. Next.js 16, App Router, e2e на Playwright.\nСтек: TypeScript, Next.js 16, Tailwind v4",
+      "desc_en": "CRM for freelance work: deals, invoices, clients, tasks and analytics in one interface. Next.js 16 App Router, Playwright e2e.\nStack: TypeScript, Next.js 16, Tailwind v4",
+      "repo": "https://github.com/ssrjkk/corvid_crm",
+      "site": "https://ssrjkk.github.io/corvid_crm/",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/corvid_crm.jpg"
+    },
+    {
+      "name": "verso",
+      "title": "Verso",
+      "lang": "TypeScript",
+      "stars": 0,
+      "desc": "Редакционный Headless CMS и блочный конструктор страниц: коллекции, записи, ревизии, канбан редполитики и headless-выдача по API.\nСтек: TypeScript, Next.js 16, tRPC, Prisma",
+      "desc_en": "Editorial headless CMS and block page builder: collections, records, revisions, a redpolicy kanban and headless delivery over API.\nStack: TypeScript, Next.js 16, tRPC, Prisma",
+      "repo": "https://github.com/ssrjkk/verso",
+      "site": "https://ssrjkk.github.io/verso/",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/verso.jpg"
+    },
+    {
+      "name": "ssrjkk.github.io",
+      "title": "Projects hub",
+      "lang": "HTML, CSS, JavaScript",
+      "stars": 0,
+      "desc": "Хаб проектов и услуг: живые интерфейсы, ссылки на сайты и ботов, контакты. Здесь же живёт каталог-бот @ssrjkk_bot на Cloudflare Workers.\nСтек: HTML, CSS, GitHub Pages, Cloudflare Workers",
+      "desc_en": "Project and services hub: live interfaces, links to sites and bots, contacts. Also home to the @ssrjkk_bot catalogue worker on Cloudflare Workers.\nStack: HTML, CSS, GitHub Pages, Cloudflare Workers",
+      "repo": "https://github.com/ssrjkk/ssrjkk.github.io",
+      "site": "https://ssrjkk.github.io/",
+      "bot": "https://t.me/ssrjkk_bot",
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/ssrjkk.github.io.jpg"
+    }
+  ],
+  "channels": [
+    {
+      "name": "B2W Main",
+      "url": "https://t.me/b2wmain"
+    },
+    {
+      "name": "B2W Shitpost",
+      "url": "https://t.me/+zxyfRXblOINkNjNi"
+    }
+  ],
+  "links": [
+    {
+      "name": "GitHub",
+      "url": "https://github.com/ssrjkk"
+    },
+    {
+      "name": "Telegram",
+      "url": "https://t.me/ssrjkk"
+    },
+    {
+      "name": "Projects hub",
+      "url": "https://ssrjkk.github.io/"
+    },
+    {
+      "name": "Bot catalogue",
+      "url": "https://t.me/ssrjkk_bot"
+    }
+  ]
+}

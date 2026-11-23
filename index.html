@@ -1,0 +1,1042 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Сергей Ситников — фулстек-разработка, боты, магазины</title>
+<meta name="description" content="Сергей Ситников: фулстек-разработка на Python/TypeScript — Telegram-боты, интернет-магазины с ботами, Mini Apps и backend. Живые проекты и контакты.">
+<link rel="canonical" href="https://ssrjkk.github.io/">
+<meta name="theme-color" content="#F5F4EF">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Сергей Ситников">
+<meta property="og:title" content="Сергей Ситников — фулстек-разработка, боты, магазины">
+<meta property="og:description" content="Живые проекты: магазин с ботами TG/MAX, платформа оркестрации ботов, MCP-сервер, торговый терминал. Пишу с тестами.">
+<meta property="og:url" content="https://ssrjkk.github.io/">
+<meta property="og:image" content="https://ssrjkk.github.io/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Сергей Ситников — фулстек-разработка, боты, магазины">
+<meta name="twitter:description" content="Живые проекты и контакты. Python/TypeScript, тесты, Docker.">
+<meta name="twitter:image" content="https://ssrjkk.github.io/assets/og.png">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48" href="/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<style>
+:root{
+  --bg:#F5F4EF;
+  --ink:#141412;
+  --muted:#66665E;
+  --soft:#8A8A80;
+  --line:#DCDAD0;
+  --card:#FFFFFF;
+  --accent:#1B4DFF;
+  --radius:18px;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",Menlo,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:clip}
+section[id]{scroll-margin-top:78px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:clip}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font:inherit}
+::selection{background:#D8D5FF;color:#111}
+.wrap{width:min(1180px,calc(100% - 40px));margin:0 auto}
+.skip{position:absolute;left:-9999px;top:0;background:#111;color:#fff;padding:10px 14px;z-index:100}
+.skip:focus{left:12px;top:12px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* header */
+.site-header{position:sticky;top:0;z-index:40;background:rgba(245,244,239,.86);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.header-in{display:flex;align-items:center;gap:24px;min-height:66px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:650;letter-spacing:-.02em;white-space:nowrap}
+.brand-mark{width:30px;height:30px;border-radius:9px;background:#141412;color:#F5F4EF;display:grid;place-items:center;font:600 11px/1 var(--mono);letter-spacing:.03em}
+.brand-name{font-size:14px}
+.nav{display:flex;align-items:center;gap:22px;margin-left:auto}
+.nav a{font-size:13px;color:#4E4E47}
+.nav a:hover{color:#111}
+.header-gh{display:inline-flex;align-items:center;gap:6px;border:1px solid #141412;border-radius:999px;padding:7px 13px;font-size:12px;font-weight:600;background:#141412;color:#F5F4EF}
+.header-gh:hover{background:#2A2A26}
+.mobile-nav{display:none;gap:18px;padding:0 0 12px;overflow-x:auto;white-space:nowrap;font-size:13px}
+.mobile-nav a{color:#4E4E47}
+
+/* hero */
+.hero{padding:88px 0 56px;border-bottom:1px solid var(--line)}
+.eyebrow{display:flex;align-items:center;gap:10px;margin:0;color:var(--muted);font:600 11px/1.2 var(--mono);letter-spacing:.14em;text-transform:uppercase}
+.eyebrow .dot{width:8px;height:8px;border-radius:50%;background:#178A4C;box-shadow:0 0 0 3px rgba(23,138,76,.13)}
+h1{font-size:clamp(42px,7.1vw,82px);line-height:.99;letter-spacing:-.055em;font-weight:650;margin:28px 0 0;max-width:1080px;text-wrap:balance}
+h1 em{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.035em;color:#4A4A42}
+.lede{max-width:660px;margin:28px 0 0;font-size:19px;line-height:1.52;color:#4D4D45}
+.lede strong{color:#141412;font-weight:600}
+.cta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 20px;border-radius:999px;border:1px solid var(--line);background:transparent;font-size:14px;font-weight:600;transition:background .15s,border-color .15s,transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:#0F3FE0}
+.btn.dark{background:#141412;border-color:#141412;color:#F5F4EF}
+.btn.dark:hover{background:#2A2A26}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);margin:64px 0 0;border-top:1px solid var(--line)}
+.stat{padding:20px 22px 0 0;border-right:1px solid var(--line)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font-size:clamp(26px,3.4vw,36px);line-height:1;letter-spacing:-.04em;font-weight:650}
+.stat span{display:block;margin-top:8px;color:var(--muted);font-size:12px;line-height:1.35}
+.stat sup{font-size:.45em;vertical-align:super;color:var(--soft);letter-spacing:0}
+
+/* sections */
+.section{padding:82px 0;border-bottom:1px solid var(--line)}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;margin-bottom:34px}
+.section-num{display:block;font:600 11px/1 var(--mono);letter-spacing:.14em;color:var(--soft);text-transform:uppercase}
+h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font-weight:650;margin:12px 0 0}
+.section-head p{max-width:400px;margin:0 0 3px;color:var(--muted);font-size:15px;line-height:1.5}
+
+/* projects */
+.projects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(20,20,18,.08);border-color:#C9C7BC}
+.card--featured{grid-column:1/-1;display:grid;grid-template-columns:1.42fr 1fr}
+.card--featured .shot{height:100%;aspect-ratio:auto;min-height:380px}
+.shot{position:relative;display:block;aspect-ratio:16/10;background:#E9E8E1;overflow:hidden;flex:none}
+.shot img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .5s ease}
+.card:hover .shot img{transform:scale(1.025)}
+.badge{position:absolute;left:14px;top:14px;display:inline-flex;align-items:center;gap:6px;background:#141412;color:#F5F4EF;border-radius:999px;padding:6px 10px;font:600 10px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase}
+.badge.live::before{content:"";width:6px;height:6px;border-radius:50%;background:#4ADE80}
+.card-body{padding:22px;flex:1;display:flex;flex-direction:column}
+.card-body .card-link:first-of-type{margin-top:auto}
+.card-body .card-link+.card-link{margin-top:9px}
+.card-body .tags{margin-bottom:18px}
+.card--featured .card-body{padding:38px;display:flex;flex-direction:column;justify-content:center}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.card h3{margin:0;font-size:22px;line-height:1.1;letter-spacing:-.03em;font-weight:650}
+.card--featured h3{font-size:30px}
+.mono{font:600 10px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);white-space:nowrap}
+.card p{margin:11px 0 16px;color:#55554D;font-size:14.5px;line-height:1.55}
+.card--featured p{font-size:16px;max-width:44ch}
+.tags{list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px;padding:0}
+.tags li{border:1px solid var(--line);border-radius:999px;padding:4px 9px;color:#5C5C54;font:500 10.5px/1.2 var(--mono)}
+.card-link{display:inline-flex;align-items:center;gap:7px;align-self:flex-start;font-size:13.5px;font-weight:650;border-bottom:1px solid #141412;padding-bottom:2px}
+.card-link span{font-weight:400}
+.card-link:hover{color:var(--accent);border-color:var(--accent)}
+.more{margin-top:18px;border:1px solid var(--line);border-radius:var(--radius);background:var(--card);overflow:hidden}
+.more-head{padding:20px 22px 0;font:600 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.more-row{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:16px 22px;border-top:1px solid var(--line)}
+.more-row:first-of-type{margin-top:16px}
+.more-row b{font-size:15.5px;letter-spacing:-.015em;font-weight:650}
+.more-row p{margin:4px 0 0;color:var(--muted);font-size:13px;line-height:1.5;max-width:640px}
+.more-row .mono{font:600 10.5px/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--soft);white-space:nowrap}
+.more-row:hover{background:#FAFAF6}
+.more-row:hover .mono{color:var(--accent)}
+.code-shot{height:100%;min-height:280px;background:#101014;color:#D8D8D0;padding:22px;display:flex;flex-direction:column;justify-content:space-between;aspect-ratio:16/10}
+.code-shot .code-head{display:flex;align-items:center;gap:8px;font:500 11px/1 var(--mono);color:#8B8B84}
+.code-shot .code-head i{width:8px;height:8px;border-radius:50%;background:#3A3A3A;display:inline-block}
+.code-shot pre{margin-top:auto;margin-bottom:auto;font:12.5px/1.8 var(--mono);white-space:pre-wrap;color:#C9C9C1}
+.code-shot pre .g{color:#7CE38B}
+.code-shot pre .b{color:#8FB8FF}
+.code-shot .code-foot{border-top:1px solid #2A2A2E;margin-top:20px;padding-top:14px;font:500 10.5px/1.4 var(--mono);color:#77776F;letter-spacing:.04em}
+
+/* services */
+.service-list{border-top:1px solid var(--line)}
+.service{display:grid;grid-template-columns:52px 1fr 190px;gap:24px;padding:26px 0;border-bottom:1px solid var(--line);align-items:start}
+.service-num{font:500 12px/1.6 var(--mono);color:var(--soft);padding-top:3px}
+.service h3{margin:0 0 5px;font-size:20px;letter-spacing:-.025em;font-weight:650}
+.service p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.55;max-width:640px}
+.price{text-align:right;font-weight:650;font-size:17px;letter-spacing:-.02em;white-space:nowrap}
+.price span{display:block;margin-top:5px;font:500 11px/1.3 var(--mono);color:var(--soft);letter-spacing:.02em}
+.note{margin:18px 0 0;color:var(--soft);font-size:12.5px}
+
+/* process */
+.process{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--line)}
+.step{padding:24px 24px 0 0;border-right:1px solid var(--line)}
+.step:last-child{border-right:0}
+.step b{display:block;font:600 11px/1 var(--mono);letter-spacing:.12em;color:var(--accent)}
+.step h3{margin:16px 0 7px;font-size:16.5px;letter-spacing:-.02em;font-weight:650}
+.step p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.5}
+
+/* about */
+.about{display:grid;grid-template-columns:1.15fr .85fr;gap:64px;align-items:start}
+.about p{margin:0 0 16px;color:#4D4D45;font-size:16px;line-height:1.6}
+.about p:last-child{margin-bottom:0}
+.stack{display:flex;flex-wrap:wrap;gap:7px}
+.stack span{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 11px;font:500 11.5px/1.2 var(--mono);color:#4E4E47}
+.about-card{border:1px solid var(--line);border-radius:var(--radius);padding:24px;background:#fff}
+.about-card h3{margin:0 0 12px;font-size:14px;letter-spacing:-.01em;font-weight:650}
+.stack-note{margin:16px 0 0;color:var(--soft);font-size:12.5px;line-height:1.5}
+
+/* contact */
+.contact{padding:82px 0}
+.contact-box{position:relative;overflow:hidden;background:#111110;color:#F5F4EF;border-radius:26px;padding:56px 56px 48px}
+.contact-box::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:56px 56px;mask-image:linear-gradient(120deg,transparent 20%,#000 100%);pointer-events:none}
+.contact-box>*{position:relative;z-index:1}
+.contact-box .section-num{color:#87877F}
+.contact-box h2{max-width:760px;color:#F5F4EF;margin-top:14px}
+.contact-box p{max-width:560px;margin:18px 0 0;color:#B9B9B0;font-size:16px}
+.contact-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.contact-box .btn{border-color:#3A3A36;color:#F5F4EF}
+.contact-box .btn:hover{border-color:#6A6A64}
+.contact-box .btn.primary{background:#F5F4EF;border-color:#F5F4EF;color:#111110}
+.contact-box .btn.primary:hover{background:#fff}
+.contact-meta{display:flex;flex-wrap:wrap;gap:22px;margin-top:34px;padding-top:22px;border-top:1px solid #2C2C29;font-size:12.5px;color:#9A9A92}
+.contact-meta a:hover{color:#fff}
+
+/* footer */
+.footer{padding:26px 0 40px;display:flex;justify-content:space-between;align-items:center;gap:20px;color:var(--soft);font-size:12px}
+.footer-links{display:flex;gap:16px}
+.footer a:hover{color:#111}
+
+/* bots and all links */
+.link-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}
+.link-box{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px}
+.link-box h3{margin:0;font-size:16px;font-weight:650;letter-spacing:-.02em}
+.link-box ul{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:9px}
+.link-box li{display:flex;align-items:baseline;justify-content:space-between;gap:14px;border-top:1px solid #EFEEE7;padding-top:9px;font-size:13.5px;color:var(--muted)}
+.link-box li:first-child{border-top:0;padding-top:0}
+.link-box li a{color:#141412;font-weight:600}
+.link-box li a:hover{color:var(--accent)}
+
+@media (max-width:900px){
+  .nav{display:none}
+  .mobile-nav{display:flex}
+  .header-in{min-height:60px}
+  .hero{padding:62px 0 44px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stat:nth-child(2){border-right:0}
+  .stat:nth-child(1),.stat:nth-child(2){border-bottom:1px solid var(--line);padding-bottom:18px}
+  .stat:nth-child(3),.stat:nth-child(4){padding-top:18px}
+  .section{padding:62px 0}
+  .section-head{display:block}
+  .section-head p{margin-top:14px}
+  .card--featured{grid-template-columns:1fr}
+  .card--featured .shot{min-height:0;aspect-ratio:16/10}
+  .card--featured .card-body{padding:24px}
+  .card--featured h3{font-size:24px}
+  .service{grid-template-columns:34px 1fr;gap:16px}
+  .price{grid-column:2;text-align:left;margin-top:6px}
+  .process{grid-template-columns:repeat(2,1fr)}
+  .step:nth-child(2){border-right:0}
+  .step:nth-child(1),.step:nth-child(2){border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:22px}
+  .about{grid-template-columns:1fr;gap:32px}
+  .contact-box{padding:38px 26px 32px;border-radius:20px}
+}
+@media (max-width:620px){
+  .wrap{width:calc(100% - 28px)}
+  .brand-name{display:none}
+  .header-gh{padding:6px 11px}
+  h1{font-size:34px}
+  .lede{font-size:15.5px}
+  .projects{grid-template-columns:1fr}
+  .card--featured{grid-column:auto}
+  .stats{margin-top:44px}
+  .stat{padding-right:12px}
+  .stat b{font-size:28px}
+  .process{grid-template-columns:1fr}
+  .step{border-right:0!important;border-bottom:1px solid var(--line);padding:18px 0}
+  .step:last-child{border-bottom:0}
+  .step:first-child{padding-top:0}
+  .service{grid-template-columns:1fr;gap:8px}
+  .price{grid-column:auto;text-align:left}
+  .more-row{display:block}
+  .more-row .mono{display:block;margin-top:8px}
+  .link-cols{grid-template-columns:1fr}
+  .contact{padding:58px 0}
+  .contact-actions .btn{width:100%}
+  .footer{display:block;line-height:1.9}
+  .footer-links{margin-top:8px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+  .card:hover,.btn:hover{transform:none}
+}
+/* --- live status bar (status/worker.js, Cloudflare cron каждые 15 минут) --- */
+.statusbar{border-bottom:1px solid var(--line);background:var(--card)}
+.statusbar .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:13px 0}
+.sb-label{font:600 11px/1 var(--mono);letter-spacing:.11em;text-transform:uppercase;color:#6B6B62;margin-right:8px;display:inline-flex;align-items:center;gap:7px}
+.sb-label .pulse{width:7px;height:7px;border-radius:50%;background:#178A4C;box-shadow:0 0 0 3px rgba(23,138,76,.13);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.sb-label .pulse{animation:none}}
+.chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:7px 12px;font:500 12.5px/1 var(--sans);background:var(--bg)}
+.chip .cdot{width:7px;height:7px;border-radius:50%;background:#B9B7AC;flex:none}
+.chip.up .cdot{background:#178A4C;box-shadow:0 0 0 3px rgba(23,138,76,.13)}
+.chip.down{border-color:#E0B4B4;background:#FBF1F1}
+.chip.down .cdot{background:#D64545;box-shadow:0 0 0 3px rgba(214,69,69,.14)}
+.chip .cms{font:500 11px/1 var(--mono);color:#6B6B62}
+.sb-updated{margin-left:auto;font:500 11.5px/1 var(--mono);color:#6B6B62}
+/* 7.0:1 на белом фоне строки — устаревшие данные видно, а не угадывается. */
+.sb-updated.stale{color:#A62B22}
+.badge.down::before{content:"";width:6px;height:6px;border-radius:50%;background:#F87171}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">К содержанию</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <div class="header-in">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">СС</span>
+        <span class="brand-name">Сергей Ситников</span>
+      </a>
+      <nav class="nav" aria-label="Основное">
+        <a href="#projects">Проекты</a>
+        <a href="#bots">Боты</a>
+        <a href="#services">Услуги</a>
+        <a href="#process">Подход</a>
+        <a href="#about">О себе</a>
+        <a href="#contact">Контакты</a>
+      </nav>
+      <a class="header-gh" href="https://github.com/ssrjkk" target="_blank" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
+    </div>
+    <nav class="mobile-nav" aria-label="Мобильная навигация">
+      <a href="#projects">Проекты</a>
+      <a href="#bots">Боты</a>
+      <a href="#services">Услуги</a>
+      <a href="#process">Подход</a>
+      <a href="#about">О себе</a>
+      <a href="#contact">Контакты</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow"><span class="dot" aria-hidden="true"></span> Full-stack · Telegram · Web3</p>
+      <h1>Фулстек: боты, магазины, backend. <em>С тестами, а не «на авось».</em></h1>
+      <p class="lede">Сергей Ситников. Фулстек-разработка на Python и TypeScript: Telegram-боты, Mini Apps, интернет-магазины и backend. Ниже — <strong>живые проекты</strong>, а не концепты: ссылки открываются, код лежит на GitHub.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="https://t.me/ssrjkk" target="_blank" rel="noopener">Обсудить задачу</a>
+        <a class="btn" href="#projects">Смотреть проекты</a>
+        <a class="btn" href="https://t.me/ssrjkk_bot" target="_blank" rel="noopener">Каталог в Telegram</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>22</b><span>живых сайтов,<br>включая хаб</span></div>
+        <div class="stat"><b>120</b><span>скиллов в<br>agent-skills</span></div>
+        <div class="stat"><b>66</b><span>tools в MCP-сервере<br>raven</span></div>
+        <div class="stat"><b>5</b><span>Telegram-ботов<br>в работе</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="statusbar" aria-label="Живой статус сервисов">
+    <div class="wrap" id="live-status">
+      <span class="sb-label"><span class="pulse" aria-hidden="true"></span>Live</span>
+      <noscript><span class="chip"><span class="cdot up"></span>Все ссылки ниже проверяются автоматически каждые 15 минут</span></noscript>
+      <span class="sb-updated" id="sb-updated"></span>
+    </div>
+  </section>
+
+  <section class="section" id="projects">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="section-num">01 — Проекты</span>
+          <h2>Живое, а не концепты</h2>
+        </div>
+        <p>Каждый проект можно открыть и потрогать. Скриншоты сняты с живых интерфейсов; где публичного интерфейса нет — показан код проекта.</p>
+      </div>
+
+      <div class="projects">
+        <article class="card card--featured">
+          <a class="shot" href="/bothive/" aria-label="Открыть лендинг Bothive">
+            <img src="assets/bothive.jpg" alt="Лендинг Bothive в стиле серверной стойки: 8 съёмных воркер-платформ, health-score и Prometheus-метрики" loading="eager">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>bothive</h3><span class="mono">bots</span></div>
+            <p>Платформа оркестрации ботов: 8 платформ, BullMQ, песочница скриптов, circuit breaker, DLQ и Prometheus.</p>
+            <ul class="tags"><li>TypeScript</li><li>Fastify</li><li>React</li><li>Redis</li></ul>
+            <a class="card-link" href="/bothive/">Лендинг проекта <span aria-hidden="true">→</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/bothive" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_bothive" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/fruktovy/" target="_blank" rel="noopener" aria-label="Открыть сайт магазина «Фруктовый дворец»">
+            <img src="assets/fruktovy.jpg" alt="Витрина «Фруктовый дворец»: каталог из 25 позиций, пакет, конструктор 3D-ящика и сезонный календарь" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>fruktovy</h3><span class="mono">e-commerce</span></div>
+            <p>Сайт магазина фруктов и овощей на Сытнинской ул., 12: 25 позиций в шести рядах с ценой за единицу, поиск, пакет с повтором заказа, конструктор 3D-ящика, сезонный календарь и подсказки прилавка. Оплату страница не принимает: заявка уходит продавцу в Telegram, оттуда приходит счёт СБП или на карту, либо расчёт при получении. Пять палитр на одной разметке, промокоды, QR на адрес витрины в блоке «Как найти», self-hosted ассеты, CSP и ноль трекеров; адрес, часы, оба телефона и плашка «4,7 · 39 оценок · 22 отзыва» взяты из карточки организации на Яндекс Картах, а сама карта грузится только по клику. Архив проекта выгружается прямо из браузера.</p>
+            <ul class="tags"><li>HTML</li><li>CSS</li><li>JavaScript</li><li>GitHub Actions</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/fruktovy/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/fruktovy" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_fruktovy" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/our-jamon/" target="_blank" rel="noopener" aria-label="Открыть витрину лавки «Наш Хамон»">
+            <img src="assets/our-jamon.jpg" alt="Витрина «Наш Хамон»: полоса о демо-режиме, заголовок лавки и фото хамона нарезки" loading="lazy">
+            <span class="badge">демо-витрина</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>our-jamon</h3><span class="mono">e-commerce</span></div>
+            <p>Лавка деликатесов на Сытном рынке: 12 отделов, 210 позиций — 183 с ценой и 27 уточняются, поиск, корзина с отменой действия, вес по факту резки. Публичная страница статичная и без внешних запросов; Next.js-движок с заказами, оплатой через Т-Банк и выгрузкой в 1С к боевым реквизитам не подключён, поэтому витрина в демо-режиме и закрыта от индексирования. 200 unit-тестов и 97 сценариев в браузере, четыре обязательные проверки CI, защищённый main.</p>
+            <ul class="tags"><li>TypeScript</li><li>Next.js</li><li>SQLite</li><li>Playwright</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/our-jamon/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/our-jamon" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_our-jamon" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/raven/" target="_blank" rel="noopener" aria-label="Открыть сайт Raven">
+            <img src="assets/raven.jpg" alt="Сайт Raven: self-hosted MCP-сервер с 66 инструментами" loading="lazy">
+            <span class="badge">open source</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>raven</h3><span class="mono">MCP / AI</span></div>
+            <p>Self-hosted MCP-сервер: 66 инструментов поверх stdio и HTTP, изоляция workspace и ключевая авторизация.</p>
+            <ul class="tags"><li>Python</li><li>FastAPI</li><li>MCP</li><li>Rust / Go</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/raven/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://ssrjkk.github.io/raven/docs/" target="_blank" rel="noopener">Docs <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/raven" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_raven" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/twinby-swipe-bot/" target="_blank" rel="noopener" aria-label="Открыть лендинг Heart3">
+            <img src="assets/heart3.jpg" alt="Лендинг Heart3: светлая страница проекта, три рабочих контура и список 28 приложений для дейтинга" loading="lazy">
+            <span class="badge">open source</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>heart3</h3><span class="mono">AI · automation</span></div>
+            <p>Мультиплатформенный ассистент для дейтинга: VLM читает анкету и находит кнопки, свайпает на Android и в браузере, переписку ведёт трёхузловой LangGraph-агент. Режим, драйвер, платформа из реестра 28 дейтингов и ИИ-ключ любой формы меняются на ходу в панели. 102 теста, 46 из них — на чистой stdlib.</p>
+            <ul class="tags"><li>Python</li><li>Appium</li><li>FastAPI</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/twinby-swipe-bot/" target="_blank" rel="noopener">Лендинг проекта <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/twinby-swipe-bot" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/twinby-swipe-bot/blob/main/AGENT_INTEGRATION_GUIDE.md" target="_blank" rel="noopener">Integration guide <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_twinby-swipe-bot" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://t.me/waketrade_bot" target="_blank" rel="noopener" aria-label="Открыть Telegram-бота Wake">
+            <img src="assets/wake.jpg" alt="Telegram-бот WakeTrade: команды /markets и /funding, таблицы объёмов и ставок" loading="lazy">
+            <span class="badge live">live bot</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>wake</h3><span class="mono">trading</span></div>
+            <p>Терминал по перп-рынкам Lighter + Telegram-бот с теми же рыночными данными: объёмы, funding, портфель.</p>
+            <ul class="tags"><li>React</li><li>FastAPI</li><li>PostgreSQL</li><li>Mini App</li></ul>
+            <a class="card-link" href="https://t.me/waketrade_bot" target="_blank" rel="noopener">Открыть бота <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://wake-7k6.pages.dev" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/wake" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_wake" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://t.me/tippy_on_base_bot" target="_blank" rel="noopener" aria-label="Открыть Telegram-бота Tippy">
+            <img src="assets/tippy.jpg" alt="Telegram-бот Tippy: баланс USDC, чаевые, рынки предсказаний и Mini App" loading="lazy">
+            <span class="badge live">live bot</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>tippy</h3><span class="mono">payments</span></div>
+            <p>USDC-экономика в Telegram: чаевые, донат-страницы, рынки предсказаний на LMSR и кабинет в Mini App.</p>
+            <ul class="tags"><li>Python</li><li>aiogram</li><li>Base / USDC</li><li>Mini App</li></ul>
+            <a class="card-link" href="https://t.me/tippy_on_base_bot" target="_blank" rel="noopener">Открыть бота <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://tippy-egi.pages.dev/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/tippy-on-base" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_tippy-on-base" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/drafter/" target="_blank" rel="noopener" aria-label="Открыть сайт Drafter">
+            <img src="assets/drafter.jpg" alt="Drafter: рабочее пространство QA-ассистента с модулями тест-планов, кейсов и баг-репортов" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>drafter</h3><span class="mono">QA · AI</span></div>
+            <p>Браузерный QA-ассистент: тест-планы, кейсы, код автотестов и баг-репорты из описания задачи. Девять провайдеров, свой ключ.</p>
+            <ul class="tags"><li>TypeScript</li><li>9 providers</li><li>607 tests</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/drafter/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/drafter" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_drafter" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/ezzoffer/" target="_blank" rel="noopener" aria-label="Открыть сайт EZOffer">
+            <img src="assets/ezzoffer.jpg" alt="EZOffer: поиск работы без рутины — каталог вакансий и отклики с сопроводительными" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>ezzoffer</h3><span class="mono">automation</span></div>
+            <p>Автоклик по hh.ru: резюме, подбор вакансий из 13 источников и до 250 откликов в сутки на старшем тарифе, каждый с письмом.</p>
+            <ul class="tags"><li>TypeScript</li><li>Next.js</li><li>hh.ru</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/ezzoffer/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ezzoffer_bot" target="_blank" rel="noopener">Открыть бота <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/ezzoffer" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_ezzoffer" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/harvest/" target="_blank" rel="noopener" aria-label="Открыть сайт Harvest">
+            <img src="assets/harvest.jpg" alt="Harvest: QA-стенд для EVM-тестнетов — боты, сценарии и отчёт прогона" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>harvest</h3><span class="mono">QA · testnets</span></div>
+            <p>QA-стенд для чужих EVM-тестнетов: флот кошельков, сценарии, здоровье сети и отчёт. Только тестовые сети, плюс Telegram-бот.</p>
+            <ul class="tags"><li>Python</li><li>EVM testnets</li><li>Telegram bot</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/harvest/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/harvest_testnet_bot" target="_blank" rel="noopener">Открыть бота <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/harvest" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_harvest" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/shroud/" target="_blank" rel="noopener" aria-label="Открыть сайт Shroud">
+            <img src="assets/shroud.jpg" alt="Shroud: обучение ML на зашифрованных данных, спецификация протокола и лаборатория" loading="lazy">
+            <span class="badge">research</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>shroud</h3><span class="mono">FHE · fhEVM</span></div>
+            <p>Исследовательский прототип: обучение ML на шифрованных данных, escrow-задачи и STARK-прототип проверки вычислений. Не аудировано.</p>
+            <ul class="tags"><li>Solidity</li><li>TypeScript</li><li>Rust</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/shroud/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/shroud" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_shroud" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/agent-skills/" target="_blank" rel="noopener" aria-label="Открыть каталог Agent Skills">
+            <img src="assets/skills.jpg" alt="Agent Skills Library: каталог навыков для AI-агентов" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>agent-skills</h3><span class="mono">AI tooling</span></div>
+            <p>120 навыков на EN и RU, 20 IT-роадмапов и 25 гайдов. Публичный registry, поиск через CLI --remote и Python SDK.</p>
+            <ul class="tags"><li>Python</li><li>CLI / SDK</li><li>EN + RU</li><li><a href="https://ssrjkk.github.io/agent-skills/skills_catalog.json">Registry JSON</a></li><li><a href="https://ssrjkk.github.io/agent-skills/roadmaps.html">Роадмапы</a></li><li><a href="https://ssrjkk.github.io/agent-skills/guides.html">Гайды</a></li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/agent-skills/" target="_blank" rel="noopener">Открыть каталог <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://ssrjkk.github.io/agent-skills/skills_catalog.json" target="_blank" rel="noopener">Registry JSON <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://ssrjkk.github.io/agent-skills/roadmaps.html" target="_blank" rel="noopener">Roadmaps <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://ssrjkk.github.io/agent-skills/guides.html" target="_blank" rel="noopener">Guides <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/agent-skills" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_agent-skills" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/qualix/" target="_blank" rel="noopener" aria-label="Открыть сайт qualix">
+            <img src="assets/qualix.jpg" alt="Экран Qualix: шесть уровней автотестов, покрытие и отчётность прогонов" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>qualix</h3><span class="mono">QA · платформа</span></div>
+            <p>Платформа автоматизации тестирования: шесть уровней — от unit до нагрузки, 317 тестов и покрытие 85%+, которые считает прогон, а не обещания. Готовна к k8s.</p>
+            <ul class="tags"><li>Python</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/qualix/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/qualix" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_qualix" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/qa-arsenal/" target="_blank" rel="noopener" aria-label="Открыть сайт qa-arsenal">
+            <img src="assets/qa-arsenal.jpg" alt="Экран QA Arsenal: наборы API, UI, нагрузки, БД и Kafka в одном пайплайне" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>qa-arsenal</h3><span class="mono">QA · монорепо</span></div>
+            <p>Монорепозиторий автотестов: API и UI на hh.ru, Python- и Go-тесты ГУАП, amoCRM — нагрузка, БД и Kafka в одном пайплайне.</p>
+            <ul class="tags"><li>Python</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/qa-arsenal/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/qa-arsenal" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_qa-arsenal" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/mobius/" target="_blank" rel="noopener" aria-label="Открыть сайт mobius">
+            <img src="assets/mobius.jpg" alt="Экран Mobius: мобильная автоматизация Android и iOS, пул устройств и прогоны" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>mobius</h3><span class="mono">mobile QA</span></div>
+            <p>Автоматизация мобильных приложений на Android и iOS: Appium 2.x, screen objects, пул устройств, параллельные прогоны — 950 тестов и 99% покрытия кода.</p>
+            <ul class="tags"><li>Python</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/mobius/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/mobius" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_mobius" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/noema/" target="_blank" rel="noopener" aria-label="Открыть сайт noema">
+            <img src="assets/noema.jpg" alt="Экран NOEMA: 3D-атлас нейронных связей и формальная проверка решений Z3" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>noema</h3><span class="mono">AI · Z3</span></div>
+            <p>Нейросимвольный движок: LLM предлагает решение, Z3 доказывает его по формальным контрактам, кандидат исполняется в изолированной песочнице, инциденты становятся проверенными pull request.</p>
+            <ul class="tags"><li>Python</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/noema/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://ssrjkk.github.io/noema/showcase/" target="_blank" rel="noopener">Showcase <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://ssrjkk.github.io/noema/atlas.html" target="_blank" rel="noopener">Atlas <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/noema" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/noema/blob/main/docs/usage-guide.md" target="_blank" rel="noopener">Usage guide <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/noema/blob/main/docs/WHITEPAPER.md" target="_blank" rel="noopener">Whitepaper <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_noema" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/volley/" target="_blank" rel="noopener" aria-label="Открыть сайт volley">
+            <img src="assets/volley.jpg" alt="Экран Volley: профили нагрузки, сценарии и метрики предельной пропускной способности" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>volley</h3><span class="mono">нагрузка</span></div>
+            <p>Нагрузочное тестирование HTTP на асинхронном ядре C++20: YAML-сценарии, OAuth2, mTLS и Vault, экспорт в OTLP и Prometheus, Python SDK.</p>
+            <ul class="tags"><li>C++</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/volley/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/volley" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_volley" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/b2w-crypto-tg-bot/" target="_blank" rel="noopener" aria-label="Открыть сайт b2w-crypto-tg-bot">
+            <img src="assets/b2w-crypto-tg-bot.jpg" alt="Экран B2W Crypto: криптопортфель, цены и алерты в Telegram" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>b2w-crypto-tg-bot</h3><span class="mono">crypto · bot</span></div>
+            <p>Telegram-платформа криптопортфеля: отслеживание цен, мониторинг рынка, алерты и портфельные отчёты.</p>
+            <ul class="tags"><li>Python</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/b2w-crypto-tg-bot/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/b2w-crypto-tg-bot" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_b2w-crypto-tg-bot" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/tt_bot/" target="_blank" rel="noopener" aria-label="Открыть сайт tt_bot">
+            <img src="assets/tt_bot.jpg" alt="Экран tt_bot: мониторинг эндпоинтов, SSL и TCP с историей и SLA" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>tt_bot</h3><span class="mono">мониторинг</span></div>
+            <p>Мониторинг HTTP/HTTPS, SSL-сертификатов и TCP-сервисов прямо из чата: anti-rebinding SSRF guard, границы доступа по user_id, SLA с P50/P95, история в SQLite WAL и CSV с санитайзером формул.</p>
+            <ul class="tags"><li>Python</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/tt_bot/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://ssrjkk.github.io/tt_bot/showcase/" target="_blank" rel="noopener">Showcase <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/tt_bot" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_tt_bot" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/corvid_crm/" target="_blank" rel="noopener" aria-label="Открыть сайт corvid_crm">
+            <img src="assets/corvid_crm.jpg" alt="Экран Corvid CRM: воронка сделок, счета и аналитика фрилансера" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>corvid_crm</h3><span class="mono">CRM</span></div>
+            <p>CRM для фриланса: сделки, счета, клиенты, задачи и аналитика в одном интерфейсе — своя воронка, свои поля и свои счета.</p>
+            <ul class="tags"><li>TypeScript</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/corvid_crm/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/corvid_crm" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_corvid_crm" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/verso/" target="_blank" rel="noopener" aria-label="Открыть сайт verso">
+            <img src="assets/verso.jpg" alt="Экран Verso: коллекции, записи и блочный конструктор страниц" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>verso</h3><span class="mono">CMS</span></div>
+            <p>Редакционная headless CMS и блочный конструктор страниц: коллекции, записи, ревизии, канбан редполитики и headless-выдача по API.</p>
+            <ul class="tags"><li>TypeScript</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/verso/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/verso" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_verso" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+      </div>
+
+      <div class="more">
+        <div class="more-head">Ещё проекты — с живыми лендингами</div>
+        <a class="more-row" href="https://ssrjkk.github.io/noema/" target="_blank" rel="noopener">
+          <div><b>noema</b><p>Нейросимвольный движок: LLM предлагает, Z3 доказывает по контрактам, CEGIS возвращает контрпримеры. Витрина — 3D-коннектом из 95 000 нейронов, v2 уже в main.</p></div>
+          <span class="mono">Python · MIT →</span>
+        </a>
+        <a class="more-row" href="https://ssrjkk.github.io/noema/atlas.html" target="_blank" rel="noopener">
+          <div><b>noema · атлас</b><p>Анатомия движка по отделам мозга: где рождается решение, живёт память, оттачиваются навыки и стоят защитные оболочки. Бумажная вёрстка, что раньше была главным лендингом.</p></div>
+          <span class="mono">HTML · документация →</span>
+        </a>
+        <a class="more-row" href="https://ssrjkk.github.io/volley/" target="_blank" rel="noopener">
+          <div><b>volley</b><p>Нагрузка на HTTP: C++20 async-ядро, YAML-сценарии, OAuth2/mTLS, OpenTelemetry.</p></div>
+          <span class="mono">C++ · Apache-2.0 →</span>
+        </a>
+        <a class="more-row" href="https://ssrjkk.github.io/mobius/" target="_blank" rel="noopener">
+          <div><b>mobius</b><p>Мобильная автоматизация Android/iOS: Appium 2.x + pytest, screen objects, device pooling.</p></div>
+          <span class="mono">Python · Appium →</span>
+        </a>
+        <a class="more-row" href="https://ssrjkk.github.io/qa-arsenal/" target="_blank" rel="noopener">
+          <div><b>qa-arsenal</b><p>QA-монорепо: API/UI/load/DB/Kafka на 5 целей, один пайплайн и стандарты.</p></div>
+          <span class="mono">Python · monorepo →</span>
+        </a>
+        <a class="more-row" href="https://ssrjkk.github.io/corvid_crm/" target="_blank" rel="noopener">
+          <div><b>corvid_crm</b><p>CRM для фриланса: сделки, счета, клиенты, задачи и аналитика в одном окне.</p></div>
+          <span class="mono">TypeScript · Next.js →</span>
+        </a>
+        <a class="more-row" href="https://ssrjkk.github.io/verso/" target="_blank" rel="noopener">
+          <div><b>verso</b><p>Редакционный Headless CMS: коллекции, ревизии, канбан редполитики и headless-выдача.</p></div>
+          <span class="mono">TypeScript · tRPC →</span>
+        </a>
+        <a class="more-row" href="https://github.com/ssrjkk/ssrjkk.github.io/tree/main/bot" target="_blank" rel="noopener">
+          <div><b>ssrjkk bot</b><p>Каталог проектов @ssrjkk_bot: Cloudflare Worker, D1 и KV, двуязычный каталог и скриншоты. Живёт в этом репозитории, в bot/.</p></div>
+          <span class="mono">JavaScript · Workers →</span>
+        </a>
+        <a class="more-row" href="https://ssrjkk.github.io/b2w-crypto-tg-bot/" target="_blank" rel="noopener">
+          <div><b>b2w-crypto-tg-bot</b><p>Telegram-платформа для криптопортфеля: отслеживание цен, алерты, рыночная аналитика.</p></div>
+          <span class="mono">Python · aiogram →</span>
+        </a>
+        <a class="more-row" href="https://ssrjkk.github.io/tt_bot/" target="_blank" rel="noopener">
+          <div><b>tt_bot</b><p>Мониторинг HTTP/HTTPS, SSL и TCP из чата: anti-rebinding SSRF guard, границы по пользователю, SLA/P95 и CSV-отчёт.</p></div>
+          <span class="mono">Python · aiogram →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="bots">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="section-num">02 — Боты</span>
+          <h2>Живые Telegram-боты</h2>
+        </div>
+        <p>Пять ботов в работе: каталог проектов, торговый терминал, платежи, тестнет-стенд и отклики на hh.ru.</p>
+      </div>
+      <div class="more">
+        <div class="more-head">Открыть в Telegram</div>
+        <a class="more-row" href="https://t.me/ssrjkk_bot" target="_blank" rel="noopener">
+          <div><b>@ssrjkk_bot</b><p>Каталог проектов: /projects, /sites, /bots, /top, /search, скриншоты и переключение RU/EN. Cloudflare Workers, D1 и KV.</p></div>
+          <span class="mono">catalogue →</span>
+        </a>
+        <a class="more-row" href="https://t.me/waketrade_bot" target="_blank" rel="noopener">
+          <div><b>@waketrade_bot</b><p>Карточки рынков, funding и ссылка на терминал Wake — те же данные Lighter, что и на сайте.</p></div>
+          <span class="mono">trading →</span>
+        </a>
+        <a class="more-row" href="https://t.me/tippy_on_base_bot" target="_blank" rel="noopener">
+          <div><b>@tippy_on_base_bot</b><p>Чаевые, донат-страницы, рынки предсказаний и Mini App в USDC на Base.</p></div>
+          <span class="mono">payments →</span>
+        </a>
+        <a class="more-row" href="https://t.me/harvest_testnet_bot" target="_blank" rel="noopener">
+          <div><b>@harvest_testnet_bot</b><p>Статус тестнет-стенда и операторские команды Harvest.</p></div>
+          <span class="mono">testnets →</span>
+        </a>
+        <a class="more-row" href="https://t.me/ezzoffer_bot" target="_blank" rel="noopener">
+          <div><b>@ezzoffer_bot</b><p>Автоотклики на hh.ru: подбор вакансий, сопроводительные письма и уведомления об ответах прямо в Telegram.</p></div>
+          <span class="mono">hh.ru →</span>
+        </a>
+      </div>
+
+      <div class="link-cols">
+        <div class="link-box">
+          <h3>Все сайты</h3>
+          <ul>
+            <li><a href="https://ssrjkk.github.io/">ssrjkk.github.io</a><span>хаб</span></li>
+            <li><a href="https://ssrjkk.github.io/bothive/">bothive</a><span>боты</span></li>
+            <li><a href="https://ssrjkk.github.io/raven/">raven</a><span>MCP</span></li>
+            <li><a href="https://wake-7k6.pages.dev">wake</a><span>терминал</span></li>
+            <li><a href="https://ssrjkk.github.io/drafter/">drafter</a><span>QA · AI</span></li>
+            <li><a href="https://ssrjkk.github.io/ezzoffer/">ezzoffer</a><span>hh.ru</span></li>
+            <li><a href="https://ssrjkk.github.io/harvest/">harvest</a><span>тестнеты</span></li>
+            <li><a href="https://ssrjkk.github.io/shroud/">shroud</a><span>FHE</span></li>
+            <li><a href="https://ssrjkk.github.io/agent-skills/">agent-skills</a><span>каталог</span></li>
+            <li><a href="https://ssrjkk.github.io/qualix/">qualix</a><span>QA-платформа</span></li>
+            <li><a href="https://ssrjkk.github.io/qa-arsenal/">qa-arsenal</a><span>QA-монорепо</span></li>
+            <li><a href="https://ssrjkk.github.io/mobius/">mobius</a><span>моб. автотесты</span></li>
+            <li><a href="https://ssrjkk.github.io/noema/">noema</a><span>нейросимволика</span></li>
+            <li><a href="https://ssrjkk.github.io/volley/">volley</a><span>нагрузка</span></li>
+            <li><a href="https://ssrjkk.github.io/corvid_crm/">corvid_crm</a><span>CRM</span></li>
+            <li><a href="https://ssrjkk.github.io/verso/">verso</a><span>Headless CMS</span></li>
+            <li><a href="https://ssrjkk.github.io/fruktovy/">fruktovy</a><span>фрукты и овощи</span></li>
+          <li><a href="https://ssrjkk.github.io/our-jamon/">our-jamon</a><span>хамон и деликатесы</span></li>
+            <li><a href="https://tippy-egi.pages.dev/">tippy-on-base</a><span>чаевые</span></li>
+            <li><a href="https://ssrjkk.github.io/b2w-crypto-tg-bot/">b2w-crypto-tg-bot</a><span>крипто</span></li>
+            <li><a href="https://ssrjkk.github.io/tt_bot/">tt_bot</a><span>мониторинг</span></li>
+            <li><a href="https://ssrjkk.github.io/twinby-swipe-bot/">heart3</a><span>дейтинг-агент</span></li>
+          </ul>
+        </div>
+        <div class="link-box">
+          <h3>Боты, каналы, код</h3>
+          <ul>
+            <li><a href="https://t.me/ssrjkk_bot">@ssrjkk_bot</a><span>каталог</span></li>
+            <li><a href="https://t.me/waketrade_bot">@waketrade_bot</a><span>терминал</span></li>
+            <li><a href="https://t.me/tippy_on_base_bot">@tippy_on_base_bot</a><span>платежи</span></li>
+            <li><a href="https://t.me/harvest_testnet_bot">@harvest_testnet_bot</a><span>тестнеты</span></li>
+            <li><a href="https://t.me/ezzoffer_bot">@ezzoffer_bot</a><span>hh.ru</span></li>
+            <li><a href="https://t.me/b2wmain">@b2wmain</a><span>канал</span></li>
+            <li><a href="https://t.me/ssrjkk">@ssrjkk</a><span>связь</span></li>
+            <li><a href="https://github.com/ssrjkk">github.com/ssrjkk</a><span>код</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="services">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="section-num">03 — Услуги</span>
+          <h2>Что можно заказать</h2>
+        </div>
+        <p>Ориентиры по цене и сроку. Точная смета — после короткого описания задачи, без «уточним в процессе».</p>
+      </div>
+
+      <div class="service-list">
+        <div class="service">
+          <div class="service-num">01</div>
+          <div>
+            <h3>Telegram-бот для бизнеса</h3>
+            <p>Заявки, оплаты, админка, рассылки, уведомления. Интеграция с CRM, Google Sheets или вашей базой.</p>
+          </div>
+          <div class="price">20–40K ₽<span>4–7 дней</span></div>
+        </div>
+        <div class="service">
+          <div class="service-num">02</div>
+          <div>
+            <h3>Интернет-магазин + боты TG/MAX</h3>
+            <p>Каталог, фильтры, корзина, оформление заказа и Deep Link в бота: витрина и заявки в одном контуре.</p>
+          </div>
+          <div class="price">40–80K ₽<span>1–2 недели</span></div>
+        </div>
+        <div class="service">
+          <div class="service-num">03</div>
+          <div>
+            <h3>Telegram Mini App</h3>
+            <p>Кабинет, каталог, оплата внутри Telegram, админка. React + API, без конструкторов и потолка в кастомизации.</p>
+          </div>
+          <div class="price">от 80K ₽<span>2–4 недели</span></div>
+        </div>
+        <div class="service">
+          <div class="service-num">04</div>
+          <div>
+            <h3>Full-stack доработка</h3>
+            <p>Новые фичи и интеграции в существующий продукт: React, API, база, тесты и CI. Разовый спринт или поддержка на ретейнере.</p>
+          </div>
+          <div class="price">от 40K ₽<span>или ретейнер</span></div>
+        </div>
+      </div>
+      <p class="note">Предоплата 50%. Работаю по ТЗ, правки в рамках согласованного объёма — без доплат. Деплой и инструкция входят в стоимость.</p>
+    </div>
+  </section>
+
+  <section class="section" id="process">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="section-num">04 — Подход</span>
+          <h2>Без сюрпризов</h2>
+        </div>
+        <p>Один исполнитель, без менеджеров и передач между отделами. Вы всегда знаете, на каком этапе задача.</p>
+      </div>
+      <div class="process">
+        <div class="step"><b>01</b><h3>Разбор задачи</h3><p>30 минут в Telegram: что нужно, что уже есть, где узкое место. Фиксирую объём и цену.</p></div>
+        <div class="step"><b>02</b><h3>План и прототип</h3><p>Сценарии, экраны, схема данных. Согласуем до кода, чтобы не переделывать после сдачи.</p></div>
+        <div class="step"><b>03</b><h3>Разработка</h3><p>Короткие статусы раз в 1–2 дня. Показываю рабочие куски, а не отчёт «всё идёт по плану».</p></div>
+        <div class="step"><b>04</b><h3>Тесты и запуск</h3><p>Проверяю сценарии, деплою в Docker, отдаю исходники, логи и инструкцию по запуску.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <div class="wrap about">
+      <div>
+        <span class="section-num">05 — О себе</span>
+        <h2 style="margin-bottom:22px">Фулстек: от задачи до продакшена</h2>
+        <p>Собираю продукт целиком: интерфейс, API, база, интеграции и деплой. В проектах ниже — магазин с ботами TG/MAX, платформа оркестрации на 8 платформ, MCP-сервер на 66 инструментов и торговый терминал. Поэтому в коде сразу закладываю тесты, логи и обработку ошибок.</p>
+        <p>Пишу на Python и TypeScript: FastAPI, aiogram, React, PostgreSQL, Redis, Docker. Деплой — не «залил по SSH», а compose/CI с логами и health-check. Если проект не тянет — скажу до заказа, а не после.</p>
+        <p>Работаю сам. Без прослойки, которая пересказывает ТЗ. Отвечаю в течение дня, по МСК.</p>
+      </div>
+      <div class="about-card">
+        <h3>Стек, который использую</h3>
+        <div class="stack">
+          <span>Python</span><span>FastAPI</span><span>aiogram 3</span><span>TypeScript</span>
+          <span>React</span><span>Node.js</span><span>PostgreSQL</span><span>Redis</span>
+          <span>Docker</span><span>GitHub Actions</span><span>Playwright</span><span>pytest</span>
+          <span>Allure</span><span>Prometheus</span>
+        </div>
+        <p class="stack-note">Не беру задачи, где нет доступа к стенду и непонятен критерий «готово». Так дешевле для обеих сторон.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="wrap">
+      <div class="contact-box">
+        <span class="section-num">06 — Контакты</span>
+        <h2>Напишите задачу.<br>Скажу, сколько это стоит и когда будет готово.</h2>
+        <p>Пришлите 2–3 строки: что нужно сделать и какой результат считается готовым. Отвечу с оценкой и планом, даже если решите не брать.</p>
+        <div class="contact-actions">
+          <a class="btn primary" href="https://t.me/ssrjkk" target="_blank" rel="noopener">Telegram @ssrjkk</a>
+          <a class="btn" href="mailto:ray013lefe@gmail.com">ray013lefe@gmail.com</a>
+          <a class="btn" href="https://github.com/ssrjkk" target="_blank" rel="noopener">GitHub</a>
+        </div>
+        <div class="contact-meta">
+          <a href="https://t.me/b2wmain" target="_blank" rel="noopener">Канал @b2wmain</a>
+          <a href="https://kwork.ru/user/ssrjkk" target="_blank" rel="noopener">Kwork</a>
+          <span>Санкт-Петербург · МСК</span>
+          <span>© 2026 Сергей Ситников</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer wrap">
+  <span>Сделано без конструкторов. HTML, CSS и живые проекты.</span>
+  <div class="footer-links">
+    <a href="https://github.com/ssrjkk" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://t.me/ssrjkk" target="_blank" rel="noopener">Telegram</a>
+    <a href="https://t.me/ssrjkk_bot" target="_blank" rel="noopener">Каталог проектов</a>
+    <a href="mailto:ray013lefe@gmail.com">Email</a>
+  </div>
+</footer>
+
+<script>
+/* Живой статус: status/worker.js на Cloudflare Cron Triggers, раз в 15 минут. */
+(function () {
+  "use strict";
+  var STATUS_URL = "https://ssrjkk-status.ray013lefe.workers.dev/";
+  var box = document.getElementById("live-status");
+  var updated = document.getElementById("sb-updated");
+  if (!box) return;
+
+  /* Ответ приходит с чужого домена: пока он целиком не разобран, витрину не трогаем —
+     половину ряда чипов выдать за живой статус хуже, чем не выдать ничего. */
+  var URL_RE = /^https:\/\/[A-Za-z0-9.\-]+(:\d{2,5})?(\/[!#-~]*)?$/;
+
+  function num(v) { return typeof v === "number" && isFinite(v); }
+
+  function parse(data) {
+    if (!data || !Array.isArray(data.targets) || !data.targets.length) return null;
+    var targets = [], byUrl = {};
+    for (var i = 0; i < data.targets.length; i++) {
+      var t = data.targets[i];
+      if (!t || typeof t.name !== "string" || !t.name) return null;
+      if (typeof t.url !== "string" || !URL_RE.test(t.url) || byUrl[t.url]) return null;
+      if (typeof t.ok !== "boolean" || !num(t.code) || !num(t.uptime)) return null;
+      targets.push({ name: t.name, url: t.url, ok: t.ok, code: t.code,
+                     ms: num(t.ms) ? t.ms : null, uptime: t.uptime });
+      byUrl[t.url] = t;
+    }
+    var stamp = null;
+    if (typeof data.generated_at === "string" && isFinite(Date.parse(data.generated_at))) {
+      stamp = Date.parse(data.generated_at);
+    }
+    var s = data.summary;
+    var sum = (s && num(s.up) && num(s.total) && s.total > 0 && s.up >= 0 && s.up <= s.total) ? s : null;
+    return { targets: targets, byUrl: byUrl, stamp: stamp, sum: sum };
+  }
+
+  function chipFor(t) {
+    var chip = document.createElement("a");
+    chip.className = "chip " + (t.ok ? "up" : "down");
+    chip.href = t.url;
+    chip.target = "_blank";
+    chip.rel = "noopener";
+    chip.title = (t.ok ? "Доступен" : "Недоступен (код " + (t.code || "нет ответа") + ")")
+      + " · uptime: " + t.uptime + "%";
+    var dot = document.createElement("span");
+    dot.className = "cdot";
+    chip.appendChild(dot);
+    chip.appendChild(document.createTextNode(t.name));
+    if (t.ok && t.ms !== null) {
+      var ms = document.createElement("span");
+      ms.className = "cms";
+      ms.textContent = t.ms + "ms";
+      chip.appendChild(ms);
+    }
+    return chip;
+  }
+
+  /* Метка времени и сводка — отдельные поля: отсутствие одного не отменяет остальное. */
+  function stampText(view) {
+    if (view.stamp === null) return null;
+    var mins = Math.max(0, Math.round((Date.now() - view.stamp) / 60000));
+    return mins === 0 ? "обновлено только что" : "обновлено " + mins + " мин назад";
+  }
+
+  function commit(view) {
+    var frag = document.createDocumentFragment();
+    view.targets.forEach(function (t) { frag.appendChild(chipFor(t)); });
+    box.querySelectorAll(".chip").forEach(function (n) { n.remove(); });
+    box.appendChild(frag);
+
+    /* Промежуток больше двух расписаний — врёт уже не витрина, а сам опрос.
+       Порог вынесен в отдельное if: им сверяет страницу с воркером тест status/tests. */
+    var mins = view.stamp === null ? null : Math.max(0, Math.round((Date.now() - view.stamp) / 60000));
+    var stale = mins === null;
+    if (mins > 30) stale = true;
+    var parts = [stampText(view) || "без отметки времени"];
+    if (view.sum) parts.push(view.sum.up + "/" + view.sum.total + " в строю");
+    if (stale) parts.push("данные устарели");
+    if (updated) {
+      updated.textContent = parts.join(" · ");
+      updated.classList.toggle("stale", stale);
+    }
+
+    /* Синхронизируем бейджи на карточках с живыми данными. */
+    document.querySelectorAll(".card a[href]").forEach(function (a) {
+      var href = a.getAttribute("href");
+      var t = null;
+      for (var url in view.byUrl) {
+        if (href.indexOf(url) === 0) { t = view.byUrl[url]; break; }
+      }
+      if (!t) return;
+      var card = a.closest(".card");
+      if (!card) return;
+      var badge = card.querySelector(".badge");
+      if (!badge) return;
+      badge.classList.remove("live", "down");
+      badge.classList.add(t.ok ? "live" : "down");
+      badge.textContent = (t.ok ? "live" : "down") + (t.ok && t.ms !== null ? " " + t.ms + "ms" : "");
+    });
+  }
+
+  fetch(STATUS_URL, { cache: "no-store", signal: AbortSignal.timeout(6000) })
+    .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+    .then(function (data) {
+      var view = parse(data);
+      if (!view) throw new Error("payload");
+      commit(view);
+    })
+    .catch(function () {
+      if (updated) {
+        updated.textContent = "статус временно недоступен";
+        updated.classList.add("stale");
+      }
+    });
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Сергей Ситников",
+  "url": "https://ssrjkk.github.io/",
+  "jobTitle": "Фулстек-разработчик",
+  "sameAs": ["https://github.com/ssrjkk", "https://t.me/ssrjkk", "https://t.me/ssrjkk_bot"],
+  "knowsAbout": ["Python", "TypeScript", "Telegram bots", "FastAPI", "React", "PostgreSQL", "Docker"]
+}
+</script>
+</body>
+</html>

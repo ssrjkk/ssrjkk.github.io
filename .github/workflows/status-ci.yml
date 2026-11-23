@@ -1,0 +1,46 @@
+# Опрос витрины живёт на Cloudflare Cron Triggers (status/wrangler.toml), поэтому
+# у Actions здесь нет расписания: планировщик бесплатного аккаунта задерживает
+# `cron: "*/15"`, и паузы в замерах доходили до 7ч53 вместо четверти часа.
+# CI проверяет воркер и его согласованность с хабом — сеть из CI не нужна.
+name: Status CI
+
+on:
+  push:
+    branches: [main]
+    paths: ['status/**', 'index.html', '.github/workflows/status-ci.yml']
+  pull_request:
+    branches: [main]
+    paths: ['status/**', 'index.html', '.github/workflows/status-ci.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: status-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: status
+
+jobs:
+  worker:
+    name: Продюсер статуса
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      # Зависимостей нет: воркер, тесты и двойник сети — один файл Node >= 20.
+      - name: Тесты воркера
+        run: npm test
+
+      # Порог числовой: упавшее покрытие или разъехавшийся со списком целей хаб
+      # роняют сборку, а не остаются незамеченными до следующего посетителя.
+      - name: Покрытие и гейты расхождения
+        run: npm run coverage

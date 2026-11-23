@@ -1,0 +1,12 @@
+name = "ssrjkk-status"
+main = "worker.js"
+compatibility_date = "2025-06-01"
+
+# Живой статус витрины. Cron Triggers считают интервалы честно, в отличие от
+# `cron: "*/15"` на бесплатном GitHub Actions (замеры: паузы 3ч26 — 7ч53).
+[[kv_namespaces]]
+binding = "STATUS_KV"
+id = "22543aed628a4ae1a21df48ea512d888"
+
+[triggers]
+crons = ["*/15 * * * *"]

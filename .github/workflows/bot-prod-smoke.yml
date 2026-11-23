@@ -1,0 +1,36 @@
+# Смоук против задеплоенного воркера раз в час. Bot CI проверяет исходники на моках,
+# а здесь проверяется прод: версия живёт на edge, счётчики совпадают с projects.json
+# и /webhook не принимает обновления без секрета. Красный = что-то из этого сломалось;
+# обходить нельзя, починка — правкой воркера или конфигов, а не флагом.
+name: Bot prod smoke
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: bot-prod-smoke
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: bot
+
+jobs:
+  smoke:
+    name: Живой воркер
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      # Только встроенные модули Node: ставить зависимости ради трёх запросов нечего.
+      - name: Здоровье, счётчики и охрана вебхука
+        run: node scripts/smoke-prod.mjs
