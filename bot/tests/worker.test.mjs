@@ -705,6 +705,28 @@ test("project cards and keyboards include documentation links", () => {
   }
 });
 
+test("every project with documentation links publishes all of them on card and keyboard", () => {
+  const catalogue = JSON.parse(readFileSync(new URL("../projects.json", import.meta.url), "utf8"));
+  const withLinks = catalogue.projects.filter((entry) => (entry.links || []).length);
+  assert.ok(withLinks.length >= 2, "в каталоге должно быть чем проверять, чем один проект со ссылками");
+  for (const project of withLinks) {
+    for (const lang of ["ru", "en"]) {
+      const card = projectCard(project, {}, lang);
+      const buttons = projectDetailKeyboard(lang, project).flat().filter((button) => button.url);
+      for (const link of project.links) {
+        assert.ok(
+          card.includes(`<a href="${link.url}">${link.name}</a>`),
+          `${project.name}: карточка не содержит ссылку ${link.name} (${link.url})`
+        );
+        assert.ok(
+          buttons.some((button) => button.url === link.url && button.text === link.name),
+          `${project.name}: клавиатура не содержит кнопку ${link.name} (${link.url})`
+        );
+      }
+    }
+  }
+});
+
 test("documentation link labels and attributes are HTML escaped", () => {
   const card = projectCard({
     name: "fixture",
