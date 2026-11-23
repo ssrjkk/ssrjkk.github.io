@@ -42,10 +42,12 @@ export const TARGETS = [
   { id: "volley", name: "Volley", url: "https://ssrjkk.github.io/volley/" },
   { id: "mobius", name: "Mobius", url: "https://ssrjkk.github.io/mobius/" },
   { id: "noema", name: "Noema", url: "https://ssrjkk.github.io/noema/" },
+  { id: "noema-showcase", name: "Noema · Showcase", url: "https://ssrjkk.github.io/noema/showcase/" },
   { id: "qa-arsenal", name: "QA Arsenal", url: "https://ssrjkk.github.io/qa-arsenal/" },
   { id: "qualix", name: "Qualix", url: "https://ssrjkk.github.io/qualix/" },
   { id: "b2w", name: "B2W Crypto", url: "https://ssrjkk.github.io/b2w-crypto-tg-bot/" },
   { id: "tt-bot", name: "TT Bot", url: "https://ssrjkk.github.io/tt_bot/" },
+  { id: "tt-bot-showcase", name: "TT Bot · Showcase", url: "https://ssrjkk.github.io/tt_bot/showcase/" },
   { id: "twinby", name: "<3 (Heart3)", url: "https://ssrjkk.github.io/twinby-swipe-bot/" }
 ];
 

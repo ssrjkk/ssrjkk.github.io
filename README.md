@@ -17,7 +17,7 @@ Telegram bots and channels, the services with prices, and contacts.
 
 ## Live status
 
-`status/worker.js` polls the twenty-three services listed on the hub every 15 minutes on Cloudflare Cron
+`status/worker.js` polls the twenty-five services listed on the hub every 15 minutes on Cloudflare Cron
 Triggers and keeps the last 60 checks per service in Workers KV. The page reads the worker directly, so
 a status update no longer needs a commit or a Pages rebuild.
 
