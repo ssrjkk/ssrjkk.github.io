@@ -49,7 +49,7 @@ export const TARGETS = [
   { id: "b2w", name: "B2W Crypto", url: "https://ssrjkk.github.io/b2w-crypto-tg-bot/" },
   { id: "tt-bot", name: "TT Bot", url: "https://ssrjkk.github.io/tt_bot/" },
   { id: "tt-bot-showcase", name: "TT Bot · Showcase", url: "https://ssrjkk.github.io/tt_bot/showcase/" },
-  { id: "twinby", name: "<3 (Heart3)", url: "https://ssrjkk.github.io/twinby-swipe-bot/" }
+  { id: "twinby", name: "<3", url: "https://ssrjkk.github.io/twinby-swipe-bot/" }
 ];
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

@@ -251,7 +251,7 @@
     },
     {
       "name": "twinby-swipe-bot",
-      "title": "<3 (Heart3)",
+      "title": "<3",
       "lang": "Python",
       "stars": 0,
       "desc": "Дейтинг-агент <3: три контура ui_vision / web_vision / api, реестр 28 платформ (спецификации, не 28 проверенных интеграций), переписка через LangGraph и Control Panel на FastAPI. 102 теста, 46 из них — на чистой stdlib.\nСтек: Python, Appium, uiautomator2, FastAPI",

@@ -39,12 +39,12 @@ globalThis.fetch = async (input) => {
 const { buildSync } = createRequire(import.meta.url)("esbuild");
 const CATALOGUE = JSON.parse(readFileSync(new URL("../projects.json", import.meta.url), "utf8"));
 
-test("Heart3 title is escaped while existing project links stay stable", () => {
+test("Проект <3 показывается экранированным именем while existing project links stay stable", () => {
   const project = CATALOGUE.projects.find((p) => p.name === "twinby-swipe-bot");
-  assert.equal(displayName(project), "<3 (Heart3)");
+  assert.equal(displayName(project), "<3");
   for (const lang of ["ru", "en"]) {
     const card = projectCard(project, {}, lang);
-    assert.ok(card.startsWith("<b>&lt;3 (Heart3)</b>"));
+    assert.ok(card.startsWith("<b>&lt;3</b>"));
     assert.ok(!card.includes("<b><3"));
     assert.ok(card.includes("102"), `счётчик тестов устарел: ${card.slice(-160)}`);
     const counts = lang === "ru" ? "102 теста, 46 из них" : "102 tests, 46 of them";
