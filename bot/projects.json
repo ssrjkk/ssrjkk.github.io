@@ -45,7 +45,13 @@
       "desc_en": "Self-hosted MCP server: 66 tools over stdio and HTTP, workspace confinement, keyed auth, MIT licensed.\nStack: Python, FastAPI, MCP, Rust/Go",
       "repo": "https://github.com/ssrjkk/raven",
       "site": "https://ssrjkk.github.io/raven/",
-      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/raven.jpg"
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/raven.jpg",
+      "links": [
+        {
+          "name": "Docs",
+          "url": "https://ssrjkk.github.io/raven/docs/"
+        }
+      ]
     },
     {
       "name": "wake",
@@ -91,6 +97,7 @@
       "desc_en": "Job search automation for hh.ru: vacancy matching, cover letters, resume management and Telegram notifications.\nStack: TypeScript, Next.js, hh.ru API",
       "repo": "https://github.com/ssrjkk/ezzoffer",
       "site": "https://ssrjkk.github.io/ezzoffer/",
+      "bot": "https://t.me/ezzoffer_bot",
       "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/ezzoffer.jpg"
     },
     {
@@ -234,7 +241,13 @@
       "desc_en": "Service monitoring straight from the chat: HTTP/HTTPS, SSL certificate and TCP probes behind an anti-rebinding SSRF guard, per-user access boundaries, throttling, schedules and threshold alerts, SLA with P50/P95 per monitor, SQLite WAL history and formula-sanitized CSV export. Ships as one read-only Docker container; 35 offline tests, 93% coverage.\nStack: Python, aiogram 3, aiosqlite",
       "repo": "https://github.com/ssrjkk/tt_bot",
       "site": "https://ssrjkk.github.io/tt_bot/",
-      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/tt_bot.jpg"
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/tt_bot.jpg",
+      "links": [
+        {
+          "name": "Showcase",
+          "url": "https://ssrjkk.github.io/tt_bot/showcase/"
+        }
+      ]
     },
     {
       "name": "twinby-swipe-bot",

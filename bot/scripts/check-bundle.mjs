@@ -1,5 +1,5 @@
 /**
- * Проверка воркера port: данные, ссылки и бандл согласованы.
+ * Проверка воркера каталога: данные, ссылки, хаб и бандл согласованы.
  *
  * В репозитории лежат три вещи:
  *
@@ -294,6 +294,48 @@ if (existsSync(HUB)) {
       fail(`в index.html не найден счётчик «${label}» — сверять витрину с каталогом нечем`);
     } else if (Number(stat[1]) !== want) {
       fail(`счётчик «${label}» в index.html показывает ${stat[1]}, а каталог несёт ${want}`);
+    }
+  }
+
+  // --- 12. Карточки хаба покрывают каталог -------------------------------
+  // Раздел «Проекты» — витрина: посетитель судит о парке по её карточкам. Без
+  // этого правила проект мог остаться только в блоке «Все сайты», а README
+  // продолжал бы утверждать, что карточка есть. Хаб сам себя карточки не требует.
+  const HUB_SELF = "ssrjkk.github.io";
+  const cards = [...hubHtml.matchAll(/<article class="card[^"]*">([\s\S]*?)<\/article>/g)].map((m) => m[1]);
+  const cardNames = new Set();
+  for (const body of cards) {
+    const deep = body.match(/[?&]start=p_([A-Za-z0-9._-]+)"/);
+    if (deep) cardNames.add(deep[1]);
+  }
+  for (const p of data.projects || []) {
+    if (p.name === HUB_SELF) continue;
+    if (!cardNames.has(p.name)) {
+      fail(`проект «${p.name}» не имеет карточки в разделе «Проекты» index.html — deep-ссылки ?start=p_${p.name} нет ни в одной карточке`);
+    }
+  }
+  for (const name of cardNames) {
+    if (!(data.projects || []).some((p) => p.name === name)) {
+      fail(`карточка index.html ссылается на проект «${name}», которого нет в projects.json`);
+    }
+  }
+  if (cards.length !== cardNames.size) {
+    fail(`в index.html ${cards.length} карточек, но deep-ссылок на разные проекты только ${cardNames.size} — две карточки ведут в один проект`);
+  }
+
+  // --- 13. Скриншоты карточек лежат в репозитории ------------------------
+  // alt-текст обещает интерфейс, а не заглушку: файл из src у <img> обязан
+  // существовать рядом с index.html, иначе витрина отдаёт битую картинку.
+  const shotRefs = [...hubHtml.matchAll(/<img src="(assets\/[^"]+)"/g)].map((m) => m[1]);
+  for (const ref of shotRefs) {
+    if (!existsSync(resolve(ROOT, "..", ref))) {
+      fail(`карточка index.html ссылается на ${ref}, которого нет в assets/`);
+    }
+  }
+  for (const name of cardNames) {
+    const card = cards.find((b) => (b.match(/[?&]start=p_([A-Za-z0-9._-]+)"/) || [])[1] === name);
+    if (card && !/<img src="assets\//.test(card)) {
+      fail(`карточка «${name}» в index.html без скриншота — в ней нет <img src="assets/…">`);
     }
   }
 }

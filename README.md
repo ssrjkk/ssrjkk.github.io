@@ -9,8 +9,8 @@ Telegram bots and channels, the services with prices, and contacts.
 
 ## Sections
 
-- **Projects** — bothive, fruktovy, raven, wake, tippy, drafter, ezzoffer, harvest, shroud, tt_bot, agent-skills, QA frameworks
-- **Bots** — [@ssrjkk_bot](https://t.me/ssrjkk_bot), [@waketrade_bot](https://t.me/waketrade_bot), [@tippy_on_base_bot](https://t.me/tippy_on_base_bot), [@harvest_testnet_bot](https://t.me/harvest_testnet_bot)
+- **Projects** — twenty-one cards, one per catalogue project: bothive, fruktovy, our-jamon, raven, twinby-swipe-bot, wake, tippy-on-base, drafter, ezzoffer, harvest, shroud, agent-skills, qualix, qa-arsenal, mobius, noema, volley, b2w-crypto-tg-bot, tt_bot, corvid_crm, verso. Each card links the site, the repository, the bot where one exists and the `?start=p_<name>` deep link into [@ssrjkk_bot](https://t.me/ssrjkk_bot)
+- **Bots** — [@ssrjkk_bot](https://t.me/ssrjkk_bot), [@waketrade_bot](https://t.me/waketrade_bot), [@tippy_on_base_bot](https://t.me/tippy_on_base_bot), [@harvest_testnet_bot](https://t.me/harvest_testnet_bot), [@ezzoffer_bot](https://t.me/ezzoffer_bot)
 - **Sites** — twenty-two site addresses, including this hub; availability requires a complete HTTP response, and Wake API readiness is shown separately
 - **Services** — Telegram bots, stores with TG/MAX bots, Mini Apps, full-stack web apps and automation
 - **Contacts** — Telegram, GitHub, channels, email

@@ -147,13 +147,21 @@ function checkBundleData(mutate = () => {}, editReadme = (text) => text, editHub
     for (const file of workflows) writeFileSync(join(base, ".github", "workflows", file), "");
     const hubPath = fileURLToPath(new URL("../../index.html", import.meta.url));
     if (existsSync(hubPath)) writeFileSync(join(base, "index.html"), editHub(readFileSync(hubPath, "utf8")));
+    // Скриншоты карточек лежат в assets/ рядом с index.html: фикстура копирует
+    // сами файлы пустыми — проверке важно, что на них есть чем закрыться.
+    const assetsDir = fileURLToPath(new URL("../../assets/", import.meta.url));
+    if (existsSync(assetsDir)) {
+      mkdirSync(join(base, "assets"), { recursive: true });
+      for (const file of readdirSync(assetsDir)) writeFileSync(join(base, "assets", file), "");
+    }
     const readmePath = join(root, "README.md");
     writeFileSync(readmePath, editReadme(readFileSync(readmePath, "utf8")));
     const data = JSON.parse(readFileSync(new URL("../projects.json", import.meta.url), "utf8"));
     mutate(data);
     writeFileSync(join(root, "projects.json"), JSON.stringify(data));
     for (const [file, edit] of Object.entries(editFiles)) {
-      const target = join(root, file);
+      // ../ — путь относительно корня репозитория, а не bot/
+      const target = file.startsWith("../") ? join(base, file.slice(3)) : join(root, file);
       if (edit === null) rmSync(target, { force: true });
       else writeFileSync(target, edit(readFileSync(target, "utf8")));
     }
@@ -374,11 +382,31 @@ for (const [name, editHub] of [
   ["a catalogue site missing from the hub sites box", (text) => text.replace(/\s*<li><a href="https:\/\/ssrjkk\.github\.io\/raven\/">raven<\/a><span>[^<]*<\/span><\/li>/, "")],
   ["a hub sites-box row the catalogue does not list", (text) => text.replace('<li><a href="https://ssrjkk.github.io/raven/">', '<li><a href="https://example.test/ghost-site/">ghost</a><span>призрак</span></li>\n            <li><a href="https://ssrjkk.github.io/raven/">')],
   ["a hub site counter the catalogue does not support", (text) => text.replace('<div class="stat"><b>22</b><span>живых сайтов,', '<div class="stat"><b>23</b><span>живых сайтов,')],
-  ["a hub bot counter the catalogue does not support", (text) => text.replace('<div class="stat"><b>4</b><span>Telegram-ботов', '<div class="stat"><b>5</b><span>Telegram-ботов')]
+  ["a hub bot counter the catalogue does not support", (text) => text.replace('<div class="stat"><b>5</b><span>Telegram-ботов', '<div class="stat"><b>6</b><span>Telegram-ботов')],
+  ["a catalogue project without a card on the hub", (text) => text.replace(
+    /\s*<a class="card-link" href="https:\/\/t\.me\/ssrjkk_bot\?start=p_mobius"[^\n]*\n/, "\n")],
+  ["two hub cards opening the same project", (text) => text.replace("?start=p_mobius", "?start=p_noema")]
 ]) {
   test(`bundle validation rejects ${name}`, () => {
     const result = checkBundleData(() => {}, (text) => text, editHub);
     expectGateRejection(result, /index\.html|deep-/, name);
+  });
+}
+
+// Скриншоты карточек — то же обещание, что и ссылки: alt-текст описывает экран
+// проекта, а файла под ним может не быть. Проверка ловит и битый путь, и карточку
+// без кадра, и файл, который из репозитория уже удалён.
+for (const [name, editHub, editFiles] of [
+  ["a hub card pointing at a screenshot the repo does not have",
+    (text) => text.replace('assets/mobius.jpg', 'assets/mobius-old.jpg'), {}],
+  ["a hub card that lost its screenshot",
+    (text) => text.replace(/\s*<img src="assets\/mobius\.jpg"[^\n]*\n/, "\n"), {}],
+  ["a screenshot file the hub still points at but the repo dropped",
+    (text) => text, { "../assets/mobius.jpg": null }]
+]) {
+  test(`bundle validation rejects ${name}`, () => {
+    const result = checkBundleData(() => {}, (text) => text, editHub, editFiles);
+    expectGateRejection(result, /assets\/|скриншота/, name);
   });
 }
 
@@ -457,7 +485,9 @@ test("the README count of gate mutations is the count the suite really runs", ()
 test("bundle validation reports the catalogue it accepted", () => {
   const result = checkBundleData();
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /Воркер в порядке: 22 проектов, 22 сайтов, 4 ботов, 2 привязок/);
+  const sites = CATALOGUE.projects.filter((p) => p.site).length;
+  const bots = CATALOGUE.projects.filter((p) => p.bot).length;
+  assert.match(result.stdout, new RegExp(`Воркер в порядке: ${CATALOGUE.projects.length} проектов, ${sites} сайтов, ${bots} ботов, 2 привязок`));
 });
 
 test("health endpoint answers OK", async () => {
@@ -471,9 +501,11 @@ test("root endpoint reports the catalogue size", async () => {
   assert.equal(response.status, 200);
   const body = await response.json();
   assert.equal(body.name, "ssrjkk-bot");
-  assert.equal(body.projects, 22);
-  assert.equal(body.sites, 22);
-  assert.equal(body.bots, 4);
+  // Числа берутся из каталога, а не из памяти: правка projects.json обязана
+  // менять ответ воркера, иначе счётчики расходятся с витриной.
+  assert.equal(body.projects, CATALOGUE.projects.length);
+  assert.equal(body.sites, CATALOGUE.projects.filter((p) => p.site).length);
+  assert.equal(body.bots, CATALOGUE.projects.filter((p) => p.bot).length);
   assert.equal(body.github, "https://github.com/ssrjkk");
 });
 
@@ -500,9 +532,9 @@ test("/start shows the menu with sites and bots", async () => {
   assert.equal(response.status, 200);
 
   const text = lastText(calls);
-  assert.match(text, /Проектов: 22/);
-  assert.match(text, /Сайтов: 22/);
-  assert.match(text, /Ботов: 4/);
+  assert.match(text, new RegExp(`Проектов: ${CATALOGUE.projects.length}`));
+  assert.match(text, new RegExp(`Сайтов: ${CATALOGUE.projects.filter((p) => p.site).length}`));
+  assert.match(text, new RegExp(`Ботов: ${CATALOGUE.projects.filter((p) => p.bot).length}`));
 
   const button = callsOf(calls, "sendMessage").at(-1);
   const data = keyboardData(button);
@@ -551,9 +583,10 @@ test("/bots lists every Telegram bot as a URL button", async () => {
   const sent = callsOf(calls, "sendMessage").at(-1);
   assert.match(sent.body.text, /Telegram-боты/);
   const urls = keyboardData(sent).filter((value) => value.startsWith("https://"));
-  assert.equal(urls.length, 4);
-  assert.ok(new Set(urls).has("https://t.me/ssrjkk_bot"));
-  assert.ok(new Set(urls).has("https://t.me/waketrade_bot"));
+  assert.equal(urls.length, CATALOGUE.projects.filter((p) => p.bot).length);
+  for (const p of CATALOGUE.projects) {
+    if (p.bot) assert.ok(new Set(urls).has(p.bot), `в списке ботов нет ${p.bot} — проекта «${p.name}»`);
+  }
 });
 
 test("/about counts the catalogue instead of hardcoding it", async () => {

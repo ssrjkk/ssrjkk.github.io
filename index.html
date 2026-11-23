@@ -313,7 +313,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
         <div class="stat"><b>22</b><span>живых сайтов,<br>включая хаб</span></div>
         <div class="stat"><b>120</b><span>скиллов в<br>agent-skills</span></div>
         <div class="stat"><b>66</b><span>tools в MCP-сервере<br>raven</span></div>
-        <div class="stat"><b>4</b><span>Telegram-ботов<br>в работе</span></div>
+        <div class="stat"><b>5</b><span>Telegram-ботов<br>в работе</span></div>
       </div>
     </div>
   </section>
@@ -403,6 +403,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
             <ul class="tags"><li>Python</li><li>Appium</li><li>FastAPI</li></ul>
             <a class="card-link" href="https://ssrjkk.github.io/twinby-swipe-bot/" target="_blank" rel="noopener">Лендинг проекта <span aria-hidden="true">↗</span></a>
             <a class="card-link" href="https://github.com/ssrjkk/twinby-swipe-bot" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_twinby-swipe-bot" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
           </div>
         </article>
 
@@ -422,7 +423,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
 
         <article class="card">
           <a class="shot" href="https://t.me/tippy_on_base_bot" target="_blank" rel="noopener" aria-label="Открыть Telegram-бота Tippy">
-            <img src="assets/tippy.png" alt="Telegram-бот Tippy: баланс USDC, чаевые, рынки предсказаний и Mini App" loading="lazy">
+            <img src="assets/tippy.jpg" alt="Telegram-бот Tippy: баланс USDC, чаевые, рынки предсказаний и Mini App" loading="lazy">
             <span class="badge live">live bot</span>
           </a>
           <div class="card-body">
@@ -505,26 +506,143 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
         </article>
 
         <article class="card">
-          <a class="shot code-shot" href="https://ssrjkk.github.io/qualix/" target="_blank" rel="noopener" aria-label="Открыть сайт Qualix">
-            <div class="code-head"><i></i><i></i><i></i> qa / qualix</div>
-            <pre><span class="g">def</span> test_create_order(auth, db):
-    r = api.post(<span class="b">"/orders"</span>, json={...})
-    <span class="g">assert</span> r.status == 201
-    <span class="g">assert</span> db.has(r.json()[<span class="b">"id"</span>])
-
-<span class="g">def</span> test_401_without_token():
-    <span class="g">assert</span> api.get(<span class="b">"/orders"</span>).status == 401</pre>
-            <div class="code-foot">pytest · Playwright · API + UI + DB + Kafka</div>
+          <a class="shot" href="https://ssrjkk.github.io/qualix/" target="_blank" rel="noopener" aria-label="Открыть сайт qualix">
+            <img src="assets/qualix.jpg" alt="Экран Qualix: шесть уровней автотестов, покрытие и отчётность прогонов" loading="lazy">
+            <span class="badge live">live</span>
           </a>
           <div class="card-body">
-            <div class="card-top"><h3>QA-фреймворки</h3><span class="mono">testing</span></div>
-            <p>Автотесты, которые проверяют бизнес-логику, а не только статус-код: UI, API, БД, Kafka и нагрузка.</p>
-            <ul class="tags"><li>pytest</li><li>Playwright</li><li>Allure</li><li>CI/CD</li></ul>
+            <div class="card-top"><h3>qualix</h3><span class="mono">QA · платформа</span></div>
+            <p>Платформа автоматизации тестирования: шесть уровней — от unit до нагрузки, 317 тестов и покрытие 85%+, которые считает прогон, а не обещания. Готовна к k8s.</p>
+            <ul class="tags"><li>Python</li></ul>
             <a class="card-link" href="https://ssrjkk.github.io/qualix/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
             <a class="card-link" href="https://github.com/ssrjkk/qualix" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
             <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_qualix" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
           </div>
         </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/qa-arsenal/" target="_blank" rel="noopener" aria-label="Открыть сайт qa-arsenal">
+            <img src="assets/qa-arsenal.jpg" alt="Экран QA Arsenal: наборы API, UI, нагрузки, БД и Kafka в одном пайплайне" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>qa-arsenal</h3><span class="mono">QA · монорепо</span></div>
+            <p>Монорепозиторий автотестов: API и UI на hh.ru, Python- и Go-тесты ГУАП, amoCRM — нагрузка, БД и Kafka в одном пайплайне.</p>
+            <ul class="tags"><li>Python</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/qa-arsenal/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/qa-arsenal" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_qa-arsenal" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/mobius/" target="_blank" rel="noopener" aria-label="Открыть сайт mobius">
+            <img src="assets/mobius.jpg" alt="Экран Mobius: мобильная автоматизация Android и iOS, пул устройств и прогоны" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>mobius</h3><span class="mono">mobile QA</span></div>
+            <p>Автоматизация мобильных приложений на Android и iOS: Appium 2.x, screen objects, пул устройств, параллельные прогоны — 950 тестов и 99% покрытия кода.</p>
+            <ul class="tags"><li>Python</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/mobius/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/mobius" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_mobius" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/noema/" target="_blank" rel="noopener" aria-label="Открыть сайт noema">
+            <img src="assets/noema.jpg" alt="Экран NOEMA: 3D-атлас нейронных связей и формальная проверка решений Z3" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>noema</h3><span class="mono">AI · Z3</span></div>
+            <p>Нейросимвольный движок: LLM предлагает решение, Z3 доказывает его по формальным контрактам, кандидат исполняется в изолированной песочнице, инциденты становятся проверенными pull request.</p>
+            <ul class="tags"><li>Python</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/noema/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://ssrjkk.github.io/noema/showcase/" target="_blank" rel="noopener">Showcase <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://ssrjkk.github.io/noema/atlas.html" target="_blank" rel="noopener">Atlas <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/noema" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_noema" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/volley/" target="_blank" rel="noopener" aria-label="Открыть сайт volley">
+            <img src="assets/volley.jpg" alt="Экран Volley: профили нагрузки, сценарии и метрики предельной пропускной способности" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>volley</h3><span class="mono">нагрузка</span></div>
+            <p>Нагрузочное тестирование HTTP на асинхронном ядре C++20: YAML-сценарии, OAuth2, mTLS и Vault, экспорт в OTLP и Prometheus, Python SDK.</p>
+            <ul class="tags"><li>C++</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/volley/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/volley" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_volley" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/b2w-crypto-tg-bot/" target="_blank" rel="noopener" aria-label="Открыть сайт b2w-crypto-tg-bot">
+            <img src="assets/b2w-crypto-tg-bot.jpg" alt="Экран B2W Crypto: криптопортфель, цены и алерты в Telegram" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>b2w-crypto-tg-bot</h3><span class="mono">crypto · bot</span></div>
+            <p>Telegram-платформа криптопортфеля: отслеживание цен, мониторинг рынка, алерты и портфельные отчёты.</p>
+            <ul class="tags"><li>Python</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/b2w-crypto-tg-bot/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/b2w-crypto-tg-bot" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_b2w-crypto-tg-bot" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/tt_bot/" target="_blank" rel="noopener" aria-label="Открыть сайт tt_bot">
+            <img src="assets/tt_bot.jpg" alt="Экран tt_bot: мониторинг эндпоинтов, SSL и TCP с историей и SLA" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>tt_bot</h3><span class="mono">мониторинг</span></div>
+            <p>Мониторинг HTTP/HTTPS, SSL-сертификатов и TCP-сервисов прямо из чата: anti-rebinding SSRF guard, границы доступа по user_id, SLA с P50/P95, история в SQLite WAL и CSV с санитайзером формул.</p>
+            <ul class="tags"><li>Python</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/tt_bot/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://ssrjkk.github.io/tt_bot/showcase/" target="_blank" rel="noopener">Showcase <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/tt_bot" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_tt_bot" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/corvid_crm/" target="_blank" rel="noopener" aria-label="Открыть сайт corvid_crm">
+            <img src="assets/corvid_crm.jpg" alt="Экран Corvid CRM: воронка сделок, счета и аналитика фрилансера" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>corvid_crm</h3><span class="mono">CRM</span></div>
+            <p>CRM для фриланса: сделки, счета, клиенты, задачи и аналитика в одном интерфейсе — своя воронка, свои поля и свои счета.</p>
+            <ul class="tags"><li>TypeScript</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/corvid_crm/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/corvid_crm" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_corvid_crm" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <a class="shot" href="https://ssrjkk.github.io/verso/" target="_blank" rel="noopener" aria-label="Открыть сайт verso">
+            <img src="assets/verso.jpg" alt="Экран Verso: коллекции, записи и блочный конструктор страниц" loading="lazy">
+            <span class="badge live">live</span>
+          </a>
+          <div class="card-body">
+            <div class="card-top"><h3>verso</h3><span class="mono">CMS</span></div>
+            <p>Редакционная headless CMS и блочный конструктор страниц: коллекции, записи, ревизии, канбан редполитики и headless-выдача по API.</p>
+            <ul class="tags"><li>TypeScript</li></ul>
+            <a class="card-link" href="https://ssrjkk.github.io/verso/" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://github.com/ssrjkk/verso" target="_blank" rel="noopener">Смотреть код <span aria-hidden="true">↗</span></a>
+            <a class="card-link" href="https://t.me/ssrjkk_bot?start=p_verso" target="_blank" rel="noopener">Карточка в @ssrjkk_bot <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
       </div>
 
       <div class="more">
@@ -580,7 +698,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
           <span class="section-num">02 — Боты</span>
           <h2>Живые Telegram-боты</h2>
         </div>
-        <p>Четыре бота в работе: каталог проектов, торговый терминал, платежи и тестнет-стенд.</p>
+        <p>Пять ботов в работе: каталог проектов, торговый терминал, платежи, тестнет-стенд и отклики на hh.ru.</p>
       </div>
       <div class="more">
         <div class="more-head">Открыть в Telegram</div>
@@ -599,6 +717,10 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
         <a class="more-row" href="https://t.me/harvest_testnet_bot" target="_blank" rel="noopener">
           <div><b>@harvest_testnet_bot</b><p>Статус тестнет-стенда и операторские команды Harvest.</p></div>
           <span class="mono">testnets →</span>
+        </a>
+        <a class="more-row" href="https://t.me/ezzoffer_bot" target="_blank" rel="noopener">
+          <div><b>@ezzoffer_bot</b><p>Автоотклики на hh.ru: подбор вакансий, сопроводительные письма и уведомления об ответах прямо в Telegram.</p></div>
+          <span class="mono">hh.ru →</span>
         </a>
       </div>
 
@@ -637,6 +759,7 @@ h2{font-size:clamp(30px,4.3vw,46px);line-height:1.04;letter-spacing:-.045em;font
             <li><a href="https://t.me/waketrade_bot">@waketrade_bot</a><span>терминал</span></li>
             <li><a href="https://t.me/tippy_on_base_bot">@tippy_on_base_bot</a><span>платежи</span></li>
             <li><a href="https://t.me/harvest_testnet_bot">@harvest_testnet_bot</a><span>тестнеты</span></li>
+            <li><a href="https://t.me/ezzoffer_bot">@ezzoffer_bot</a><span>hh.ru</span></li>
             <li><a href="https://t.me/b2wmain">@b2wmain</a><span>канал</span></li>
             <li><a href="https://t.me/ssrjkk">@ssrjkk</a><span>связь</span></li>
             <li><a href="https://github.com/ssrjkk">github.com/ssrjkk</a><span>код</span></li>
