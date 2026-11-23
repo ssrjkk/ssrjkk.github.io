@@ -824,6 +824,17 @@ function starCountFor(project, stars) {
   if (live) return live.stars || 0;
   return project.stars || 0;
 }
+function isGithubUrl(url) {
+  try {
+    const hostname = new URL(url).hostname;
+    return hostname === "github.com" || hostname.endsWith(".github.com");
+  } catch {
+    return false;
+  }
+}
+function docLinks(project) {
+  return (project.links || []).filter((link) => !(project.private && isGithubUrl(link.url)));
+}
 function projectCard(project, stars, lang) {
   const star = starCountFor(project, stars);
   const starCount = star > 0 ? ` ${star}★` : "";
@@ -831,7 +842,7 @@ function projectCard(project, stars, lang) {
   if (project.site) links.push(`<a href="${project.site}">${LANG[lang].siteLabel}</a>`);
   if (project.repo && !project.private) links.push(`<a href="${project.repo}">GitHub</a>`);
   if (project.bot) links.push(`<a href="${project.bot}">${LANG[lang].botLabel}</a>`);
-  for (const link of project.links || []) links.push(`<a href="${esc(link.url)}">${esc(link.name)}</a>`);
+  for (const link of docLinks(project)) links.push(`<a href="${esc(link.url)}">${esc(link.name)}</a>`);
   if (project.private) links.push(LANG[lang].privateLabel);
   return `<b>${esc(displayName(project))}</b> [${esc(project.lang)}]${starCount}
 ${esc(desc(project, lang))}
@@ -869,7 +880,7 @@ function projectDetailKeyboard(lang, project, userId = null) {
   if (project.bot) row.push({ text: `${LANG[lang].botLabel} ↗`, url: project.bot });
   const rows = [];
   if (row.length) rows.push(row);
-  if (project.links?.length) rows.push(project.links.map((link) => ({ text: link.name, url: link.url })));
+  if (project.links?.length) rows.push(docLinks(project).map((link) => ({ text: link.name, url: link.url })));
   const shareRow = [{ text: LANG[lang].shareProject, url: shareProjectUrl(lang, project) }];
   if (userId !== null) shareRow.push({ text: LANG[lang].invite, callback_data: `ref:${project.name}` });
   rows.push(shareRow);
@@ -1409,7 +1420,7 @@ async function handleInline(env, query) {
     if (project.bot) buttons.push({ text: `${LANG[lang].botLabel} ↗`, url: project.bot });
     const rows = [];
     if (buttons.length) rows.push(buttons);
-    if (project.links?.length) rows.push(project.links.map((link) => ({ text: link.name, url: link.url })));
+    if (project.links?.length) rows.push(docLinks(project).map((link) => ({ text: link.name, url: link.url })));
     const markup = rows.length ? { inline_keyboard: rows } : void 0;
     const card = projectCard(project, stars, lang);
     if (project.shot) {
@@ -1531,6 +1542,7 @@ export {
   LANG_CACHE_LIMIT,
   worker_default as default,
   displayName,
+  docLinks,
   projectCard,
   projectDetailKeyboard,
   resetCaches,
