@@ -31,6 +31,10 @@
  *      каталога и на бота из projects.json.
  *  11. Блок «Все сайты» и счётчики на витрине перечисляют ровно то, что несёт
  *      каталог, — в обе стороны.
+ *  12. У каждого проекта каталога есть своя карточка в разделе «Проекты», и
+ *      карточка показывает скриншот, который лежит в assets/.
+ *  13. Карточка несёт все ссылки своей записи — сайт, репозиторий, бота и
+ *      документацию — и не ведёт туда, чего в записи нет.
  *
  * Запуск: node scripts/check-bundle.mjs
  * Выход: 0 — всё в порядке, 1 — есть замечания (они печатаются в stderr).
@@ -336,6 +340,54 @@ if (existsSync(HUB)) {
     const card = cards.find((b) => (b.match(/[?&]start=p_([A-Za-z0-9._-]+)"/) || [])[1] === name);
     if (card && !/<img src="assets\//.test(card)) {
       fail(`карточка «${name}» в index.html без скриншота — в ней нет <img src="assets/…">`);
+    }
+  }
+
+  // --- 14. Карточка несёт все ссылки каталога ----------------------------
+  verifyCardLinks(hubHtml);
+}
+
+// Каталог знает сайт, бота, документацию и репозиторий проекта, а карточка —
+// единственная витрина, где эти ссылки можно нажать. Без сверки карточка
+// отстаёт от данных молча: записи в projects.json достаточно, чтобы счётчик
+// вырос, но посетитель хаба так и не увидит ни исходников, ни бота.
+// Сравниваются href'ы после приведения относительных путей к адресу хаба:
+// карточка bothive ссылается на /bothive/, и это тот же сайт.
+function verifyCardLinks(hubHtml) {
+  const norm = (value) => {
+    let url = value;
+    try {
+      url = new URL(value, data.hub).href;
+    } catch {
+      return value;
+    }
+    return url.replace(/\/+$/, "");
+  };
+  const bodies = [...hubHtml.matchAll(/<article class="card[^"]*">([\s\S]*?)<\/article>/g)].map((m) => m[1]);
+  for (const body of bodies) {
+    const name = (body.match(/[?&]start=p_([A-Za-z0-9._-]+)"/) || [])[1];
+    const project = (data.projects || []).find((p) => p.name === name);
+    if (!project) continue;
+
+    const hrefs = [...body.matchAll(/<a class="card-link"[^>]*href="([^"]+)"/g)].map((m) => norm(m[1]));
+    const expected = [project.site, project.repo, project.bot, ...(project.links || []).map((l) => l.url)]
+      .filter(Boolean)
+      .map(norm);
+    const known = new Set([...expected, norm(`${data.bot}?start=p_${name}`)]);
+
+    for (const url of expected) {
+      if (!hrefs.includes(url)) {
+        fail(`карточка «${name}» в index.html не ссылается на ${url} — в каталоге эта ссылка есть`);
+      }
+    }
+    for (const href of hrefs) {
+      if (!known.has(href)) {
+        fail(`карточка «${name}» в index.html ведёт на ${href}, которого нет в записи проекта`);
+      }
+    }
+    const last = hrefs[hrefs.length - 1];
+    if (last !== norm(`${data.bot}?start=p_${name}`)) {
+      fail(`карточка «${name}»: ссылка на каталог должна быть последней, а замыкает ${last}`);
     }
   }
 }

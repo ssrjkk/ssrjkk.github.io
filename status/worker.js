@@ -24,6 +24,7 @@ export const TARGETS = [
   { id: "fruktovy", name: "Фруктовый", url: "https://ssrjkk.github.io/fruktovy/" },
   { id: "our-jamon", name: "Наш Хамон", url: "https://ssrjkk.github.io/our-jamon/" },
   { id: "raven", name: "Raven", url: "https://ssrjkk.github.io/raven/" },
+  { id: "raven-docs", name: "Raven · документация", url: "https://ssrjkk.github.io/raven/docs/" },
   { id: "agent-skills", name: "Agent Skills", url: "https://ssrjkk.github.io/agent-skills/" },
   { id: "drafter", name: "Drafter", url: "https://ssrjkk.github.io/drafter/" },
   { id: "ezzoffer", name: "EZZoffer", url: "https://ssrjkk.github.io/ezzoffer/" },
