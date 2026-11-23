@@ -1583,8 +1583,8 @@ test("/links offers exactly the catalogue links and then the way back", async ()
 
 test("/myid answers the numeric id in a copyable code tag", async () => {
   const calls = installFetch();
-  await sendWebhook(makeEnv(), makeCtx(), messageUpdate("/myid", { chatId: -100201, userId: 397602448 }));
-  assert.equal(lastText(calls), "Your ID: <code>397602448</code>", "в группе показываем id автора, а не чата");
+  await sendWebhook(makeEnv(), makeCtx(), messageUpdate("/myid", { chatId: -100201, userId: 700000001 }));
+  assert.equal(lastText(calls), "Your ID: <code>700000001</code>", "в группе показываем id автора, а не чата");
 });
 
 test("/search without a query asks for the format and tracks nothing", async () => {
