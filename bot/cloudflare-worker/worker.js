@@ -1,4 +1,4 @@
-// projects.json
+// bot/projects.json
 var projects_default = {
   github: "ssrjkk",
   hub: "https://ssrjkk.github.io/",
@@ -259,7 +259,13 @@ var projects_default = {
       desc_en: "Dating agent <3: three loops ui_vision / web_vision / api, a registry of 28 platforms (specifications, not 28 verified integrations), LangGraph conversations and a FastAPI Control Panel. 102 tests, 46 of them dependency-free.\nStack: Python, Appium, uiautomator2, FastAPI",
       repo: "https://github.com/ssrjkk/twinby-swipe-bot",
       site: "https://ssrjkk.github.io/twinby-swipe-bot/",
-      shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/twinby-swipe-bot.jpg"
+      shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/twinby-swipe-bot.jpg",
+      links: [
+        {
+          name: "Integration guide",
+          url: "https://github.com/ssrjkk/twinby-swipe-bot/blob/main/AGENT_INTEGRATION_GUIDE.md"
+        }
+      ]
     },
     {
       name: "corvid_crm",
@@ -326,7 +332,7 @@ var projects_default = {
   ]
 };
 
-// src/worker.js
+// bot/src/worker.js
 var GITHUB_USERNAME = projects_default.github;
 var BOT_URL = projects_default.bot;
 var PROJECTS = projects_default.projects;
