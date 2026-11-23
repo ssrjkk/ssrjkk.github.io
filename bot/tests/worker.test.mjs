@@ -693,7 +693,7 @@ test("the live catalogue publishes a repository link for every project", () => {
 test("project cards and keyboards include documentation links", () => {
   const catalogue = JSON.parse(readFileSync(new URL("../projects.json", import.meta.url), "utf8"));
   const project = catalogue.projects.find((entry) => entry.name === "agent-skills");
-  assert.equal(project.links.length, 3);
+  assert.equal(project.links.length, 4);
   for (const lang of ["ru", "en"]) {
     const card = projectCard(project, {}, lang);
     for (const link of project.links) {
@@ -835,7 +835,8 @@ test("inline query returns photos for projects with screenshots", async () => {
   assert.deepEqual(skillPhoto.reply_markup.inline_keyboard[1].map((button) => button.url), [
     "https://ssrjkk.github.io/agent-skills/skills_catalog.json",
     "https://ssrjkk.github.io/agent-skills/roadmaps.html",
-    "https://ssrjkk.github.io/agent-skills/guides.html"
+    "https://ssrjkk.github.io/agent-skills/guides.html",
+    "https://github.com/ssrjkk/agent-skills/blob/main/docs/ARCHITECTURE.md"
   ]);
 });
 

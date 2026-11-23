@@ -12,7 +12,21 @@
       "desc_en": "Self-hosted bot orchestration for eight platforms: BullMQ queues, sandboxed script engine, webhooks and Prometheus metrics.\nStack: TypeScript, Fastify, React, Redis, PostgreSQL",
       "repo": "https://github.com/ssrjkk/bothive",
       "site": "https://ssrjkk.github.io/bothive/",
-      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/bothive.jpg"
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/bothive.jpg",
+      "links": [
+        {
+          "name": "API",
+          "url": "https://github.com/ssrjkk/bothive/blob/main/docs/api.md"
+        },
+        {
+          "name": "ADR",
+          "url": "https://github.com/ssrjkk/bothive/blob/main/docs/adr/README.md"
+        },
+        {
+          "name": "Deploy",
+          "url": "https://github.com/ssrjkk/bothive/blob/main/docs/deployment.md"
+        }
+      ]
     },
     {
       "name": "fruktovy",
@@ -23,7 +37,13 @@
       "desc_en": "Storefront for a fruit and vegetable shop at Sytninskaya ul. 12 in Saint Petersburg: 25 items in six aisles, per-unit prices (kg, 100 g, piece) from 95 to 1250 ₽, search, an order basket with reorder, a 3D crate builder, a seasonal calendar and counter hints. The page takes no payment — the request goes to the seller in Telegram, where an SBP or card invoice arrives, or you pay on pickup. Five themes on one markup, promo codes, a QR code to the storefront, self-hosted assets, CSP and zero trackers; the Yandex map loads only on click. Address, opening hours, the numbers +7 (951) 645-03-30 and +7 (905) 267-67-74 and the «4.7 · 39 ratings · 22 reviews» pill come from the shop's Yandex Maps organisation card. The project archive exports straight from the browser.\nStack: HTML, CSS, JavaScript, Node (quality gate), GitHub Actions (Pages)",
       "repo": "https://github.com/ssrjkk/fruktovy",
       "site": "https://ssrjkk.github.io/fruktovy/",
-      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/fruktovy.jpg"
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/fruktovy.jpg",
+      "links": [
+        {
+          "name": "Deploy",
+          "url": "https://github.com/ssrjkk/fruktovy/blob/main/AGENT_DEPLOY.md"
+        }
+      ]
     },
     {
       "name": "our-jamon",
@@ -34,7 +54,17 @@
       "desc_en": "Storefront for a deli counter at the Sytny market in Saint Petersburg: 12 departments, 210 items — 183 priced and 27 awaiting confirmation. Search, a cart with undo, selection by curing months, weight priced after the slice. The public page is a static storefront on GitHub Pages: assets, fonts and scripts live in the repo, zero external requests. Behind it a Next.js engine handles orders, delivery, T-Bank payments and the 1C export; neither is wired to live credentials yet, so the storefront runs in demo mode — a banner on top and noindex until the seller confirms the prices. CI runs 200 unit tests and 97 browser scenarios at 1440, 768 and 360 px, with four required checks and a protected main.\nStack: TypeScript, Next.js, JavaScript, Playwright, GitHub Actions",
       "repo": "https://github.com/ssrjkk/our-jamon",
       "site": "https://ssrjkk.github.io/our-jamon/",
-      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/our-jamon.jpg"
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/our-jamon.jpg",
+      "links": [
+        {
+          "name": "Releases",
+          "url": "https://github.com/ssrjkk/our-jamon/blob/main/RELEASE.md"
+        },
+        {
+          "name": "Shop guide",
+          "url": "https://github.com/ssrjkk/our-jamon/blob/main/shop/README.md"
+        }
+      ]
     },
     {
       "name": "raven",
@@ -50,6 +80,14 @@
         {
           "name": "Docs",
           "url": "https://ssrjkk.github.io/raven/docs/"
+        },
+        {
+          "name": "Security",
+          "url": "https://ssrjkk.github.io/raven/security.html"
+        },
+        {
+          "name": "Changelog",
+          "url": "https://github.com/ssrjkk/raven/blob/main/CHANGELOG.md"
         }
       ]
     },
@@ -63,7 +101,21 @@
       "repo": "https://github.com/ssrjkk/wake",
       "site": "https://wake-7k6.pages.dev",
       "bot": "https://t.me/waketrade_bot",
-      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/wake.jpg"
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/wake.jpg",
+      "links": [
+        {
+          "name": "Whitepaper",
+          "url": "https://github.com/ssrjkk/wake/blob/main/WHITEPAPER.md"
+        },
+        {
+          "name": "Changelog",
+          "url": "https://github.com/ssrjkk/wake/blob/main/CHANGELOG.md"
+        },
+        {
+          "name": "Deploy",
+          "url": "https://github.com/ssrjkk/wake/blob/main/docs/RAILWAY_DEPLOY.md"
+        }
+      ]
     },
     {
       "name": "tippy-on-base",
@@ -75,7 +127,21 @@
       "repo": "https://github.com/ssrjkk/tippy-on-base",
       "site": "https://tippy-egi.pages.dev/",
       "bot": "https://t.me/tippy_on_base_bot",
-      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/tippy-on-base.jpg"
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/tippy-on-base.jpg",
+      "links": [
+        {
+          "name": "Whitepaper",
+          "url": "https://github.com/ssrjkk/tippy-on-base/blob/main/docs/WHITEPAPER.md"
+        },
+        {
+          "name": "User guide",
+          "url": "https://github.com/ssrjkk/tippy-on-base/blob/main/docs/USER_GUIDE.md"
+        },
+        {
+          "name": "Security",
+          "url": "https://github.com/ssrjkk/tippy-on-base/blob/main/SECURITY.md"
+        }
+      ]
     },
     {
       "name": "drafter",
@@ -86,7 +152,17 @@
       "desc_en": "Browser-based AI QA assistant: test plans, cases, automation code and bug reports from a task description. Nine providers, bring your own key.\nStack: TypeScript, React, LLM providers",
       "repo": "https://github.com/ssrjkk/drafter",
       "site": "https://ssrjkk.github.io/drafter/",
-      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/drafter.jpg"
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/drafter.jpg",
+      "links": [
+        {
+          "name": "Changelog",
+          "url": "https://github.com/ssrjkk/drafter/blob/main/CHANGELOG.md"
+        },
+        {
+          "name": "Security",
+          "url": "https://github.com/ssrjkk/drafter/blob/main/SECURITY.md"
+        }
+      ]
     },
     {
       "name": "ezzoffer",
@@ -98,7 +174,21 @@
       "repo": "https://github.com/ssrjkk/ezzoffer",
       "site": "https://ssrjkk.github.io/ezzoffer/",
       "bot": "https://t.me/ezzoffer_bot",
-      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/ezzoffer.jpg"
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/ezzoffer.jpg",
+      "links": [
+        {
+          "name": "FAQ",
+          "url": "https://ssrjkk.github.io/ezzoffer/faq"
+        },
+        {
+          "name": "Pricing",
+          "url": "https://ssrjkk.github.io/ezzoffer/pricing"
+        },
+        {
+          "name": "About",
+          "url": "https://ssrjkk.github.io/ezzoffer/about"
+        }
+      ]
     },
     {
       "name": "harvest",
@@ -110,7 +200,21 @@
       "repo": "https://github.com/ssrjkk/harvest",
       "site": "https://ssrjkk.github.io/harvest/",
       "bot": "https://t.me/harvest_testnet_bot",
-      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/harvest.jpg"
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/harvest.jpg",
+      "links": [
+        {
+          "name": "Docs",
+          "url": "https://ssrjkk.github.io/harvest/docs.html"
+        },
+        {
+          "name": "Demo",
+          "url": "https://ssrjkk.github.io/harvest/demo.html"
+        },
+        {
+          "name": "Changelog",
+          "url": "https://github.com/ssrjkk/harvest/blob/main/CHANGELOG.md"
+        }
+      ]
     },
     {
       "name": "shroud",
@@ -121,7 +225,21 @@
       "desc_en": "Research prototype for ML training over encrypted data: fhEVM contracts, STARK proof of compute, streaming payouts. Not audited.\nStack: Solidity, TypeScript, Rust, fhEVM",
       "repo": "https://github.com/ssrjkk/shroud",
       "site": "https://ssrjkk.github.io/shroud/",
-      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/shroud.jpg"
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/shroud.jpg",
+      "links": [
+        {
+          "name": "Protocol",
+          "url": "https://ssrjkk.github.io/shroud/protocol.html"
+        },
+        {
+          "name": "Security",
+          "url": "https://ssrjkk.github.io/shroud/security.html"
+        },
+        {
+          "name": "User guide",
+          "url": "https://github.com/ssrjkk/shroud/blob/main/USER_GUIDE.md"
+        }
+      ]
     },
     {
       "name": "agent-skills",
@@ -144,6 +262,10 @@
         {
           "name": "Guides",
           "url": "https://ssrjkk.github.io/agent-skills/guides.html"
+        },
+        {
+          "name": "Architecture",
+          "url": "https://github.com/ssrjkk/agent-skills/blob/main/docs/ARCHITECTURE.md"
         }
       ],
       "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/agent-skills.jpg"
@@ -157,7 +279,17 @@
       "desc_en": "QA automation platform: 317 tests across six layers, 85%+ coverage, security hardening, k8s-ready.\nStack: Python, FastAPI, pytest, Playwright, Locust",
       "repo": "https://github.com/ssrjkk/qualix",
       "site": "https://ssrjkk.github.io/qualix/",
-      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/qualix.jpg"
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/qualix.jpg",
+      "links": [
+        {
+          "name": "ADR",
+          "url": "https://github.com/ssrjkk/qualix/blob/main/docs/adr/README.md"
+        },
+        {
+          "name": "Changelog",
+          "url": "https://github.com/ssrjkk/qualix/blob/main/CHANGELOG.md"
+        }
+      ]
     },
     {
       "name": "qa-arsenal",
@@ -168,7 +300,13 @@
       "desc_en": "QA monorepo: hh.ru API/UI, guap.ru Python/Go and amoCRM. API, UI, load, DB and Kafka suites in one pipeline.\nStack: Python, pytest, Playwright, Go, Kafka",
       "repo": "https://github.com/ssrjkk/qa-arsenal",
       "site": "https://ssrjkk.github.io/qa-arsenal/",
-      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/qa-arsenal.jpg"
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/qa-arsenal.jpg",
+      "links": [
+        {
+          "name": "Showcase",
+          "url": "https://ssrjkk.github.io/qa-arsenal/showcase/"
+        }
+      ]
     },
     {
       "name": "mobius",
@@ -179,7 +317,21 @@
       "desc_en": "Mobile automation for Android and iOS: Appium 2.x + pytest, screen objects, device pooling, parallel runs. 950 tests, 99% code coverage.\nStack: Python, Appium 2.x, pytest",
       "repo": "https://github.com/ssrjkk/mobius",
       "site": "https://ssrjkk.github.io/mobius/",
-      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/mobius.jpg"
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/mobius.jpg",
+      "links": [
+        {
+          "name": "Usage",
+          "url": "https://github.com/ssrjkk/mobius/blob/main/docs/USAGE.md"
+        },
+        {
+          "name": "Showcase",
+          "url": "https://ssrjkk.github.io/mobius/showcase/"
+        },
+        {
+          "name": "Changelog",
+          "url": "https://github.com/ssrjkk/mobius/blob/main/CHANGELOG.md"
+        }
+      ]
     },
     {
       "name": "noema",
@@ -219,7 +371,17 @@
       "desc_en": "HTTP load-testing platform: C++20 async core, YAML scenarios, OAuth2/mTLS/Vault, OTLP and Prometheus, Python SDK.\nStack: C++20, Boost.Beast, gRPC",
       "repo": "https://github.com/ssrjkk/volley",
       "site": "https://ssrjkk.github.io/volley/",
-      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/volley.jpg"
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/volley.jpg",
+      "links": [
+        {
+          "name": "Showcase",
+          "url": "https://ssrjkk.github.io/volley/showcase/"
+        },
+        {
+          "name": "Architecture",
+          "url": "https://github.com/ssrjkk/volley/blob/main/docs/architecture.md"
+        }
+      ]
     },
     {
       "name": "b2w-crypto-tg-bot",
@@ -230,7 +392,21 @@
       "desc_en": "Telegram crypto platform: portfolio tracking, price monitoring and market alerts.\nStack: Python, aiogram, PostgreSQL",
       "repo": "https://github.com/ssrjkk/b2w-crypto-tg-bot",
       "site": "https://ssrjkk.github.io/b2w-crypto-tg-bot/",
-      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/b2w-crypto-tg-bot.jpg"
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/b2w-crypto-tg-bot.jpg",
+      "links": [
+        {
+          "name": "Showcase",
+          "url": "https://ssrjkk.github.io/b2w-crypto-tg-bot/showcase/"
+        },
+        {
+          "name": "API",
+          "url": "https://github.com/ssrjkk/b2w-crypto-tg-bot/blob/main/docs/api_reference.md"
+        },
+        {
+          "name": "Deploy",
+          "url": "https://github.com/ssrjkk/b2w-crypto-tg-bot/blob/main/docs/deployment.md"
+        }
+      ]
     },
     {
       "name": "tt_bot",
@@ -246,6 +422,10 @@
         {
           "name": "Showcase",
           "url": "https://ssrjkk.github.io/tt_bot/showcase/"
+        },
+        {
+          "name": "Architecture",
+          "url": "https://github.com/ssrjkk/tt_bot/blob/main/ARCHITECTURE.md"
         }
       ]
     },
@@ -263,6 +443,10 @@
         {
           "name": "Integration guide",
           "url": "https://github.com/ssrjkk/twinby-swipe-bot/blob/main/AGENT_INTEGRATION_GUIDE.md"
+        },
+        {
+          "name": "Security",
+          "url": "https://github.com/ssrjkk/twinby-swipe-bot/blob/main/SECURITY.md"
         }
       ]
     },
@@ -286,7 +470,17 @@
       "desc_en": "Editorial headless CMS and block page builder: collections, records, revisions, a redpolicy kanban and headless delivery over API.\nStack: TypeScript, Next.js 16, tRPC, Prisma",
       "repo": "https://github.com/ssrjkk/verso",
       "site": "https://ssrjkk.github.io/verso/",
-      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/verso.jpg"
+      "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/verso.jpg",
+      "links": [
+        {
+          "name": "Decisions",
+          "url": "https://github.com/ssrjkk/verso/blob/main/docs/DECISIONS.md"
+        },
+        {
+          "name": "Deploy",
+          "url": "https://github.com/ssrjkk/verso/blob/main/docs/DEPLOYMENT.md"
+        }
+      ]
     },
     {
       "name": "ssrjkk.github.io",

@@ -77,15 +77,23 @@ bot itself, used to build invite links), `projects`, `channels` and `links`. Eac
   "repo": "https://github.com/ssrjkk/wake",
   "site": "https://wake-7k6.pages.dev",
   "bot": "https://t.me/waketrade_bot",
-  "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/wake.jpg"
+  "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/wake.jpg",
+  "links": [
+    { "name": "Whitepaper", "url": "https://github.com/ssrjkk/wake/blob/main/WHITEPAPER.md" },
+    { "name": "Changelog", "url": "https://github.com/ssrjkk/wake/blob/main/CHANGELOG.md" }
+  ]
 }
 ```
 
-`site`, `bot` and `shot` are optional. Screenshots are served from the profile repository on `main`, which
-is reachable by Telegram without a token. `stars` is the fallback value — the worker refreshes real counts
-from the GitHub API and caches them for an hour; when the API answers nothing for a project (rate limit on
-an unauthenticated IP) the card keeps `stars` instead of showing 0. `"private": true` keeps the repository
-link out of public cards while the entry stays in the catalogue. A project's `repo` must equal
+`site`, `bot`, `shot` and `links` are optional. `links` is the documentation of that project: the bot
+renders the labels under the card and the hub mirrors the same hrefs in the same card, so `npm run check`
+fails when a card drops a link the record has or shows one it does not. With `"private": true` the worker
+hides every documentation link whose host is `github.com` — the repository button is gone for the same
+reason, and `github.com.evil` stays because the host is parsed, not searched for. Screenshots are served
+from the profile repository on `main`, which is reachable by Telegram without a token. `stars` is the
+fallback value — the worker refreshes real counts from the GitHub API and caches them for an hour; when
+the API answers nothing for a project (rate limit on an unauthenticated IP) the card keeps `stars` instead
+of showing 0. A project's `repo` must equal
 `https://github.com/ssrjkk/<name>` — the bundle check enforces it.
 
 After editing, rebuild and run the checks from `bot/`:
@@ -115,7 +123,7 @@ npm run coverage  # same suite, plus the numeric coverage gate CI fails on
 ```
 
 `npm run coverage` measures the shipped bundle and `scripts/smoke-prod.mjs` and exits non-zero below 99.5%
-lines, 96.5% branches and 97% functions; the suite currently reports 99.70 / 97.15 / 97.44. It runs against
+lines, 96.5% branches and 97% functions; the suite currently reports 99.73 / 97.18 / 97.48. It runs against
 the bundle that is deployed: Telegram, GitHub, KV and D1 are mocked, and `fetch` is replaced before the first
 test with a stub that throws, so a case that forgets its mock fails loudly instead of reaching the network
 from CI. The language and star caches are reset between the cases that care about them, and a catalogue built
@@ -233,6 +241,10 @@ Deep-ссылки: `https://t.me/ssrjkk_bot?start=p_<name>` сразу откр�
 а в карточке бота есть «Поделиться» с той же ссылкой проекта и «Пригласить» с личной `?start=ref_`.
 `npm run check` ловит расхождение: имя проекта в ссылке хаба должно быть в каталоге.
 
+Документация проекта лежит в том же `projects.json` в поле `links`: бот показывает её кнопками под карточкой,
+хаб повторяет те же ссылки в своей карточке, и гейт сверяет их в обе стороны. У закрытого проекта
+`github.com`-ссылки документации скрываются вместе с кнопкой репозитория.
+
 Правка контента: изменить `projects.json`, затем из `bot/`:
 `npm run build && npm run check && npm test && npm run coverage`.
 Секреты (`BOT_TOKEN`, `OWNER_ID`, `SETUP_KEY`, `WEBHOOK_SECRET`) задаются через `wrangler secret put` и в
@@ -252,7 +264,7 @@ Deep-ссылки: `https://t.me/ssrjkk_bot?start=p_<name>` сразу откр�
 
 Покрытие — числовой порог, а не «посмотрели и согласились»: `npm run coverage` меряет задеплоенный бандл и
 `scripts/smoke-prod.mjs` и выходит кодом 1 ниже 99.5% строк, 96.5% веток и 97% функций; сейчас прогон даёт
-99.70 / 97.15 / 97.44. Тесты гоняют против того же бандла, что уезжает на Cloudflare: Telegram, GitHub, KV и
+99.73 / 97.18 / 97.48. Тесты гоняют против того же бандла, что уезжает на Cloudflare: Telegram, GitHub, KV и
 D1 замоканы, а `fetch` до первой проверки подменён заглушкой, которая бросает ошибку, — тест, забывший
 двойника, падает сразу и с адресом запроса, а не уходит в сеть из CI. Кеш языка и кеш звёзд сбрасываются
 между проверками, которым важно начало TTL, а ветки, которых в текущем каталоге нет (проект без скриншота,
