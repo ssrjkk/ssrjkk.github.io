@@ -1,0 +1,7 @@
+Golos Text — SIL Open Font License 1.1
+Source: https://fonts.google.com/specimen/Golos+Text
+
+Cormorant Garamond — SIL Open Font License 1.1
+Source: https://fonts.google.com/specimen/Cormorant+Garamond
+
+Self-hosted variable WOFF2 subsets: latin and cyrillic.
