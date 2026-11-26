@@ -301,12 +301,7 @@
       "repo": "https://github.com/ssrjkk/qa-arsenal",
       "site": "https://ssrjkk.github.io/qa-arsenal/",
       "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/qa-arsenal.jpg",
-      "links": [
-        {
-          "name": "Showcase",
-          "url": "https://ssrjkk.github.io/qa-arsenal/showcase/"
-        }
-      ]
+      "links": []
     },
     {
       "name": "mobius",
@@ -324,10 +319,6 @@
           "url": "https://github.com/ssrjkk/mobius/blob/main/docs/USAGE.md"
         },
         {
-          "name": "Showcase",
-          "url": "https://ssrjkk.github.io/mobius/showcase/"
-        },
-        {
           "name": "Changelog",
           "url": "https://github.com/ssrjkk/mobius/blob/main/CHANGELOG.md"
         }
@@ -343,10 +334,6 @@
       "repo": "https://github.com/ssrjkk/noema",
       "site": "https://ssrjkk.github.io/noema/",
       "links": [
-        {
-          "name": "Showcase",
-          "url": "https://ssrjkk.github.io/noema/showcase/"
-        },
         {
           "name": "Atlas",
           "url": "https://ssrjkk.github.io/noema/atlas.html"
@@ -395,10 +382,6 @@
       "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/b2w-crypto-tg-bot.jpg",
       "links": [
         {
-          "name": "Showcase",
-          "url": "https://ssrjkk.github.io/b2w-crypto-tg-bot/showcase/"
-        },
-        {
           "name": "API",
           "url": "https://github.com/ssrjkk/b2w-crypto-tg-bot/blob/main/docs/api_reference.md"
         },
@@ -419,10 +402,6 @@
       "site": "https://ssrjkk.github.io/tt_bot/",
       "shot": "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/tt_bot.jpg",
       "links": [
-        {
-          "name": "Showcase",
-          "url": "https://ssrjkk.github.io/tt_bot/showcase/"
-        },
         {
           "name": "Architecture",
           "url": "https://github.com/ssrjkk/tt_bot/blob/main/ARCHITECTURE.md"

@@ -1,4 +1,4 @@
-// projects.json
+// _v3/r7/catalogue_fix/bot/projects.json
 var projects_default = {
   github: "ssrjkk",
   hub: "https://ssrjkk.github.io/",
@@ -302,12 +302,7 @@ var projects_default = {
       repo: "https://github.com/ssrjkk/qa-arsenal",
       site: "https://ssrjkk.github.io/qa-arsenal/",
       shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/qa-arsenal.jpg",
-      links: [
-        {
-          name: "Showcase",
-          url: "https://ssrjkk.github.io/qa-arsenal/showcase/"
-        }
-      ]
+      links: []
     },
     {
       name: "mobius",
@@ -325,10 +320,6 @@ var projects_default = {
           url: "https://github.com/ssrjkk/mobius/blob/main/docs/USAGE.md"
         },
         {
-          name: "Showcase",
-          url: "https://ssrjkk.github.io/mobius/showcase/"
-        },
-        {
           name: "Changelog",
           url: "https://github.com/ssrjkk/mobius/blob/main/CHANGELOG.md"
         }
@@ -344,10 +335,6 @@ var projects_default = {
       repo: "https://github.com/ssrjkk/noema",
       site: "https://ssrjkk.github.io/noema/",
       links: [
-        {
-          name: "Showcase",
-          url: "https://ssrjkk.github.io/noema/showcase/"
-        },
         {
           name: "Atlas",
           url: "https://ssrjkk.github.io/noema/atlas.html"
@@ -396,10 +383,6 @@ var projects_default = {
       shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/b2w-crypto-tg-bot.jpg",
       links: [
         {
-          name: "Showcase",
-          url: "https://ssrjkk.github.io/b2w-crypto-tg-bot/showcase/"
-        },
-        {
           name: "API",
           url: "https://github.com/ssrjkk/b2w-crypto-tg-bot/blob/main/docs/api_reference.md"
         },
@@ -420,10 +403,6 @@ var projects_default = {
       site: "https://ssrjkk.github.io/tt_bot/",
       shot: "https://raw.githubusercontent.com/ssrjkk/ssrjkk/main/assets/shots/tt_bot.jpg",
       links: [
-        {
-          name: "Showcase",
-          url: "https://ssrjkk.github.io/tt_bot/showcase/"
-        },
         {
           name: "Architecture",
           url: "https://github.com/ssrjkk/tt_bot/blob/main/ARCHITECTURE.md"
@@ -526,7 +505,7 @@ var projects_default = {
   ]
 };
 
-// src/worker.js
+// _v3/r7/catalogue_fix/bot/src/worker.js
 var GITHUB_USERNAME = projects_default.github;
 var BOT_URL = projects_default.bot;
 var PROJECTS = projects_default.projects;
